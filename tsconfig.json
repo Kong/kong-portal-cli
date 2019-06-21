@@ -1,0 +1,38 @@
+
+{
+  "compilerOptions": {
+    "noImplicitAny": false,
+    "noImplicitThis": true,
+    "alwaysStrict": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "strictPropertyInitialization": true,
+    "skipLibCheck": true,
+
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    
+    "target": "es2017",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "removeComments": true,
+
+    "outDir": "bin",
+    "pretty": true,
+
+    "lib": [
+      "es2019"
+    ]
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "templates",
+    "fixtures",
+    "workspaces"
+  ]
+}
