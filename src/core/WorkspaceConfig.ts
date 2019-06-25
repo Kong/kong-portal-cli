@@ -1,6 +1,15 @@
 import Config from './Config';
+import {OutgoingHttpHeaders} from './HTTP/RestInterfaces';
 
-export default class WorkspaceConfig extends Config {
+export interface IWorkspaceConfig {
+  name?: string;
+  description?: string;
+  upstream: string;
+  headers?: OutgoingHttpHeaders;
+  rbacToken?: string;
+}
+
+export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
   public get name(): string {
     return this.data.name;
   }
@@ -23,6 +32,14 @@ export default class WorkspaceConfig extends Config {
 
   public set upstream(url: string) {
     this.data.upstream = url;
+  }
+
+  public get headers(): OutgoingHttpHeaders {
+    return this.data.headers || {};
+  }
+
+  public set headers(headers: OutgoingHttpHeaders) {
+    this.data.headers = headers;
   }
 
   public get rbacToken(): string {
