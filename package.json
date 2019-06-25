@@ -31,11 +31,12 @@
     "clipanion": "^0.15.0",
     "crypto-promise": "^2.1.0",
     "fs-extra": "^8.0.1",
+    "got": "^9.6.0",
     "js-yaml": "^3.13.1",
-    "node-fetch": "^2.6.0",
     "recursive-readdir-async": "^1.1.5"
   },
   "devDependencies": {
+    "@types/got": "^9.6.0",
     "@types/node": "^12.0.8",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
