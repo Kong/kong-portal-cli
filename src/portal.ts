@@ -4,10 +4,13 @@ import { clipanion } from 'clipanion';
 
 clipanion.topLevel(`[-v,--verbose]`);
 
+import DeployCommand from './commands/deploy';
+import WipeCommand from './commands/wipe';
+
 clipanion
   .command(`deploy <workspace>`)
   .describe(`Deploy changes made locally under the given workspace upstream.`)
-  .action(require('./commands/deploy'));
+  .action(DeployCommand);
 
 clipanion
   .command(`fetch <workspace>`)
@@ -15,9 +18,9 @@ clipanion
   .action(require('./commands/fetch'));
 
 clipanion
-  .command(`reset <workspace>`)
-  .describe(`Resets content and themes in the given workspace, locally.`)
-  .action(require('./commands/reset'));
+  .command(`wipe <workspace>`)
+  .describe(`Deletes all content and themes from upstream workspace.`)
+  .action(WipeCommand);
 
 clipanion
   .command(`config <workspace>`)

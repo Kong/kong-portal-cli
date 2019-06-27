@@ -1,12 +1,12 @@
-import {IRestResource, IRestResponse} from './RestInterfaces'
-import {join} from 'path'
+import { IRestResource, IRestResponse } from './RestInterfaces';
+import { join } from 'path';
 import RestClient from './RestClient';
 
 export default class RestResource implements IRestResource {
   public resourcePath: string;
   public client?: RestClient;
 
-  constructor(resourcePath: string) {
+  public constructor(resourcePath: string) {
     this.resourcePath = resourcePath;
   }
 
@@ -27,11 +27,13 @@ export default class RestResource implements IRestResource {
   }
 
   public toObject(): any {
-    return Object.assign({}, this)
+    let o = Object.assign({}, this);
+    delete o.resourcePath;
+    return o;
   }
 
   public toJSON(): string {
-    return this.toObject()
+    return this.toObject();
   }
 
   public getResourcePath(path: string): string {
@@ -39,6 +41,6 @@ export default class RestResource implements IRestResource {
   }
 
   public static fromJSON(child: any, json: any): any {
-    return Object.assign(Object.create(child.prototype), json)
+    return new child(json);
   }
 }

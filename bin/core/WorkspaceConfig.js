@@ -20,6 +20,12 @@ class WorkspaceConfig extends Config_1.default {
     set upstream(url) {
         this.data.upstream = url;
     }
+    get headers() {
+        return this.data.headers || {};
+    }
+    set headers(headers) {
+        this.data.headers = headers;
+    }
     get rbacToken() {
         return this.data.rbac_token;
     }

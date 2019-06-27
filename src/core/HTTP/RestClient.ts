@@ -4,9 +4,9 @@ import { IWorkspaceConfig } from '../WorkspaceConfig';
 import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces';
 
 export class RestClientError<T> extends Error {
-  response: IRestResponse<T>;
+  public response: IRestResponse<T>;
 
-  constructor(res: IRestResponse<T>, message?: string) {
+  public constructor(res: IRestResponse<T>, message?: string) {
     super(message);
     this.response = res;
   }
@@ -17,7 +17,7 @@ export default class RestClient {
   public clientHeaders: OutgoingHttpHeaders;
   public clientUrl: string;
 
-  constructor(workspaceConfig: IWorkspaceConfig) {
+  public constructor(workspaceConfig: IWorkspaceConfig) {
     this.clientHeaders = workspaceConfig.headers || {};
     this.clientUrl = workspaceConfig.upstream;
 
@@ -32,42 +32,45 @@ export default class RestClient {
     });
   }
 
-  public async get<T>(
-    resource: string, 
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<T>> {
+  public async get<T>(resource: string, options: Partial<got.GotJSONOptions> = {}): Promise<IRestResponse<T>> {
     return this.handleResponse(await this.client.get(resource, options));
   }
 
   public async create<Output>(
-    resource: IRestResource, 
+    resource: IRestResource,
     options: Partial<got.GotJSONOptions> = {},
   ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject()
-    return this.handleResponse(await this.client.post(resource.getResourcePath(), options))
+    options.body = resource.toObject();
+    return this.handleResponse(await this.client.post(resource.getResourcePath(), options));
   }
 
   public async update<Output>(
-    resource: IRestResource, 
+    resource: IRestResource,
     options: Partial<got.GotJSONOptions> = {},
   ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject()
-    return this.handleResponse(await this.client.patch(resource.getResourcePath(), options))
+    options.body = resource.toObject();
+    return this.handleResponse(await this.client.patch(resource.getResourcePath(), options));
   }
 
   public async save<Output>(
-    resource: IRestResource, 
+    resource: IRestResource,
     options: Partial<got.GotJSONOptions> = {},
   ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject()
-    return this.handleResponse(await this.client.put(resource.getResourcePath(), options))
+    options.body = resource.toObject();
+    try {
+      let response = await this.client.put(resource.getResourcePath(), options);
+      return this.handleResponse(response);
+    } catch (e) {
+      console.log(e);
+      throw e;
+    }
   }
 
   public async delete<T>(
-    resource: IRestResource, 
+    resource: IRestResource,
     options: Partial<got.GotJSONOptions> = {},
   ): Promise<IRestResponse<T>> {
-    return this.handleResponse(await this.client.delete(resource.getResourcePath(), options))
+    return this.handleResponse(await this.client.delete(resource.getResourcePath(), options));
   }
 
   private handleResponse<T>(res: any): IRestResponse<T> {
@@ -86,8 +89,8 @@ export default class RestClient {
       statusCode,
       result,
       headers: res.headers,
-    }
+    };
 
-    return response
+    return response;
   }
 }

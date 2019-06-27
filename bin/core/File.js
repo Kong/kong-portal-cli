@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
-const crypto_promise_1 = require("crypto-promise");
+const crypto = require("crypto-promise");
 class File {
     constructor(location, options = {
         encoding: 'utf8',
@@ -20,7 +20,8 @@ class File {
     }
     async getShaSum(algorithm = '256') {
         const contents = await this.read();
-        return await crypto_promise_1.default.hash('sha' + algorithm)(contents);
+        const buffer = await crypto.hash('sha' + algorithm)(contents);
+        return buffer.toString('hex');
     }
 }
 exports.default = File;

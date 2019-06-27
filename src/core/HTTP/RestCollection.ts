@@ -1,5 +1,5 @@
-import {IRestCollection, IRestResponse} from './RestInterfaces';
-import {join} from 'path';
+import { IRestCollection, IRestResponse } from './RestInterfaces';
+import { join } from 'path';
 import RestClient from './RestClient';
 
 export default class RestCollection implements IRestCollection {
@@ -7,7 +7,7 @@ export default class RestCollection implements IRestCollection {
   public client?: RestClient;
   public next?: string | null;
 
-  constructor(resourcePath: string) {
+  public constructor(resourcePath: string) {
     this.resourcePath = resourcePath;
   }
 
@@ -41,7 +41,9 @@ export default class RestCollection implements IRestCollection {
   }
 
   public toObject(): any {
-    return Object.assign({}, this);
+    let o = Object.assign({}, this);
+    delete o.resourcePath;
+    return o;
   }
 
   public toJSON(): string {
@@ -54,11 +56,11 @@ export default class RestCollection implements IRestCollection {
 
   public static fromJSON(entity: any, children: any, json: any): any {
     if (json.data) {
-      json.data = json.data.map((element: any) => {
+      json.data = json.data.map((element: any): any => {
         return children.fromJSON(element);
       });
     }
 
-    return Object.assign(Object.create(entity.prototype), json);
+    return new entity(json);
   }
 }

@@ -8,19 +8,19 @@ export interface FileResourceJSON {
   /** Raw file content */
   contents: string;
   /** Sha256 Checksum */
-  checksum: string;
+  checksum?: string;
   /** @deprecated since 0.36 */
-  auth: boolean;
+  auth?: boolean;
 }
 
 export default class FileResource extends RestResource implements FileResourceJSON {
   public id?: string;
   public path: string;
   public contents: string;
-  public checksum: string;
-  public auth: boolean;
+  public checksum?: string;
+  public auth?: boolean;
 
-  constructor(json: FileResourceJSON) {
+  public constructor(json: FileResourceJSON) {
     super('/files');
 
     this.id = json.id;
@@ -31,7 +31,7 @@ export default class FileResource extends RestResource implements FileResourceJS
   }
 
   public getResourcePath(): string {
-    return super.getResourcePath(this.path);
+    return super.getResourcePath(this.id || this.path);
   }
 
   public static fromJSON(json: FileResourceJSON): FileResource {

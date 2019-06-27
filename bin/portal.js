@@ -3,18 +3,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
 clipanion_1.clipanion.topLevel(`[-v,--verbose]`);
+const deploy_1 = require("./commands/deploy");
+const wipe_1 = require("./commands/wipe");
 clipanion_1.clipanion
     .command(`deploy <workspace>`)
     .describe(`Deploy changes made locally under the given workspace upstream.`)
-    .action(require('./commands/deploy'));
+    .action(deploy_1.default);
 clipanion_1.clipanion
     .command(`fetch <workspace>`)
     .describe(`Fetches content and themes from the given workspace.`)
     .action(require('./commands/fetch'));
 clipanion_1.clipanion
-    .command(`reset <workspace>`)
-    .describe(`Resets content and themes in the given workspace, locally.`)
-    .action(require('./commands/reset'));
+    .command(`wipe <workspace>`)
+    .describe(`Deletes all content and themes from upstream workspace.`)
+    .action(wipe_1.default);
 clipanion_1.clipanion
     .command(`config <workspace>`)
     .describe(`Output or change configuration of the portal on the given workspace, locally.`)

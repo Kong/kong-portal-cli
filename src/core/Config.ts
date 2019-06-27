@@ -29,12 +29,16 @@ export default class Config {
   }
 
   public async save(): Promise<void> {
-    const content = yaml.safeDump(this.data);
+    const content = this.dump();
     return await fs.writeFile(this.path, content, this.encoding);
   }
 
+  public dump(): string {
+    return yaml.safeDump(this.data);
+  }
+
   public toConsole(): void {
-    const lines = yaml.safeDump(this.data).split('\n');
+    const lines = this.dump().split('\n');
     for (var line of lines) {
       console.log(`  `, line);
     }

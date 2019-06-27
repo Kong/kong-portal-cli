@@ -18,11 +18,14 @@ class Config {
         this.data = yaml.safeLoad(content);
     }
     async save() {
-        const content = yaml.safeDump(this.data);
+        const content = this.dump();
         return await fs.writeFile(this.path, content, this.encoding);
     }
+    dump() {
+        return yaml.safeDump(this.data);
+    }
     toConsole() {
-        const lines = yaml.safeDump(this.data).split('\n');
+        const lines = this.dump().split('\n');
         for (var line of lines) {
             console.log(`  `, line);
         }
