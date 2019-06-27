@@ -1,5 +1,5 @@
 import Config from './Config';
-import {OutgoingHttpHeaders} from './HTTP/RestInterfaces';
+import { OutgoingHttpHeaders } from './HTTP/RestInterfaces';
 
 export interface IWorkspaceConfig {
   name?: string;

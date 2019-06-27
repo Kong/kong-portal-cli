@@ -1,5 +1,5 @@
 import * as fs from 'fs-extra';
-import crypto from 'crypto-promise';
+import * as crypto from 'crypto-promise';
 
 export default class File {
   public location: string;
@@ -28,7 +28,8 @@ export default class File {
   }
 
   public async getShaSum(algorithm = '256'): Promise<string> {
-    const contents = await this.read();
-    return await crypto.hash('sha' + algorithm)(contents);
+    const contents: string = await this.read();
+    const buffer: Buffer = await crypto.hash('sha' + algorithm)(contents);
+    return buffer.toString('hex');
   }
 }

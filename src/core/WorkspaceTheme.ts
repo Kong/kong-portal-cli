@@ -3,6 +3,9 @@ import * as fs from 'fs-extra';
 import { join } from 'path';
 
 import WorkspaceThemeConfig from './WorkspaceThemeConfig';
+import { Content } from './WorkspaceContent';
+import FileResource from './HTTP/Resources/FileResource';
+import File from './File';
 
 export default class WorkspaceTheme {
   public name: string;
@@ -15,9 +18,9 @@ export default class WorkspaceTheme {
   public layoutsPath: string;
   public partialsPath: string;
 
-  public assets: Record<string, any>[] | null;
-  public layouts: Record<string, any>[] | null;
-  public partials: Record<string, any>[] | null;
+  public assets: Content[] | null;
+  public layouts: Content[] | null;
+  public partials: Content[] | null;
 
   public constructor(location: string, name: string) {
     this.name = name;
@@ -35,10 +38,33 @@ export default class WorkspaceTheme {
     this.partials = null;
   }
 
-  public async scan(): Promise<void> {
-    this.assets = await rs.list(this.assetsPath);
-    this.layouts = await rs.list(this.layoutsPath);
-    this.partials = await rs.list(this.partialsPath);
+  public async scanAssets(): Promise<void> {
+    let assets = await rs.list(this.assetsPath);
+    this.assets = this.mapFilesToContent(assets);
+  }
+
+  public async scanLayouts(): Promise<void> {
+    let layouts = await rs.list(this.layoutsPath);
+    this.layouts = this.mapFilesToContent(layouts);
+  }
+
+  public async scanPartials(): Promise<void> {
+    let partials = await rs.list(this.partialsPath);
+    this.partials = this.mapFilesToContent(partials);
+  }
+
+  private mapFilesToContent(files: Record<string, any>[]): Content[] {
+    return files.map(
+      (file: any): Content => {
+        return {
+          file: new File(file.fullname),
+          resource: new FileResource({
+            path: file.fullname.replace(this.location + '/', ''),
+            contents: '',
+          }),
+        };
+      },
+    );
   }
 
   public async addLayout(): Promise<void> {
@@ -64,7 +90,9 @@ export default class WorkspaceTheme {
   public static async init(location: string, name: string): Promise<WorkspaceTheme> {
     const theme = new WorkspaceTheme(location, name);
     await theme.config.load();
-    await theme.scan();
+    await theme.scanAssets();
+    await theme.scanLayouts();
+    await theme.scanPartials();
     return theme;
   }
 

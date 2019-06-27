@@ -4,6 +4,8 @@ const rs = require("recursive-readdir-async");
 const fs = require("fs-extra");
 const path_1 = require("path");
 const WorkspaceThemeConfig_1 = require("./WorkspaceThemeConfig");
+const FileResource_1 = require("./HTTP/Resources/FileResource");
+const File_1 = require("./File");
 class WorkspaceTheme {
     constructor(location, name) {
         this.name = name;
@@ -17,10 +19,28 @@ class WorkspaceTheme {
         this.layouts = null;
         this.partials = null;
     }
-    async scan() {
-        this.assets = await rs.list(this.assetsPath);
-        this.layouts = await rs.list(this.layoutsPath);
-        this.partials = await rs.list(this.partialsPath);
+    async scanAssets() {
+        let assets = await rs.list(this.assetsPath);
+        this.assets = this.mapFilesToContent(assets);
+    }
+    async scanLayouts() {
+        let layouts = await rs.list(this.layoutsPath);
+        this.layouts = this.mapFilesToContent(layouts);
+    }
+    async scanPartials() {
+        let partials = await rs.list(this.partialsPath);
+        this.partials = this.mapFilesToContent(partials);
+    }
+    mapFilesToContent(files) {
+        return files.map((file) => {
+            return {
+                file: new File_1.default(file.fullname),
+                resource: new FileResource_1.default({
+                    path: file.fullname.replace(this.location + '/', ''),
+                    contents: '',
+                }),
+            };
+        });
     }
     async addLayout() {
         console.log('not yet implemented');
@@ -41,7 +61,9 @@ class WorkspaceTheme {
     static async init(location, name) {
         const theme = new WorkspaceTheme(location, name);
         await theme.config.load();
-        await theme.scan();
+        await theme.scanAssets();
+        await theme.scanLayouts();
+        await theme.scanPartials();
         return theme;
     }
     static async exists(location, name) {
