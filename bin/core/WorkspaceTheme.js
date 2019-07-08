@@ -20,15 +20,15 @@ class WorkspaceTheme {
         this.partials = null;
     }
     async scanAssets() {
-        let assets = await rs.list(this.assetsPath);
+        let assets = await rs.list(this.assetsPath, { exclude: ['.DS_Store'] });
         this.assets = this.mapFilesToContent(assets);
     }
     async scanLayouts() {
-        let layouts = await rs.list(this.layoutsPath);
+        let layouts = await rs.list(this.layoutsPath, { exclude: ['.DS_Store'] });
         this.layouts = this.mapFilesToContent(layouts);
     }
     async scanPartials() {
-        let partials = await rs.list(this.partialsPath);
+        let partials = await rs.list(this.partialsPath, { exclude: ['.DS_Store'] });
         this.partials = this.mapFilesToContent(partials);
     }
     mapFilesToContent(files) {

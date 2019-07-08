@@ -6,7 +6,7 @@ clipanion_1.clipanion.topLevel(`[-v,--verbose]`);
 const deploy_1 = require("./commands/deploy");
 const wipe_1 = require("./commands/wipe");
 clipanion_1.clipanion
-    .command(`deploy <workspace>`)
+    .command(`deploy <workspace> [--watch]`)
     .describe(`Deploy changes made locally under the given workspace upstream.`)
     .action(deploy_1.default);
 clipanion_1.clipanion

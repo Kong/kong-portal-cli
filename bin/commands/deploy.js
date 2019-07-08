@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
+const chokidar = require("chokidar");
 const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
 const FileRepository_1 = require("../core/HTTP/Repositories/FileRepository");
@@ -14,16 +15,9 @@ function MissingWorkspaceError(name) {
     ];
     throw new clipanion_1.UsageError(message.join('\n'));
 }
-exports.default = async (args) => {
-    let workspace;
+async function Deploy(workspace) {
     let client;
     let repository;
-    try {
-        workspace = await Workspace_1.default.init(args.workspace);
-    }
-    catch (e) {
-        return MissingWorkspaceError(args.workspace);
-    }
     client = new RestClient_1.default(workspace.config);
     repository = new FileRepository_1.default(client);
     let collection = await repository.getFiles();
@@ -103,4 +97,28 @@ exports.default = async (args) => {
         }
     }
     console.log('Done.');
+}
+exports.default = async (args) => {
+    let workspace;
+    try {
+        workspace = await Workspace_1.default.init(args.workspace);
+    }
+    catch (e) {
+        return MissingWorkspaceError(args.workspace);
+    }
+    if (args.watch) {
+        console.log(`Watching`, `${workspace.path}/*`);
+        let watcher = chokidar.watch('.', {
+            cwd: workspace.path,
+            alwaysStat: true,
+        });
+        watcher.on('change', (path, stats) => {
+            if (stats && stats.isFile()) {
+                Deploy(workspace);
+            }
+        });
+    }
+    else {
+        Deploy(workspace);
+    }
 };
