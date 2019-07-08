@@ -8,7 +8,7 @@ import DeployCommand from './commands/deploy';
 import WipeCommand from './commands/wipe';
 
 clipanion
-  .command(`deploy <workspace>`)
+  .command(`deploy <workspace> [--watch]`)
   .describe(`Deploy changes made locally under the given workspace upstream.`)
   .action(DeployCommand);
 

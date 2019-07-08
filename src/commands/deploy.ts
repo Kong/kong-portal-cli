@@ -1,5 +1,5 @@
 import { UsageError } from 'clipanion';
-import { join } from 'path';
+import * as chokidar from 'chokidar';
 
 import Workspace from '../core/Workspace';
 import RestClient from '../core/HTTP/RestClient';
@@ -18,16 +18,9 @@ function MissingWorkspaceError(name: string): void {
   throw new UsageError(message.join('\n'));
 }
 
-export default async (args): Promise<void> => {
-  let workspace: Workspace;
+async function Deploy(workspace: Workspace): Promise<void> {
   let client: RestClient;
   let repository: FilesRepository;
-
-  try {
-    workspace = await Workspace.init(args.workspace);
-  } catch (e) {
-    return MissingWorkspaceError(args.workspace);
-  }
 
   client = new RestClient(workspace.config);
   repository = new FilesRepository(client);
@@ -120,4 +113,32 @@ export default async (args): Promise<void> => {
   }
 
   console.log('Done.');
+}
+
+export default async (args: any): Promise<void> => {
+  let workspace: Workspace;
+
+  try {
+    workspace = await Workspace.init(args.workspace);
+  } catch (e) {
+    return MissingWorkspaceError(args.workspace);
+  }
+
+  if (args.watch) {
+    console.log(`Watching`, `${workspace.path}/*`);
+
+    let watcher: any = chokidar.watch('.', {
+      cwd: workspace.path,
+      alwaysStat: true,
+    });
+
+    // Todo: only deploy changed files
+    watcher.on('change', (path, stats): void => {
+      if (stats && stats.isFile()) {
+        Deploy(workspace);
+      }
+    });
+  } else {
+    Deploy(workspace);
+  }
 };

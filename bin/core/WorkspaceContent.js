@@ -12,7 +12,7 @@ class WorkspaceContent {
         this.files = null;
     }
     async scan() {
-        this.files = await rs.list(this.path);
+        this.files = await rs.list(this.path, { exclude: ['.DS_Store'] });
         if (this.files) {
             this.files = this.files.map((file) => {
                 return {
