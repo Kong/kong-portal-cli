@@ -1,11 +1,14 @@
 import { UsageError } from 'clipanion';
 import * as chokidar from 'chokidar';
+import * as ora from 'ora';
+import * as chalk from 'chalk';
 
 import Workspace from '../core/Workspace';
 import RestClient from '../core/HTTP/RestClient';
 import FilesRepository from '../core/HTTP/Repositories/FileRepository';
 import FileResource from '../core/HTTP/Resources/FileResource';
 import WorkspaceTheme from '../core/WorkspaceTheme';
+import FilesCollection from '../core/HTTP/Collections/FilesCollection';
 
 function MissingWorkspaceError(name: string): void {
   const message: string[] = [
@@ -21,63 +24,95 @@ function MissingWorkspaceError(name: string): void {
 async function Deploy(workspace: Workspace): Promise<void> {
   let client: RestClient;
   let repository: FilesRepository;
+  let collection: FilesCollection;
+  let spinner: ora.Ora;
 
   client = new RestClient(workspace.config);
   repository = new FilesRepository(client);
+  collection = await repository.getFiles();
 
-  let collection = await repository.getFiles();
+  console.log(`Deploying ${workspace.name}:`);
+  console.log(``);
 
-  let portalConfigPath: string = workspace.portalConfig.path.replace(workspace.path + '/', '');
-  let portalConfigResource = new FileResource({
-    path: portalConfigPath,
-    contents: workspace.portalConfig.dump(),
+  spinner = ora({
+    prefixText: `Deploying configuration...`,
+    text: workspace.portalConfig.path,
   });
+  spinner.start();
 
-  client.save(portalConfigResource, {
-    body: portalConfigResource.toObject(),
+  try {
+    let portalConfigPath: string = workspace.portalConfig.path.replace(workspace.path + '/', '');
+    let portalConfigResource = new FileResource({
+      path: portalConfigPath,
+      contents: workspace.portalConfig.dump(),
+    });
+
+    await client.save(portalConfigResource, {
+      body: portalConfigResource.toObject(),
+    });
+  } catch (e) {
+    spinner.fail(e.message);
+  }
+
+  spinner.prefixText = `\t`;
+  spinner.text = 'Deploy configuration';
+  spinner.succeed();
+
+  spinner = ora({
+    prefixText: `Deploying content...`,
+    text: `reading files...`,
   });
-
-  console.log(`\tUploaded ${portalConfigPath}`);
-
-  let contents = await workspace.getContent();
-  if (contents.files) {
-    for (let content of contents.files) {
-      let resource = content.resource;
-
-      try {
-        resource.contents = await content.file.read();
-        await collection.save(resource);
-        console.log(`\tUploaded ${resource.path}`);
-      } catch (e) {
-        console.log(e);
+  spinner.start();
+  try {
+    let contents = await workspace.getContent();
+    if (contents.files) {
+      for (let content of contents.files) {
+        spinner.text = content.file.location;
+        content.resource.contents = await content.file.read();
+        await collection.save(content.resource);
       }
     }
+  } catch (e) {
+    spinner.fail(e.message);
   }
+
+  spinner.prefixText = `\t`;
+  spinner.text = 'Deploy content';
+  spinner.succeed();
+
+  spinner = ora({
+    prefixText: `Deploying themes...`,
+    text: `reading files...`,
+  });
+  spinner.start();
 
   let themes = await workspace.getThemes();
   let theme: WorkspaceTheme;
   for (theme of themes) {
-    let themeConfigPath = theme.config.path.replace(workspace.path + '/', '');
-    let themeConfigResource = new FileResource({
-      path: themeConfigPath,
-      contents: theme.config.dump(),
-    });
+    try {
+      spinner.text = workspace.portalConfig.path;
+      let themeConfigPath = theme.config.path.replace(workspace.path + '/', '');
+      let themeConfigResource = new FileResource({
+        path: themeConfigPath,
+        contents: theme.config.dump(),
+      });
 
-    client.save(themeConfigResource, {
-      body: themeConfigResource.toObject(),
-    });
-
-    console.log(`\tUploaded ${themeConfigPath}`);
+      await client.save(themeConfigResource, {
+        body: themeConfigResource.toObject(),
+      });
+    } catch (e) {
+      spinner.fail(e.message);
+    }
 
     if (theme.assets) {
       for (let content of theme.assets) {
-        let resource = content.resource;
-
         try {
+          let resource = content.resource;
+          spinner.text = content.file.location;
           resource.contents = await content.file.read();
           await collection.save(resource);
-          console.log(`\tUploaded ${resource.path}`);
         } catch (e) {
+          spinner.fail(e.message);
           console.log(e);
         }
       }
@@ -85,13 +120,13 @@ async function Deploy(workspace: Workspace): Promise<void> {
 
     if (theme.layouts) {
       for (let content of theme.layouts) {
-        let resource = content.resource;
-
         try {
+          let resource = content.resource;
+          spinner.text = content.file.location;
           resource.contents = await content.file.read();
           await collection.save(resource);
-          console.log(`\tUploaded ${resource.path}`);
         } catch (e) {
+          spinner.fail(e.message);
           console.log(e);
         }
       }
@@ -99,20 +134,22 @@ async function Deploy(workspace: Workspace): Promise<void> {
 
     if (theme.partials) {
       for (let content of theme.partials) {
-        let resource = content.resource;
-
         try {
+          let resource = content.resource;
+          spinner.text = content.file.location;
           resource.contents = await content.file.read();
           await collection.save(resource);
-          console.log(`\tUploaded ${resource.path}`);
         } catch (e) {
+          spinner.fail(e.message);
           console.log(e);
         }
       }
     }
   }
 
-  console.log('Done.');
+  spinner.prefixText = `\t`;
+  spinner.text = 'Deploy themes';
+  spinner.succeed();
 }
 
 export default async (args: any): Promise<void> => {
@@ -126,6 +163,7 @@ export default async (args: any): Promise<void> => {
 
   if (args.watch) {
     console.log(`Watching`, `${workspace.path}/*`);
+    console.log(``);
 
     let watcher: any = chokidar.watch('.', {
       cwd: workspace.path,

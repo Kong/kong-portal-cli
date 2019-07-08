@@ -28,12 +28,14 @@
   },
   "homepage": "https://github.com/Kong/kong-portal-cli#readme",
   "dependencies": {
+    "chalk": "^2.4.2",
     "chokidar": "^3.0.1",
     "clipanion": "^0.15.0",
     "crypto-promise": "^2.1.0",
     "fs-extra": "^8.0.1",
     "got": "^9.6.0",
     "js-yaml": "^3.13.1",
+    "ora": "^3.4.0",
     "recursive-readdir-async": "^1.1.5"
   },
   "devDependencies": {

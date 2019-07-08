@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
 const chokidar = require("chokidar");
+const ora = require("ora");
 const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
 const FileRepository_1 = require("../core/HTTP/Repositories/FileRepository");
@@ -18,85 +19,123 @@ function MissingWorkspaceError(name) {
 async function Deploy(workspace) {
     let client;
     let repository;
+    let collection;
+    let spinner;
     client = new RestClient_1.default(workspace.config);
     repository = new FileRepository_1.default(client);
-    let collection = await repository.getFiles();
-    let portalConfigPath = workspace.portalConfig.path.replace(workspace.path + '/', '');
-    let portalConfigResource = new FileResource_1.default({
-        path: portalConfigPath,
-        contents: workspace.portalConfig.dump(),
+    collection = await repository.getFiles();
+    console.log(`Deploying ${workspace.name}:`);
+    console.log(``);
+    spinner = ora({
+        prefixText: `Deploying configuration...`,
+        text: workspace.portalConfig.path,
     });
-    client.save(portalConfigResource, {
-        body: portalConfigResource.toObject(),
+    spinner.start();
+    try {
+        let portalConfigPath = workspace.portalConfig.path.replace(workspace.path + '/', '');
+        let portalConfigResource = new FileResource_1.default({
+            path: portalConfigPath,
+            contents: workspace.portalConfig.dump(),
+        });
+        await client.save(portalConfigResource, {
+            body: portalConfigResource.toObject(),
+        });
+    }
+    catch (e) {
+        spinner.fail(e.message);
+    }
+    spinner.prefixText = `\t`;
+    spinner.text = 'Deploy configuration';
+    spinner.succeed();
+    spinner = ora({
+        prefixText: `Deploying content...`,
+        text: `reading files...`,
     });
-    console.log(`\tUploaded ${portalConfigPath}`);
-    let contents = await workspace.getContent();
-    if (contents.files) {
-        for (let content of contents.files) {
-            let resource = content.resource;
-            try {
-                resource.contents = await content.file.read();
-                await collection.save(resource);
-                console.log(`\tUploaded ${resource.path}`);
-            }
-            catch (e) {
-                console.log(e);
+    spinner.start();
+    try {
+        let contents = await workspace.getContent();
+        if (contents.files) {
+            for (let content of contents.files) {
+                spinner.text = content.file.location;
+                content.resource.contents = await content.file.read();
+                await collection.save(content.resource);
             }
         }
     }
+    catch (e) {
+        spinner.fail(e.message);
+    }
+    spinner.prefixText = `\t`;
+    spinner.text = 'Deploy content';
+    spinner.succeed();
+    spinner = ora({
+        prefixText: `Deploying themes...`,
+        text: `reading files...`,
+    });
+    spinner.start();
     let themes = await workspace.getThemes();
     let theme;
     for (theme of themes) {
-        let themeConfigPath = theme.config.path.replace(workspace.path + '/', '');
-        let themeConfigResource = new FileResource_1.default({
-            path: themeConfigPath,
-            contents: theme.config.dump(),
-        });
-        client.save(themeConfigResource, {
-            body: themeConfigResource.toObject(),
-        });
-        console.log(`\tUploaded ${themeConfigPath}`);
+        try {
+            spinner.text = workspace.portalConfig.path;
+            let themeConfigPath = theme.config.path.replace(workspace.path + '/', '');
+            let themeConfigResource = new FileResource_1.default({
+                path: themeConfigPath,
+                contents: theme.config.dump(),
+            });
+            await client.save(themeConfigResource, {
+                body: themeConfigResource.toObject(),
+            });
+        }
+        catch (e) {
+            spinner.fail(e.message);
+        }
         if (theme.assets) {
             for (let content of theme.assets) {
-                let resource = content.resource;
                 try {
+                    let resource = content.resource;
+                    spinner.text = content.file.location;
                     resource.contents = await content.file.read();
                     await collection.save(resource);
-                    console.log(`\tUploaded ${resource.path}`);
                 }
                 catch (e) {
+                    spinner.fail(e.message);
                     console.log(e);
                 }
             }
         }
         if (theme.layouts) {
             for (let content of theme.layouts) {
-                let resource = content.resource;
                 try {
+                    let resource = content.resource;
+                    spinner.text = content.file.location;
                     resource.contents = await content.file.read();
                     await collection.save(resource);
-                    console.log(`\tUploaded ${resource.path}`);
                 }
                 catch (e) {
+                    spinner.fail(e.message);
                     console.log(e);
                 }
             }
         }
         if (theme.partials) {
             for (let content of theme.partials) {
-                let resource = content.resource;
                 try {
+                    let resource = content.resource;
+                    spinner.text = content.file.location;
                     resource.contents = await content.file.read();
                     await collection.save(resource);
-                    console.log(`\tUploaded ${resource.path}`);
                 }
                 catch (e) {
+                    spinner.fail(e.message);
                     console.log(e);
                 }
             }
         }
     }
-    console.log('Done.');
+    spinner.prefixText = `\t`;
+    spinner.text = 'Deploy themes';
+    spinner.succeed();
 }
 exports.default = async (args) => {
     let workspace;
@@ -108,6 +147,7 @@ exports.default = async (args) => {
     }
     if (args.watch) {
         console.log(`Watching`, `${workspace.path}/*`);
+        console.log(``);
         let watcher = chokidar.watch('.', {
             cwd: workspace.path,
             alwaysStat: true,
