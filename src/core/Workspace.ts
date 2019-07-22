@@ -6,18 +6,21 @@ import WorkspaceTheme from './WorkspaceTheme';
 import WorkspaceConfig from './WorkspaceConfig';
 import WorkspacePortalConfig from './WorkspacePortalConfig';
 import WorkspaceContent from './WorkspaceContent';
+import WorkspaceRouterConfig from './WorkspaceRouterConfig';
 
 export default class Workspace {
   public name: string;
   public path: string;
   public config: WorkspaceConfig;
   public portalConfig: WorkspacePortalConfig;
+  public routerConfig: WorkspaceRouterConfig;
 
   public constructor(name: string) {
     this.name = name;
     this.path = Workspace.getDirectoryPath(name);
     this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml');
     this.portalConfig = new WorkspacePortalConfig(this.path, 'portal.conf.yaml');
+    this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml');
   }
 
   public getCurrentThemeName(): string {
@@ -68,6 +71,8 @@ export default class Workspace {
     const workspace = new Workspace(name);
     await workspace.config.load();
     await workspace.portalConfig.load();
+    await workspace.routerConfig.load();
+
     return workspace;
   }
 

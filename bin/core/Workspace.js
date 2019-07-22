@@ -7,12 +7,14 @@ const WorkspaceTheme_1 = require("./WorkspaceTheme");
 const WorkspaceConfig_1 = require("./WorkspaceConfig");
 const WorkspacePortalConfig_1 = require("./WorkspacePortalConfig");
 const WorkspaceContent_1 = require("./WorkspaceContent");
+const WorkspaceRouterConfig_1 = require("./WorkspaceRouterConfig");
 class Workspace {
     constructor(name) {
         this.name = name;
         this.path = Workspace.getDirectoryPath(name);
         this.config = new WorkspaceConfig_1.default(this.path, 'cli.conf.yaml');
         this.portalConfig = new WorkspacePortalConfig_1.default(this.path, 'portal.conf.yaml');
+        this.routerConfig = new WorkspaceRouterConfig_1.default(this.path, 'router.conf.yaml');
     }
     getCurrentThemeName() {
         return this.portalConfig.theme;
@@ -51,6 +53,7 @@ class Workspace {
         const workspace = new Workspace(name);
         await workspace.config.load();
         await workspace.portalConfig.load();
+        await workspace.routerConfig.load();
         return workspace;
     }
     static async exists(name) {
