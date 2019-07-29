@@ -53,6 +53,22 @@ async function Deploy(workspace: Workspace): Promise<void> {
   } catch (e) {
     spinner.fail(e.message);
   }
+  
+  if (workspace.routerConfig.data) {
+    try {
+      let routerConfigPath: string = workspace.routerConfig.path.replace(workspace.path + '/', '');
+      let routerConfigResource = new FileResource({
+        path: routerConfigPath,
+        contents: workspace.routerConfig.dump(),
+      });
+  
+      await client.save(routerConfigResource, {
+        body: routerConfigResource.toObject(),
+      });
+    } catch (e) {
+      spinner.fail(e.message);
+    }
+  }
 
   spinner.prefixText = `\t`;
   spinner.text = 'Deploy configuration';
