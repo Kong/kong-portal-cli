@@ -22,7 +22,7 @@ function MissingWorkspaceError(name: string): void {
 }
 
 async function DeployWorkspaceConfig(workspace: Workspace, client: RestClient, path?: any): Promise<void> {
-  if (path && path !== workspace.portalConfig.path) {
+  if (path && workspace.portalConfig.path.split(path)[1] !== '') {
     return;
   }
 
