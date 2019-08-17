@@ -17,7 +17,7 @@ function MissingWorkspaceError(name) {
     throw new clipanion_1.UsageError(message.join('\n'));
 }
 async function DeployWorkspaceConfig(workspace, client, path) {
-    if (path && path !== workspace.portalConfig.path) {
+    if (path && workspace.portalConfig.path.split(path)[1] !== '') {
         return;
     }
     let spinner = ora({
