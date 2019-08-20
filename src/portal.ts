@@ -6,6 +6,7 @@ clipanion.topLevel(`[-v,--verbose]`);
 
 import DeployCommand from './commands/deploy';
 import WipeCommand from './commands/wipe';
+import FetchCommand from './commands/fetch';
 
 clipanion
   .command(`deploy <workspace> [--watch]`)
@@ -15,7 +16,7 @@ clipanion
 clipanion
   .command(`fetch <workspace>`)
   .describe(`Fetches content and themes from the given workspace.`)
-  .action(require('./commands/fetch'));
+  .action(FetchCommand);
 
 clipanion
   .command(`wipe <workspace>`)

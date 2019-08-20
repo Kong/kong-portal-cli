@@ -5,6 +5,7 @@ const clipanion_1 = require("clipanion");
 clipanion_1.clipanion.topLevel(`[-v,--verbose]`);
 const deploy_1 = require("./commands/deploy");
 const wipe_1 = require("./commands/wipe");
+const fetch_1 = require("./commands/fetch");
 clipanion_1.clipanion
     .command(`deploy <workspace> [--watch]`)
     .describe(`Deploy changes made locally under the given workspace upstream.`)
@@ -12,7 +13,7 @@ clipanion_1.clipanion
 clipanion_1.clipanion
     .command(`fetch <workspace>`)
     .describe(`Fetches content and themes from the given workspace.`)
-    .action(require('./commands/fetch'));
+    .action(fetch_1.default);
 clipanion_1.clipanion
     .command(`wipe <workspace>`)
     .describe(`Deletes all content and themes from upstream workspace.`)
