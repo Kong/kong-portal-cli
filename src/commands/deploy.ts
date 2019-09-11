@@ -126,6 +126,45 @@ async function DeployWorkspaceContent(
   }
 }
 
+async function DeployWorkspaceSpecs(
+  workspace: Workspace,
+  client: RestClient,
+  collection: FilesCollection,
+  path: any,
+): Promise<void> {
+  if (path && path.indexOf('specs') < 0) {
+    return;
+  }
+
+  let spinner = ora({
+    prefixText: `Deploying ${path || 'specs'}...`,
+    text: `reading files...`,
+  });
+
+  spinner.start();
+
+  try {
+    let specs = await workspace.getSpecs();
+    if (specs.files) {
+      for (let spec of specs.files) {
+        if (path && spec.file.location.split(path)[1] !== '') {
+          continue;
+        }
+
+        spinner.text = spec.file.location;
+        spec.resource.contents = await spec.file.read();
+        await collection.save(spec.resource);
+      }
+    }
+
+    spinner.prefixText = `\t`;
+    spinner.text = `Deploy ${path || 'specs'}`;
+    spinner.succeed();
+  } catch (e) {
+    spinner.fail(e.message);
+  }
+}
+
 async function DeployWorkspaceThemeConfig(workspace, theme, client, spinner, path): Promise<void> {
   if (path && theme.config.path.split(path)[1] !== '') {
     return;
@@ -215,6 +254,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
     await DeployWorkspaceConfig(workspace, client, path);
     await DeployWorkspaceRouter(workspace, client, path);
     await DeployWorkspaceContent(workspace, client, collection, path);
+    await DeployWorkspaceSpecs(workspace, client, collection, path);
     await DeployWorkspaceThemes(workspace, client, collection, path);
 
     console.log(``);

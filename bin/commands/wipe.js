@@ -29,8 +29,13 @@ exports.default = async (args) => {
     if (collection.files) {
         let resource;
         for (resource of collection.files) {
-            await resource.delete();
-            console.log(`\tDeleted ${resource.path}`);
+            try {
+                await resource.delete();
+                console.log(`\tDeleted ${resource.path}`);
+            }
+            catch (e) {
+                console.log(e);
+            }
         }
     }
     console.log('Done.');

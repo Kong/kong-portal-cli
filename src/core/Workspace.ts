@@ -6,6 +6,7 @@ import WorkspaceTheme from './WorkspaceTheme';
 import WorkspaceConfig from './WorkspaceConfig';
 import WorkspacePortalConfig from './WorkspacePortalConfig';
 import WorkspaceContent from './WorkspaceContent';
+import WorkspaceSpecs from './WorkspaceSpecs';
 import WorkspaceRouterConfig from './WorkspaceRouterConfig';
 
 export default class Workspace {
@@ -29,6 +30,10 @@ export default class Workspace {
 
   public async getContent(): Promise<WorkspaceContent> {
     return await WorkspaceContent.init(this.path);
+  }
+
+  public async getSpecs(): Promise<WorkspaceSpecs> {
+    return await WorkspaceSpecs.init(this.path);
   }
 
   public async getTheme(name: string): Promise<WorkspaceTheme> {
