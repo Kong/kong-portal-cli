@@ -7,6 +7,7 @@ import WorkspaceConfig from './WorkspaceConfig';
 import WorkspacePortalConfig from './WorkspacePortalConfig';
 import WorkspaceContent from './WorkspaceContent';
 import WorkspaceSpecs from './WorkspaceSpecs';
+import WorkspaceEmails from './WorkspaceEmails'
 import WorkspaceRouterConfig from './WorkspaceRouterConfig';
 
 export default class Workspace {
@@ -30,6 +31,10 @@ export default class Workspace {
 
   public async getContent(): Promise<WorkspaceContent> {
     return await WorkspaceContent.init(this.path);
+  }
+
+  public async getEmails(): Promise<WorkspaceContent> {
+    return await WorkspaceEmails.init(this.path);
   }
 
   public async getSpecs(): Promise<WorkspaceSpecs> {

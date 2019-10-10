@@ -8,6 +8,7 @@ const WorkspaceConfig_1 = require("./WorkspaceConfig");
 const WorkspacePortalConfig_1 = require("./WorkspacePortalConfig");
 const WorkspaceContent_1 = require("./WorkspaceContent");
 const WorkspaceSpecs_1 = require("./WorkspaceSpecs");
+const WorkspaceEmails_1 = require("./WorkspaceEmails");
 const WorkspaceRouterConfig_1 = require("./WorkspaceRouterConfig");
 class Workspace {
     constructor(name) {
@@ -22,6 +23,9 @@ class Workspace {
     }
     async getContent() {
         return await WorkspaceContent_1.default.init(this.path);
+    }
+    async getEmails() {
+        return await WorkspaceEmails_1.default.init(this.path);
     }
     async getSpecs() {
         return await WorkspaceSpecs_1.default.init(this.path);
