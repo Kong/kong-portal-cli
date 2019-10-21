@@ -7,11 +7,11 @@ command line. It is built using [clipanion][clipanion].
 ## Overview
 
 This is the next generation TypeScript based Developer Portal CLI. The goal of
-this project was to make higher quality CLI tool over the initial sync script.
+this project is to make a higher quality CLI tool over the initial sync script.
 
-This project is built for Kong Enterprise `>= 0.36`.
+This project is built for Kong Enterprise `>= 1.3`.
 
-For Kong Enterprise `<= 0.35`, [use the legacy sync script][sync-script].
+For Kong Enterprise `<= 0.36`, or for `legacy mode` on Kong Enterprise `>= 1.3` [use the legacy sync script][sync-script].
 
 ## Install
 
@@ -22,7 +22,7 @@ For Kong Enterprise `<= 0.35`, [use the legacy sync script][sync-script].
 ## Usage
 The easiest way to start is by cloning the [portal-templates repo][templates] dev-master branch locally.
 
-Then edit `workspaces/default/cli.conf` to set workspace `name` and `rbac_token` to match your setup.
+Then edit `workspaces/default/cli.conf.yaml` to set workspace `name` and `rbac_token` to match your setup.
 
 Make sure Kong is running and portal is on:
 
