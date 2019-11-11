@@ -75,6 +75,19 @@ export default class Workspace {
   public static async init(name: string): Promise<Workspace> {
     const workspace = new Workspace(name);
     await workspace.config.load();
+
+    if (process.env.WORKSPACE_NAME) {
+      workspace.config.data.name = process.env.WORKSPACE_NAME
+    }
+
+    if (process.env.UPSTREAM) {
+      workspace.config.data.upstream = process.env.UPSTREAM
+    }
+
+    if (process.env.RBAC_TOKEN) {
+      workspace.config.data.rbac_token = process.env.RBAC_TOKEN
+    }
+
     await workspace.portalConfig.load();
     await workspace.routerConfig.load();
 
