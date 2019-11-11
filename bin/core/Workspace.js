@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const rs = require("recursive-readdir-async");
 const fs = require("fs-extra");
-const path = require("path");
+const path = require("upath");
 const WorkspaceTheme_1 = require("./WorkspaceTheme");
 const WorkspaceConfig_1 = require("./WorkspaceConfig");
 const WorkspacePortalConfig_1 = require("./WorkspacePortalConfig");

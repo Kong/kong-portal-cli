@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async';
 import * as fs from 'fs-extra';
-import * as path from 'path';
+import * as path from 'upath';
 
 import WorkspaceTheme from './WorkspaceTheme';
 import WorkspaceConfig from './WorkspaceConfig';

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const rs = require("recursive-readdir-async");
 const fs = require("fs-extra");
-const path_1 = require("path");
+const upath_1 = require("upath");
 const WorkspaceThemeConfig_1 = require("./WorkspaceThemeConfig");
 const FileResource_1 = require("./HTTP/Resources/FileResource");
 const File_1 = require("./File");
@@ -12,9 +12,9 @@ class WorkspaceTheme {
         this.location = location;
         this.path = WorkspaceTheme.getDirectoryPath(location, name);
         this.config = new WorkspaceThemeConfig_1.default(this.path, 'theme.conf.yaml');
-        this.assetsPath = path_1.join(this.path, 'assets');
-        this.layoutsPath = path_1.join(this.path, 'layouts');
-        this.partialsPath = path_1.join(this.path, 'partials');
+        this.assetsPath = upath_1.join(this.path, 'assets');
+        this.layoutsPath = upath_1.join(this.path, 'layouts');
+        this.partialsPath = upath_1.join(this.path, 'partials');
         this.assets = null;
         this.layouts = null;
         this.partials = null;
@@ -33,10 +33,11 @@ class WorkspaceTheme {
     }
     mapFilesToContent(files) {
         return files.map((file) => {
+            const unixName = upath_1.toUnix(file.fullname);
             return {
-                file: new File_1.default(file.fullname),
+                file: new File_1.default(unixName),
                 resource: new FileResource_1.default({
-                    path: file.fullname.replace(this.location + '/', ''),
+                    path: unixName.replace(this.location + '/', ''),
                     contents: '',
                 }),
             };
@@ -76,7 +77,7 @@ class WorkspaceTheme {
         }
     }
     static getDirectoryPath(location, name) {
-        return path_1.join(location, 'themes', name);
+        return upath_1.join(location, 'themes', name);
     }
 }
 exports.default = WorkspaceTheme;

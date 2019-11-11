@@ -1,5 +1,5 @@
 import { UsageError } from 'clipanion';
-import { join } from 'path';
+import { join } from 'upath';
 
 import File from '../core/File';
 import Workspace from '../core/Workspace';
@@ -65,7 +65,7 @@ export default async (args): Promise<void> => {
       }
     }
   }
-  
+
   if (!modified || added) {
     console.log(`\t`, `No changes.`)
   }
