@@ -30,13 +30,20 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace);
   }
 
-  client = new RestClient(workspace.config);
+  client = new RestClient(workspace.config, workspace.name);
   repository = new FilesRepository(client);
+
 
   console.log(`Config:`);
   console.log(``);
   console.log(`\t`,`Workspace:`, workspace.name);
-  console.log(`\t`,`Workspace Upstream:`, workspace.config.upstream, workspace.config.rbacToken ? `(authenticated)` : ``);
+
+  if (workspace.config.adminUrl) {
+    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.adminUrl}/${workspace.name}`, workspace.config.rbacToken ? `(authenticated)` : ``);
+  } else if (workspace.config.upstream) {
+    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.upstream}`, workspace.config.rbacToken ? `(authenticated)` : ``);
+  }
+
   console.log(`\t`,`Workspace Directory:`, workspace.path);
   console.log(``);
   console.log(`Changes:`);

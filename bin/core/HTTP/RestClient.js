@@ -9,9 +9,18 @@ class RestClientError extends Error {
 }
 exports.RestClientError = RestClientError;
 class RestClient {
-    constructor(workspaceConfig) {
+    constructor(workspaceConfig, workspaceName) {
         this.clientHeaders = workspaceConfig.headers || {};
-        this.clientUrl = workspaceConfig.upstream;
+        if (workspaceConfig.adminUrl) {
+            this.clientUrl = `${workspaceConfig.adminUrl}/${workspaceName}`;
+        }
+        else if (workspaceConfig.upstream) {
+            console.log('upstream is deprecated and will cease to function in a later release. Please use admin_url (upstream url without the workspace suffix)');
+            this.clientUrl = workspaceConfig.upstream;
+        }
+        else {
+            this.clientUrl = '';
+        }
         if (workspaceConfig.rbacToken) {
             this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.rbacToken;
         }

@@ -244,7 +244,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   let collection: FilesCollection;
 
   try {
-    client = new RestClient(workspace.config);
+    client = new RestClient(workspace.config, workspace.name);
     repository = new FilesRepository(client);
     collection = await repository.getFiles();
 

@@ -193,7 +193,7 @@ async function Deploy(workspace, path) {
     let repository;
     let collection;
     try {
-        client = new RestClient_1.default(workspace.config);
+        client = new RestClient_1.default(workspace.config, workspace.name);
         repository = new FileRepository_1.default(client);
         collection = await repository.getFiles();
         console.log(`Deploying ${workspace.name}:`);

@@ -14,6 +14,12 @@ class WorkspaceConfig extends Config_1.default {
     set description(text) {
         this.data.description = text;
     }
+    get adminUrl() {
+        return this.data.admin_url;
+    }
+    set adminUrl(url) {
+        this.data.admin_url = url;
+    }
     get upstream() {
         return this.data.upstream;
     }

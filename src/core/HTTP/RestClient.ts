@@ -17,9 +17,17 @@ export default class RestClient {
   public clientHeaders: OutgoingHttpHeaders;
   public clientUrl: string;
 
-  public constructor(workspaceConfig: IWorkspaceConfig) {
+  public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: String) {
     this.clientHeaders = workspaceConfig.headers || {};
-    this.clientUrl = workspaceConfig.upstream;
+
+    if (workspaceConfig.adminUrl) {
+      this.clientUrl = `${workspaceConfig.adminUrl}/${workspaceName}`
+    } else if (workspaceConfig.upstream) {
+      console.log('upstream is deprecated and will cease to function in a later release. Please use admin_url (upstream url without the workspace suffix)')
+      this.clientUrl = workspaceConfig.upstream
+    } else {
+      this.clientUrl = ''
+    }
 
     if (workspaceConfig.rbacToken) {
       this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.rbacToken;
