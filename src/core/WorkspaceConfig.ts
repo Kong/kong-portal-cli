@@ -5,9 +5,9 @@ export interface IWorkspaceConfig {
   name?: string;
   description?: string;
   upstream?: string;
-  adminUrl?: string;
   headers?: OutgoingHttpHeaders;
-  rbacToken?: string;
+  kongAdminUrl?: string;
+  kongAdminToken?: string;
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -29,14 +29,14 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.description = text;
   }
 
-  public get adminUrl(): string {
+  public get kongAdminUrl(): string {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    return this.data.admin_url;
+    return this.data.kong_admin_url;
   }
 
-  public set adminUrl(url: string) {
+  public set kongAdminUrl(url: string) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.admin_url = url;
+    this.data.kong_admin_url = url;
   }
 
   // deprecated
@@ -57,13 +57,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.headers = headers;
   }
 
-  public get rbacToken(): string {
+  public get kongAdminToken(): string {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    return this.data.rbac_token;
+    return this.data.kong_admin_token;
   }
 
-  public set rbacToken(token: string) {
+  public set kongAdminToken(token: string) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.rbac_token = token;
+    this.data.kong_admin_token = token;
   }
 }

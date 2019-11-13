@@ -76,12 +76,12 @@ export default class Workspace {
     const workspace = new Workspace(name);
     await workspace.config.load();
 
-    if (process.env.ADMIN_URL) {
-      workspace.config.data.admin_url = process.env.ADMIN_URL
+    if (process.env.KONG_ADMIN_URL) {
+      workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
     }
 
-    if (process.env.RBAC_TOKEN) {
-      workspace.config.data.rbac_token = process.env.RBAC_TOKEN
+    if (process.env.KONG_ADMIN_TOKEN) {
+      workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
     }
 
     await workspace.portalConfig.load();

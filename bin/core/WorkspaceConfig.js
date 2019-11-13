@@ -14,11 +14,11 @@ class WorkspaceConfig extends Config_1.default {
     set description(text) {
         this.data.description = text;
     }
-    get adminUrl() {
-        return this.data.admin_url;
+    get kongAdminUrl() {
+        return this.data.kong_admin_url;
     }
-    set adminUrl(url) {
-        this.data.admin_url = url;
+    set kongAdminUrl(url) {
+        this.data.kong_admin_url = url;
     }
     get upstream() {
         return this.data.upstream;
@@ -32,11 +32,11 @@ class WorkspaceConfig extends Config_1.default {
     set headers(headers) {
         this.data.headers = headers;
     }
-    get rbacToken() {
-        return this.data.rbac_token;
+    get kongAdminToken() {
+        return this.data.kong_admin_token;
     }
-    set rbacToken(token) {
-        this.data.rbac_token = token;
+    set kongAdminToken(token) {
+        this.data.kong_admin_token = token;
     }
 }
 exports.default = WorkspaceConfig;

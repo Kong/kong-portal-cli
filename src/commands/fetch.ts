@@ -38,10 +38,10 @@ export default async (args): Promise<void> => {
   console.log(``);
   console.log(`\t`,`Workspace:`, workspace.name);
 
-  if (workspace.config.adminUrl) {
-    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.adminUrl}/${workspace.name}`, workspace.config.rbacToken ? `(authenticated)` : ``);
+  if (workspace.config.kongAdminUrl) {
+    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.kongAdminUrl}/${workspace.name}`, workspace.config.kongAdminToken ? `(authenticated)` : ``);
   } else if (workspace.config.upstream) {
-    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.upstream}`, workspace.config.rbacToken ? `(authenticated)` : ``);
+    console.log(`\t`,`Workspace Upstream:`, `${workspace.config.upstream}`, workspace.config.kongAdminToken ? `(authenticated)` : ``);
   }
 
   console.log(`\t`,`Workspace Directory:`, workspace.path);
