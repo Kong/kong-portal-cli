@@ -2,11 +2,13 @@
 
 import { clipanion } from 'clipanion';
 
-clipanion.topLevel(`[-v,--verbose]`);
-
 import DeployCommand from './commands/deploy';
 import WipeCommand from './commands/wipe';
 import FetchCommand from './commands/fetch';
+import DisableCommand from './commands/disable';
+import EnableCommand from './commands/enable';
+import ServeCommand from './commands/serve';
+
 
 clipanion
   .command(`deploy <workspace> [--watch]`)
@@ -31,16 +33,16 @@ clipanion
 clipanion
   .command(`enable <workspace>`)
   .describe(`Enable the portal on the given workspace.`)
-  .action(require('./commands/enable'));
+  .action(EnableCommand);
 
 clipanion
   .command(`disable <workspace>`)
   .describe(`Enable the portal on the given workspace.`)
-  .action(require('./commands/disable'));
+  .action(DisableCommand);
 
 clipanion
   .command(`serve <workspace>`)
   .describe(`Run the portal of a given workspace locally.`)
-  .action(require('./commands/serve'));
+  .action(ServeCommand);
 
 clipanion.runExit('portal', process.argv.slice(2));
