@@ -22,7 +22,7 @@ For Kong Enterprise `<= 0.36`, or for `legacy mode` on Kong Enterprise `>= 1.3` 
 ## Usage
 The easiest way to start is by cloning the [portal-templates repo][templates] dev-master branch locally.
 
-Then edit `workspaces/default/cli.conf.yaml` to set workspace `name` and `rbac_token` to match your setup.
+Then edit `workspaces/default/cli.conf.yaml` to set `kong_admin_uri` and `kong_admin_token` to match your setup.
 
 Make sure Kong is running and portal is on:
 
@@ -48,14 +48,14 @@ Add `--watch` to make changes reactive
 You can override config values set in `cli.conf.yaml` via environment variables.  If you wanted to override the kong admin url for example, you can run:
 
 ```
-ADMIN_URL=http://new-admin-url.com portal deploy default
+KONG_ADMIN_URL=http://new-admin-url.com portal deploy default
 ```
 
 Environment variables are useful for scripting as well as temporarily overriding particular settings.
 
 Available environment variables include:
-  - `ADMIN_URL` URL the CLI should target for uploading files
-  - `RBAC_TOKEN` Kong Admin RBAC token used to authenticate with the Kong Admin API
+  - `KONG_ADMIN_URL` Kong Admin URL the CLI should target for uploading files
+  - `KONG_ADMIN_TOKEN` Kong Admin Token token used to authenticate with the Kong Admin API
 
 ## Contributing
 
