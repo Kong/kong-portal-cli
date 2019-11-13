@@ -4,16 +4,19 @@ import { OutgoingHttpHeaders } from './HTTP/RestInterfaces';
 export interface IWorkspaceConfig {
   name?: string;
   description?: string;
-  upstream: string;
+  upstream?: string;
   headers?: OutgoingHttpHeaders;
-  rbacToken?: string;
+  kongAdminUrl?: string;
+  kongAdminToken?: string;
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
+  // deprecated
   public get name(): string {
     return this.data.name;
   }
 
+  // deprecated
   public set name(name: string) {
     this.data.name = name;
   }
@@ -26,10 +29,22 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.description = text;
   }
 
+  public get kongAdminUrl(): string {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return this.data.kong_admin_url;
+  }
+
+  public set kongAdminUrl(url: string) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    this.data.kong_admin_url = url;
+  }
+
+  // deprecated
   public get upstream(): string {
     return this.data.upstream;
   }
 
+  // deprecated
   public set upstream(url: string) {
     this.data.upstream = url;
   }
@@ -42,13 +57,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.headers = headers;
   }
 
-  public get rbacToken(): string {
+  public get kongAdminToken(): string {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    return this.data.rbac_token;
+    return this.data.kong_admin_token;
   }
 
-  public set rbacToken(token: string) {
+  public set kongAdminToken(token: string) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.rbac_token = token;
+    this.data.kong_admin_token = token;
   }
 }

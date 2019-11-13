@@ -75,6 +75,15 @@ export default class Workspace {
   public static async init(name: string): Promise<Workspace> {
     const workspace = new Workspace(name);
     await workspace.config.load();
+
+    if (process.env.KONG_ADMIN_URL) {
+      workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
+    }
+
+    if (process.env.KONG_ADMIN_TOKEN) {
+      workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
+    }
+
     await workspace.portalConfig.load();
     await workspace.routerConfig.load();
 

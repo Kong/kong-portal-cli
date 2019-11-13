@@ -23,7 +23,7 @@ exports.default = async (args) => {
     catch (e) {
         return MissingWorkspaceError(args.workspace);
     }
-    client = new RestClient_1.default(workspace.config);
+    client = new RestClient_1.default(workspace.config, workspace.name);
     repository = new FileRepository_1.default(client);
     let collection = await repository.getFiles();
     if (collection.files) {

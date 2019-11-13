@@ -2,10 +2,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
-clipanion_1.clipanion.topLevel(`[-v,--verbose]`);
 const deploy_1 = require("./commands/deploy");
 const wipe_1 = require("./commands/wipe");
 const fetch_1 = require("./commands/fetch");
+const disable_1 = require("./commands/disable");
+const enable_1 = require("./commands/enable");
+const serve_1 = require("./commands/serve");
 clipanion_1.clipanion
     .command(`deploy <workspace> [--watch]`)
     .describe(`Deploy changes made locally under the given workspace upstream.`)
@@ -25,13 +27,13 @@ clipanion_1.clipanion
 clipanion_1.clipanion
     .command(`enable <workspace>`)
     .describe(`Enable the portal on the given workspace.`)
-    .action(require('./commands/enable'));
+    .action(enable_1.default);
 clipanion_1.clipanion
     .command(`disable <workspace>`)
     .describe(`Enable the portal on the given workspace.`)
-    .action(require('./commands/disable'));
+    .action(disable_1.default);
 clipanion_1.clipanion
     .command(`serve <workspace>`)
     .describe(`Run the portal of a given workspace locally.`)
-    .action(require('./commands/serve'));
+    .action(serve_1.default);
 clipanion_1.clipanion.runExit('portal', process.argv.slice(2));
