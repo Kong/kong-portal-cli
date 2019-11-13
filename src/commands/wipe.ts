@@ -1,5 +1,5 @@
 import { UsageError } from 'clipanion';
-import { join } from 'path';
+import { join } from 'upath';
 
 import Workspace from '../core/Workspace';
 import RestClient from '../core/HTTP/RestClient';

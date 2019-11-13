@@ -1,6 +1,6 @@
 import * as fs from 'fs-extra';
 import * as yaml from 'js-yaml';
-import { join } from 'path';
+import { join } from 'upath';
 
 export default class Config {
   public filename: string;

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = require("path");
+const upath_1 = require("upath");
 class RestResource {
     constructor(resourcePath) {
         this.resourcePath = resourcePath;
@@ -26,7 +26,7 @@ class RestResource {
         return this.toObject();
     }
     getResourcePath(path) {
-        return path_1.join(this.resourcePath, path);
+        return upath_1.join(this.resourcePath, path);
     }
     static fromJSON(child, json) {
         return new child(json);

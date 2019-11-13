@@ -1,5 +1,5 @@
 import { IRestCollection, IRestResponse } from './RestInterfaces';
-import { join } from 'path';
+import { join } from 'upath';
 import RestClient from './RestClient';
 
 export default class RestCollection implements IRestCollection {

@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async';
 import * as fs from 'fs-extra';
-import { join } from 'path';
+import { join, toUnix } from 'upath'
 import File from './File';
 import FileResource from './HTTP/Resources/FileResource';
 
@@ -16,7 +16,7 @@ export default class WorkspaceContent {
   public files: Content[] | null;
 
   public constructor(location: string) {
-    this.location = location;
+    this.location = toUnix(location);
     this.path = join(location, 'content');
 
     this.files = null;
@@ -28,10 +28,11 @@ export default class WorkspaceContent {
     if (this.files) {
       this.files = this.files.map(
         (file: any): Content => {
+          const unixName = toUnix(file.fullname)
           return {
-            file: new File(file.fullname),
+            file: new File(unixName),
             resource: new FileResource({
-              path: file.fullname.replace(`${this.location}/`, ''),
+              path: unixName.replace(`${this.location}/`, ''),
               contents: '',
             }),
           };
