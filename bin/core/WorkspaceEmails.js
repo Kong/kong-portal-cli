@@ -2,23 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const rs = require("recursive-readdir-async");
 const fs = require("fs-extra");
-const path_1 = require("path");
+const upath_1 = require("upath");
 const File_1 = require("./File");
 const FileResource_1 = require("./HTTP/Resources/FileResource");
 class WorkspaceEmails {
     constructor(location) {
         this.location = location;
-        this.path = path_1.join(location, 'emails');
+        this.path = upath_1.join(location, 'emails');
         this.files = null;
     }
     async scan() {
         this.files = await rs.list(this.path, { exclude: ['.DS_Store'] });
         if (this.files) {
             this.files = this.files.map((file) => {
+                const unixName = upath_1.toUnix(file.fullname);
                 return {
-                    file: new File_1.default(file.fullname),
+                    file: new File_1.default(unixName),
                     resource: new FileResource_1.default({
-                        path: file.fullname.replace(`${this.location}/`, ''),
+                        path: unixName.replace(`${this.location}/`, ''),
                         contents: '',
                     }),
                 };
@@ -48,7 +49,7 @@ class WorkspaceEmails {
         }
     }
     static getDirectoryPath(location) {
-        return path_1.join(location, 'emails');
+        return upath_1.join(location, 'emails');
     }
 }
 exports.default = WorkspaceEmails;

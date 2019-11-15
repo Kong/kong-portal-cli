@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async';
 import * as fs from 'fs-extra';
-import { join } from 'path';
+import { join, toUnix } from 'upath';
 import File from './File';
 import FileResource from './HTTP/Resources/FileResource';
 
@@ -28,10 +28,11 @@ export default class WorkspaceEmails {
     if (this.files) {
       this.files = this.files.map(
         (file: any): Email => {
+          const unixName = toUnix(file.fullname)
           return {
-            file: new File(file.fullname),
+            file: new File(unixName),
             resource: new FileResource({
-              path: file.fullname.replace(`${this.location}/`, ''),
+              path: unixName.replace(`${this.location}/`, ''),
               contents: '',
             }),
           };
