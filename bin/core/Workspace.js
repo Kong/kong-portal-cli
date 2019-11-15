@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const rs = require("recursive-readdir-async");
 const fs = require("fs-extra");
-const path = require("path");
+const path = require("upath");
 const WorkspaceTheme_1 = require("./WorkspaceTheme");
 const WorkspaceConfig_1 = require("./WorkspaceConfig");
 const WorkspacePortalConfig_1 = require("./WorkspacePortalConfig");
@@ -60,6 +60,12 @@ class Workspace {
     static async init(name) {
         const workspace = new Workspace(name);
         await workspace.config.load();
+        if (process.env.KONG_ADMIN_URL) {
+            workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL;
+        }
+        if (process.env.KONG_ADMIN_TOKEN) {
+            workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN;
+        }
         await workspace.portalConfig.load();
         await workspace.routerConfig.load();
         return workspace;

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
-const path_1 = require("path");
+const upath_1 = require("upath");
 const File_1 = require("../core/File");
 const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
@@ -25,12 +25,17 @@ exports.default = async (args) => {
     catch (e) {
         return MissingWorkspaceError(args.workspace);
     }
-    client = new RestClient_1.default(workspace.config);
+    client = new RestClient_1.default(workspace.config, workspace.name);
     repository = new FileRepository_1.default(client);
     console.log(`Config:`);
     console.log(``);
     console.log(`\t`, `Workspace:`, workspace.name);
-    console.log(`\t`, `Workspace Upstream:`, workspace.config.upstream, workspace.config.rbacToken ? `(authenticated)` : ``);
+    if (workspace.config.kongAdminUrl) {
+        console.log(`\t`, `Workspace Upstream:`, `${workspace.config.kongAdminUrl}/${workspace.name}`, workspace.config.kongAdminToken ? `(authenticated)` : ``);
+    }
+    else if (workspace.config.upstream) {
+        console.log(`\t`, `Workspace Upstream:`, `${workspace.config.upstream}`, workspace.config.kongAdminToken ? `(authenticated)` : ``);
+    }
     console.log(`\t`, `Workspace Directory:`, workspace.path);
     console.log(``);
     console.log(`Changes:`);
@@ -41,7 +46,7 @@ exports.default = async (args) => {
     if (collection.files) {
         let resource;
         for (resource of collection.files) {
-            let path = path_1.join(workspace.path, resource.path);
+            let path = upath_1.join(workspace.path, resource.path);
             let file = new File_1.default(path);
             if (await file.exists()) {
                 let shasum = await file.getShaSum();

@@ -1,5 +1,5 @@
 import { UsageError } from 'clipanion';
-import { join } from 'path';
+import { join } from 'upath';
 
 import Workspace from '../core/Workspace';
 import RestClient from '../core/HTTP/RestClient';
@@ -29,7 +29,7 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace);
   }
 
-  client = new RestClient(workspace.config);
+  client = new RestClient(workspace.config, workspace.name);
   repository = new FilesRepository(client);
 
   let collection = await repository.getFiles();

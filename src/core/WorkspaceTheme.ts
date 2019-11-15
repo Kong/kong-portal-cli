@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async';
 import * as fs from 'fs-extra';
-import { join } from 'path';
+import { join, toUnix } from 'upath';
 
 import WorkspaceThemeConfig from './WorkspaceThemeConfig';
 import { Content } from './WorkspaceContent';
@@ -56,10 +56,11 @@ export default class WorkspaceTheme {
   private mapFilesToContent(files: Record<string, any>[]): Content[] {
     return files.map(
       (file: any): Content => {
+        const unixName = toUnix(file.fullname)
         return {
-          file: new File(file.fullname),
+          file: new File(unixName),
           resource: new FileResource({
-            path: file.fullname.replace(this.location + '/', ''),
+            path: unixName.replace(this.location + '/', ''),
             contents: '',
           }),
         };

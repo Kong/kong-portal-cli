@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const yaml = require("js-yaml");
-const path_1 = require("path");
+const upath_1 = require("upath");
 class Config {
     constructor(location, filename, options = {
         encoding: 'utf8',
     }) {
         this.filename = filename;
         this.location = location;
-        this.path = path_1.join(location, filename);
+        this.path = upath_1.join(location, filename);
         this.encoding = options.encoding || 'utf8';
         this.data = null;
     }
