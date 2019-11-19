@@ -100,6 +100,35 @@ async function DeployWorkspaceContent(workspace, client, collection, path) {
         spinner.fail(e.message);
     }
 }
+async function DeployWorkspaceEmails(workspace, client, collection, path) {
+    if (path && path.indexOf('emails') < 0) {
+        return;
+    }
+    let spinner = ora({
+        prefixText: `Deploying ${path || 'emails'}...`,
+        text: `reading files...`,
+    });
+    spinner.start();
+    try {
+        let contents = await workspace.getEmails();
+        if (contents.files) {
+            for (let content of contents.files) {
+                if (path && content.file.location.split(path)[1] !== '') {
+                    continue;
+                }
+                spinner.text = content.file.location;
+                content.resource.contents = await content.file.read();
+                await collection.save(content.resource);
+            }
+        }
+        spinner.prefixText = `\t`;
+        spinner.text = `Deploy ${path || 'email'}`;
+        spinner.succeed();
+    }
+    catch (e) {
+        spinner.fail(e.message);
+    }
+}
 async function DeployWorkspaceSpecs(workspace, client, collection, path) {
     if (path && path.indexOf('specs') < 0) {
         return;
@@ -201,6 +230,7 @@ async function Deploy(workspace, path) {
         await DeployWorkspaceConfig(workspace, client, path);
         await DeployWorkspaceRouter(workspace, client, path);
         await DeployWorkspaceContent(workspace, client, collection, path);
+        await DeployWorkspaceEmails(workspace, client, collection, path);
         await DeployWorkspaceSpecs(workspace, client, collection, path);
         await DeployWorkspaceThemes(workspace, client, collection, path);
         console.log(``);
