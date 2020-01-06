@@ -12,7 +12,6 @@ class FilesRepository {
             let response = await this.client.get(this.path);
             let collection = FilesCollection_1.default.fromJSON(response.result);
             collection.client = this.client;
-            await collection.getNext();
             if (collection.files) {
                 collection.files.forEach((file) => {
                     file.client = this.client;

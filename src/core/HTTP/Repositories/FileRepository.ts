@@ -17,7 +17,6 @@ export default class FilesRepository {
       let collection = FilesCollection.fromJSON(response.result);
 
       collection.client = this.client;
-      await collection.getNext()
 
       if (collection.files) {
         collection.files.forEach((file: FileResource): void => {
