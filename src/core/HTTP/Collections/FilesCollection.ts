@@ -24,7 +24,13 @@ export default class FilesCollection extends RestCollection {
   }
 
   public async getNext(): Promise<FilesCollection | void> {
-    return super.getNext(this.next, FilesCollection);
+    const nextRes: FilesCollection = await super.getNext(this.next, FilesCollection);
+    if (!nextRes) {
+      return
+    }
+    this.files = this.files.concat(nextRes.files)
+    this.next = nextRes.next
+    await this.getNext()
   }
 
   public static fromJSON(json: FilesCollectionJSON): FilesCollection {
