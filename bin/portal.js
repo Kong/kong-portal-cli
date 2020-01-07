@@ -30,7 +30,7 @@ clipanion_1.clipanion
     .action(enable_1.default);
 clipanion_1.clipanion
     .command(`disable <workspace>`)
-    .describe(`Enable the portal on the given workspace.`)
+    .describe(`Disable the portal on the given workspace.`)
     .action(disable_1.default);
 clipanion_1.clipanion
     .command(`serve <workspace>`)

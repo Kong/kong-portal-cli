@@ -45,7 +45,6 @@ class RestClient {
         options.body = resource.toObject();
         try {
             let response = await this.client.put(resource.getResourcePath(), options);
-            console.log(response);
             return this.handleResponse(response);
         }
         catch (e) {
