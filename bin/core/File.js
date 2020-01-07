@@ -15,6 +15,9 @@ class File {
     async read() {
         return await fs.readFile(this.location, this.encoding);
     }
+    async read64() {
+        return await fs.readFile(this.location, { encoding: 'base64' });
+    }
     async exists() {
         return await fs.exists(this.location);
     }

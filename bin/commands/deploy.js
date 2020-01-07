@@ -187,6 +187,14 @@ async function DeployWorkspaceThemeFolder(folder, collection, spinner, path) {
                 let resource = content.resource;
                 spinner.text = content.file.location;
                 resource.contents = await content.file.read();
+                let fileExt = content.file.location.split('.').pop().toLowerCase();
+                if (content.file.location.includes('assets') &&
+                    ['jpeg', 'jpg', 'png', 'ico'].includes(fileExt) &&
+                    !resource.contents.startsWith('data')) {
+                    const encoded = await content.file.read64();
+                    resource.contents = `data:image/${fileExt};base64,${encoded}`;
+                    console.log('base64', resource.contents);
+                }
                 await collection.save(resource);
             }
         }

@@ -23,6 +23,10 @@ export default class File {
     return await fs.readFile(this.location, this.encoding);
   }
 
+  public async read64(): Promise<string> {
+    return await fs.readFile(this.location, { encoding: 'base64'});
+  }
+
   public async exists(): Promise<boolean> {
     return await fs.exists(this.location);
   }
