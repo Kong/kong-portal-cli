@@ -16,7 +16,17 @@ class File {
         return await fs.readFile(this.location, this.encoding);
     }
     async read64() {
-        return await fs.readFile(this.location, { encoding: 'base64' });
+        let fileExtMatch = this.location.match(/\w+$/);
+        let fileExt = 'unknown';
+        if (fileExtMatch) {
+            fileExt = fileExtMatch[0];
+        }
+        const encoded = await fs.readFile(this.location, { encoding: 'base64' });
+        return `data:image/${fileExt};base64,${encoded}`;
+    }
+    async write64(contents) {
+        contents = contents.split(';base64,')[1];
+        return await fs.outputFile(this.location, Buffer.from(contents, 'base64'), this.encoding);
     }
     async exists() {
         return await fs.exists(this.location);
