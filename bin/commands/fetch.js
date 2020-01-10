@@ -15,13 +15,11 @@ function MissingWorkspaceError(name) {
     ];
     throw new clipanion_1.UsageError(message.join('\n'));
 }
-function WriteOrWrite64(contents, file) {
+function writeOrWrite64(contents, file) {
     if (process.env.FORCE_64) {
         file.write(contents);
         return;
     }
-    let fileExt = file.location.split('.').pop();
-    fileExt = fileExt.toLowerCase();
     if (file.location.includes('assets') && contents.startsWith('data:')) {
         file.write64(contents);
         return;
@@ -64,13 +62,13 @@ exports.default = async (args) => {
             if (await file.exists()) {
                 let shasum = await file.getShaSum();
                 if (shasum !== resource.checksum) {
-                    WriteOrWrite64(resource.contents, file);
+                    writeOrWrite64(resource.contents, file);
                     console.log(`\t`, `Modified:`, resource.path);
                     modified += 1;
                 }
             }
             else {
-                WriteOrWrite64(resource.contents, file);
+                writeOrWrite64(resource.contents, file);
                 console.log(`\t`, 'Added:', resource.path);
                 added += 1;
             }
