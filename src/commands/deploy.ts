@@ -3,6 +3,8 @@ import * as chokidar from 'chokidar';
 import * as ora from 'ora';
 import * as chalk from 'chalk';
 
+import { isBinaryFile } from 'isbinaryfile';
+
 import Workspace from '../core/Workspace';
 import RestClient from '../core/HTTP/RestClient';
 import FilesRepository from '../core/HTTP/Repositories/FileRepository';
@@ -236,7 +238,12 @@ async function DeployWorkspaceThemeFolder(folder, collection, spinner, path): Pr
 
         let resource = content.resource;
         spinner.text = content.file.location;
-        resource.contents = await content.file.read();
+
+        if (await isBinaryFile(content.file.location)) {
+          resource.contents = await content.file.read64();
+        } else {
+          resource.contents = await content.file.read();
+        }
         await collection.save(resource);
       }
     }

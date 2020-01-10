@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const clipanion_1 = require("clipanion");
 const chokidar = require("chokidar");
 const ora = require("ora");
+const isbinaryfile_1 = require("isbinaryfile");
 const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
 const FileRepository_1 = require("../core/HTTP/Repositories/FileRepository");
@@ -186,7 +187,12 @@ async function DeployWorkspaceThemeFolder(folder, collection, spinner, path) {
                 }
                 let resource = content.resource;
                 spinner.text = content.file.location;
-                resource.contents = await content.file.read();
+                if (await isbinaryfile_1.isBinaryFile(content.file.location)) {
+                    resource.contents = await content.file.read64();
+                }
+                else {
+                    resource.contents = await content.file.read();
+                }
                 await collection.save(resource);
             }
         }

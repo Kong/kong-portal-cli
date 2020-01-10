@@ -19,6 +19,19 @@ function MissingWorkspaceError(name: string): void {
   throw new UsageError(message.join('\n'));
 }
 
+function writeOrWrite64(contents: string, file: File): void {
+  if (process.env.FORCE_64) {
+    file.write(contents);
+    return;
+  }
+
+  if (file.location.includes('assets') && contents.startsWith('data:')) {
+    file.write64(contents);
+    return;
+  }
+  file.write(contents);
+}
+
 export default async (args): Promise<void> => {
   let workspace: Workspace;
   let client: RestClient;
@@ -61,12 +74,12 @@ export default async (args): Promise<void> => {
       if (await file.exists()) {
         let shasum = await file.getShaSum();
         if (shasum !== resource.checksum) {
-          await file.write(resource.contents);
+          writeOrWrite64(resource.contents, file);
           console.log(`\t`, `Modified:`, resource.path);
           modified += 1;
         }
       } else {
-        await file.write(resource.contents);
+        writeOrWrite64(resource.contents, file);
         console.log(`\t`, 'Added:', resource.path);
         added += 1;
       }
