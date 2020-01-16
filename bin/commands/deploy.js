@@ -8,6 +8,7 @@ const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
 const FileRepository_1 = require("../core/HTTP/Repositories/FileRepository");
 const FileResource_1 = require("../core/HTTP/Resources/FileResource");
+const wipe_1 = require("./wipe");
 function MissingWorkspaceError(name) {
     const message = [
         `No workspace named "${name}" was found.`,
@@ -246,6 +247,9 @@ async function Deploy(workspace, path) {
     }
 }
 exports.default = async (args) => {
+    if (!process.env.NON_DESTRUCTIVE) {
+        await wipe_1.default(args);
+    }
     let workspace;
     try {
         workspace = await Workspace_1.default.init(args.workspace);
