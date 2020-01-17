@@ -11,6 +11,7 @@ import FilesRepository from '../core/HTTP/Repositories/FileRepository';
 import FileResource from '../core/HTTP/Resources/FileResource';
 import WorkspaceTheme from '../core/WorkspaceTheme';
 import FilesCollection from '../core/HTTP/Collections/FilesCollection';
+import wipe from './wipe';
 
 function MissingWorkspaceError(name: string): void {
   const message: string[] = [
@@ -311,6 +312,10 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 }
 
 export default async (args: any): Promise<void> => {
+  if (!args.preserve) {
+    await wipe(args);
+  }
+
   let workspace: Workspace;
 
   try {

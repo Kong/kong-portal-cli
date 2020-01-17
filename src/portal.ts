@@ -11,8 +11,12 @@ import ServeCommand from './commands/serve';
 
 
 clipanion
-  .command(`deploy <workspace> [--watch]`)
-  .describe(`Deploy changes made locally under the given workspace upstream.`)
+  .command(`deploy <workspace> [-W,--watch] [-P,--preserve]`)
+  .describe(
+    `Deploy changes made locally under the given workspace upstream. \n
+    [-W, --watch] to make changes reactively \n
+    [-P, --preserve] to avoid deleting files upstream that you do not have locally`
+  )
   .action(DeployCommand);
 
 clipanion

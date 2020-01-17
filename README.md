@@ -41,7 +41,9 @@ Where `<command>` is one of:
 
  Where `<workspace>` indicates the directory/workspace pairing you would like to operate on.
 
-Add `--watch` to make changes reactive
+### For `deploy`
+- Add `-W` or `--watch` to make changes reactive
+- Add `-P` or `--preserve` to avoid deleting files upstream that you do not have locally
 
 
 ### Using Environment Variables
