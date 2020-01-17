@@ -37,7 +37,7 @@ clipanion
 
 clipanion
   .command(`disable <workspace>`)
-  .describe(`Enable the portal on the given workspace.`)
+  .describe(`Disable the portal on the given workspace.`)
   .action(DisableCommand);
 
 clipanion
