@@ -247,7 +247,7 @@ async function Deploy(workspace, path) {
     }
 }
 exports.default = async (args) => {
-    if (!process.env.NON_DESTRUCTIVE) {
+    if (!args.preserve) {
         await wipe_1.default(args);
     }
     let workspace;

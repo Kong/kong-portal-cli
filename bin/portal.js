@@ -9,8 +9,10 @@ const disable_1 = require("./commands/disable");
 const enable_1 = require("./commands/enable");
 const serve_1 = require("./commands/serve");
 clipanion_1.clipanion
-    .command(`deploy <workspace> [--watch]`)
-    .describe(`Deploy changes made locally under the given workspace upstream.`)
+    .command(`deploy <workspace> [-W,--watch] [-P,--preserve]`)
+    .describe(`Deploy changes made locally under the given workspace upstream. \n
+    [-W, --watch] to make changes reactively \n
+    [-P, --preserve] to avoid deleting files upstream that you do not have locally`)
     .action(deploy_1.default);
 clipanion_1.clipanion
     .command(`fetch <workspace>`)

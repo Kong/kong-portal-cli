@@ -312,7 +312,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 }
 
 export default async (args: any): Promise<void> => {
-  if (!process.env.NON_DESTRUCTIVE) {
+  if (!args.preserve) {
     await wipe(args);
   }
 
