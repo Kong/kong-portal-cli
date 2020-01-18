@@ -6,6 +6,7 @@ const File_1 = require("../core/File");
 const Workspace_1 = require("../core/Workspace");
 const RestClient_1 = require("../core/HTTP/RestClient");
 const FileRepository_1 = require("../core/HTTP/Repositories/FileRepository");
+const isbinaryfile_1 = require("isbinaryfile");
 function MissingWorkspaceError(name) {
     const message = [
         `No workspace named "${name}" was found.`,
@@ -15,16 +16,28 @@ function MissingWorkspaceError(name) {
     ];
     throw new clipanion_1.UsageError(message.join('\n'));
 }
-function writeOrWrite64(contents, file) {
-    if (process.env.FORCE_64) {
-        file.write(contents);
-        return;
-    }
-    if (file.location.includes('assets') && contents.startsWith('data:')) {
+function writeOrWrite64(contents, file, keepEncode) {
+    if (!keepEncode && file.location.includes('assets') && contents.startsWith('data:')) {
         file.write64(contents);
         return;
     }
     file.write(contents);
+}
+async function shouldRewriteFile(resource, file, keepEncode) {
+    const shasum = await file.getShaSum();
+    if (shasum !== resource.checksum) {
+        return true;
+    }
+    if (keepEncode && (await isbinaryfile_1.isBinaryFile(file.location))) {
+        return true;
+    }
+    if (!keepEncode && file.location.includes('assets')) {
+        const contents = await file.read();
+        if (contents.startsWith('data:')) {
+            return true;
+        }
+    }
+    return false;
 }
 exports.default = async (args) => {
     let workspace;
@@ -60,15 +73,14 @@ exports.default = async (args) => {
             let path = upath_1.join(workspace.path, resource.path);
             let file = new File_1.default(path);
             if (await file.exists()) {
-                let shasum = await file.getShaSum();
-                if (shasum !== resource.checksum) {
-                    writeOrWrite64(resource.contents, file);
+                if (await shouldRewriteFile(resource, file, args.keepEncode)) {
+                    writeOrWrite64(resource.contents, file, args.keepEncode);
                     console.log(`\t`, `Modified:`, resource.path);
                     modified += 1;
                 }
             }
             else {
-                writeOrWrite64(resource.contents, file);
+                writeOrWrite64(resource.contents, file, args.keepEncode);
                 console.log(`\t`, 'Added:', resource.path);
                 added += 1;
             }
