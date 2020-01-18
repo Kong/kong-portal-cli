@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs-extra");
 const crypto = require("crypto-promise");
+const isbinaryfile_1 = require("isbinaryfile");
 class File {
     constructor(location, options = {
         encoding: 'utf8',
@@ -32,7 +33,13 @@ class File {
         return await fs.exists(this.location);
     }
     async getShaSum(algorithm = '256') {
-        const contents = await this.read();
+        let contents = await this.read();
+        if (await isbinaryfile_1.isBinaryFile(this.location)) {
+            contents = await this.read64();
+        }
+        else {
+            contents = await this.read();
+        }
         const buffer = await crypto.hash('sha' + algorithm)(contents);
         return buffer.toString('hex');
     }
