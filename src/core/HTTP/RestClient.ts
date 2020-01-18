@@ -17,7 +17,7 @@ export default class RestClient {
   public clientHeaders: OutgoingHttpHeaders;
   public clientUrl: string;
 
-  public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: String) {
+  public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: string) {
     this.clientHeaders = workspaceConfig.headers || {};
 
     if (workspaceConfig.kongAdminUrl) {
