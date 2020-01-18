@@ -1,4 +1,4 @@
-### When updating file, update .npmignore as well
+### contains all from gitignore except bin
 
 # Logs
 logs
@@ -61,10 +61,6 @@ typings/
 
 # next.js build output
 .next
-
-# js built files
-# * excluded from .npmignore
-bin
 
 # workspaces
 workspaces
