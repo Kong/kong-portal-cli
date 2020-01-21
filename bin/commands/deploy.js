@@ -257,6 +257,7 @@ exports.default = async (args) => {
     catch (e) {
         return MissingWorkspaceError(args.workspace);
     }
+    await Deploy(workspace);
     if (args.watch) {
         console.log(`Watching`, `${workspace.path}/*`);
         console.log(``);
@@ -269,8 +270,5 @@ exports.default = async (args) => {
                 Deploy(workspace, path);
             }
         });
-    }
-    else {
-        Deploy(workspace);
     }
 };
