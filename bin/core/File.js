@@ -33,7 +33,7 @@ class File {
         return await fs.exists(this.location);
     }
     async getShaSum(algorithm = '256') {
-        let contents = await this.read();
+        let contents;
         if (await isbinaryfile_1.isBinaryFile(this.location)) {
             contents = await this.read64();
         }

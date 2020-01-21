@@ -49,7 +49,7 @@ export default class File implements FileInterface {
   }
 
   public async getShaSum(algorithm = '256'): Promise<string> {
-    let contents: string = await this.read();
+    let contents: string;
 
     if (await isBinaryFile(this.location)) {
       contents = await this.read64();
