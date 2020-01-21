@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2020-01-21
+### Added
+- Binary assets now converted to base64 strings on deploy.
+
+### Changed
+- By default base64 converted assets are converted to binary on fetch (keep previous behavior with `--keep-encode`).
+
+- By default deploy wipes all upstream files first (preserve upstream files not found locally with `--preserve`)
+
+### Fixed
+- Support for large file count
+
 ## [1.0.0] - 2019-06-20
 
 ### Added
