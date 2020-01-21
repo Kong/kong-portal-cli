@@ -324,6 +324,8 @@ export default async (args: any): Promise<void> => {
     return MissingWorkspaceError(args.workspace);
   }
 
+  await Deploy(workspace);
+
   if (args.watch) {
     console.log(`Watching`, `${workspace.path}/*`);
     console.log(``);
@@ -338,7 +340,5 @@ export default async (args: any): Promise<void> => {
         Deploy(workspace, path);
       }
     });
-  } else {
-    Deploy(workspace);
   }
 };

@@ -45,6 +45,8 @@ Where `<command>` is one of:
 - Add `-W` or `--watch` to make changes reactive
 - Add `-P` or `--preserve` to avoid deleting files upstream that you do not have locally
 
+### For `fetch`
+- Add `-K` or `--keep-encode` to make keep binary assets as base64 encoded strings locally
 
 ### Using Environment Variables
 You can override config values set in `cli.conf.yaml` via environment variables.  If you wanted to override the kong admin url for example, you can run:

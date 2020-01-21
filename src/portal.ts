@@ -20,8 +20,11 @@ clipanion
   .action(DeployCommand);
 
 clipanion
-  .command(`fetch <workspace>`)
-  .describe(`Fetches content and themes from the given workspace.`)
+  .command(`fetch <workspace> [-K,--keep-encode]`)
+  .describe(
+    `Fetches content and themes from the given workspace. \n
+    [-k, --keep-encode] to store binary assets locally as base64 encoded string`
+  )
   .action(FetchCommand);
 
 clipanion

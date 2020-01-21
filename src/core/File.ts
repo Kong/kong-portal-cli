@@ -1,6 +1,8 @@
 import * as fs from 'fs-extra';
 import * as crypto from 'crypto-promise';
 
+import { isBinaryFile } from 'isbinaryfile';
+
 export default interface FileInterface {
   location: string;
   encoding: string;
@@ -47,7 +49,14 @@ export default class File implements FileInterface {
   }
 
   public async getShaSum(algorithm = '256'): Promise<string> {
-    const contents: string = await this.read();
+    let contents: string;
+
+    if (await isBinaryFile(this.location)) {
+      contents = await this.read64();
+    } else {
+      contents = await this.read();
+    }
+
     const buffer: Buffer = await crypto.hash('sha' + algorithm)(contents);
     return buffer.toString('hex');
   }
