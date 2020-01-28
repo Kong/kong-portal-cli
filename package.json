@@ -1,13 +1,14 @@
 {
   "name": "kong-portal-cli",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "CLI tool to manage your Kong Developer Portals for Kong Enterprise",
   "main": "index.js",
   "bin": {
     "portal": "./bin/portal.js"
   },
   "scripts": {
-    "build": "rm -rf bin && tsc && chmod +x ./bin/portal.js"
+    "build": "rm -rf bin && tsc && chmod +x ./bin/portal.js",
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",
