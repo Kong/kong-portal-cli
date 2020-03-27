@@ -1,10 +1,15 @@
-# Kong Developer Portal CLI
-[![License](https://img.shields.io/github/license/kong/kong-portal-cli.svg)][cli-license]
+---
+title: Developer Portal CLI
+---
+
+
+### Introduction
 
 The Kong Developer Portal CLI is used to manage your Developer Portals from the
 command line. It is built using [clipanion][clipanion].
 
-## Overview
+
+### Overview
 
 This is the next generation TypeScript based Developer Portal CLI. The goal of
 this project is to make a higher quality CLI tool over the initial sync script.
@@ -13,14 +18,18 @@ This project is built for Kong Enterprise `>= 1.3`.
 
 For Kong Enterprise `<= 0.36`, or for `legacy mode` on Kong Enterprise `>= 1.3` [use the legacy sync script][sync-script].
 
-## Install
+
+### Install
 
 ```
 > npm install -g kong-portal-cli
 ```
 
-## Usage
-The easiest way to start is by cloning the [portal-templates repo][templates] dev-master branch locally.
+
+
+### Usage
+
+The easiest way to start is by cloning the [portal-templates repo][templates] master branch locally.
 
 Then edit `workspaces/default/cli.conf.yaml` to set `kong_admin_uri` and `kong_admin_token` to match your setup.
 
@@ -31,22 +40,22 @@ Now from root folder of the templates repo you can run:
 ```portal <command> <workspace>```
 
 Where `<command>` is one of:
- - `config`    Output or change configuration of the portal on the given
+ - `config`    Output or change configuration of the portal on the given workspace.
  - `deploy`    Deploy changes made locally under the given workspace upstream.
- - `disable`   Enable the portal on the given workspace.
+ - `disable`   Disable the portal on the given workspace.
  - `enable`    Enable the portal on the given workspace.
  - `fetch`     Fetches content and themes from the given workspace.
  - `serve`     Run the portal of a given workspace locally.
- - `wipe`      Deletes all content and themes from upstream workspace
+ - `wipe`      Deletes all content and themes from upstream workspace.
 
  Where `<workspace>` indicates the directory/workspace pairing you would like to operate on.
 
 ### For `deploy`
-- Add `-W` or `--watch` to make changes reactive
-- Add `-P` or `--preserve` to avoid deleting files upstream that you do not have locally
+- Add `-W` or `--watch` to make changes reactive.
+- Add `-P` or `--preserve` to avoid deleting files upstream that you do not have locally.
 
 ### For `fetch`
-- Add `-K` or `--keep-encode` to make keep binary assets as base64 encoded strings locally
+- Add `-K` or `--keep-encode` to keep binary assets as base64 encoded strings locally.
 
 ### Using Environment Variables
 You can override config values set in `cli.conf.yaml` via environment variables.  If you wanted to override the kong admin url for example, you can run:
@@ -58,9 +67,9 @@ KONG_ADMIN_URL=http://new-admin-url.com portal deploy default
 Environment variables are useful for scripting as well as temporarily overriding particular settings.
 
 Available environment variables include:
-  - `KONG_ADMIN_URL` Kong Admin URL the CLI should target for uploading files
-  - `KONG_ADMIN_TOKEN` Kong Admin Token token used to authenticate with the Kong Admin API
-
+  - `KONG_ADMIN_URL` Kong Admin URL the CLI should target for uploading files.
+  - `KONG_ADMIN_TOKEN` Kong Admin Token token used to authenticate with the Kong Admin API.
+  
 ## Contributing
 
 For problems directly related to the CLI, [add an issue on GitHub][cli-support].
