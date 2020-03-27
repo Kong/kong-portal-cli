@@ -1,13 +1,8 @@
----
-title: Developer Portal CLI
----
-
-
-### Introduction
+# Kong Developer Portal CLI
+[![License](https://img.shields.io/github/license/kong/kong-portal-cli.svg)][cli-license]
 
 The Kong Developer Portal CLI is used to manage your Developer Portals from the
 command line. It is built using [clipanion][clipanion].
-
 
 ### Overview
 
