@@ -1,49 +1,49 @@
-import { UsageError } from 'clipanion';
-import { join } from 'upath';
+import { UsageError } from 'clipanion'
+import { join } from 'upath'
 
-import Workspace from '../core/Workspace';
-import RestClient from '../core/HTTP/RestClient';
-import FilesRepository from '../core/HTTP/Repositories/FileRepository';
-import FileResource from '../core/HTTP/Resources/FileResource';
-import { Content } from '../core/WorkspaceContent';
+import Workspace from '../core/Workspace'
+import RestClient from '../core/HTTP/RestClient'
+import FilesRepository from '../core/HTTP/Repositories/FileRepository'
+import FileResource from '../core/HTTP/Resources/FileResource'
+import { Content } from '../core/WorkspaceContent'
 
 function MissingWorkspaceError(name: string): void {
   const message: string[] = [
     `No workspace named "${name}" was found.`,
-    ``,
-    `Directories scanned:`,
+    '',
+    'Directories scanned:',
     `\t${Workspace.getDirectoryPath(name)}`,
-  ];
+  ]
 
-  throw new UsageError(message.join('\n'));
+  throw new UsageError(message.join('\n'))
 }
 
 export default async (args): Promise<void> => {
-  let workspace: Workspace;
-  let client: RestClient;
-  let repository: FilesRepository;
+  let workspace: Workspace
+  let client: RestClient
+  let repository: FilesRepository
 
   try {
-    workspace = await Workspace.init(args.workspace);
+    workspace = await Workspace.init(args.workspace)
   } catch (e) {
-    return MissingWorkspaceError(args.workspace);
+    return MissingWorkspaceError(args.workspace)
   }
 
-  client = new RestClient(workspace.config, workspace.name);
-  repository = new FilesRepository(client);
+  client = new RestClient(workspace.config, workspace.name)
+  repository = new FilesRepository(client)
 
-  let collection = await repository.getFiles();
+  let collection = await repository.getFiles()
   if (collection.files) {
-    let resource: FileResource;
+    let resource: FileResource
     for (resource of collection.files) {
       try {
-        await resource.delete();
-        console.log(`\tDeleted ${resource.path}`);
-      } catch(e) {
-        console.log(e);
+        await resource.delete()
+        console.log(`\tDeleted ${resource.path}`)
+      } catch (e) {
+        console.log(e)
       }
     }
   }
 
-  console.log('Done.');
-};
+  console.log('Done.')
+}

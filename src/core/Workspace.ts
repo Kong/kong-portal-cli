@@ -1,85 +1,85 @@
-import * as rs from 'recursive-readdir-async';
-import * as fs from 'fs-extra';
-import * as path from 'upath';
+import * as rs from 'recursive-readdir-async'
+import * as fs from 'fs-extra'
+import * as path from 'upath'
 
-import WorkspaceTheme from './WorkspaceTheme';
-import WorkspaceConfig from './WorkspaceConfig';
-import WorkspacePortalConfig from './WorkspacePortalConfig';
-import WorkspaceContent from './WorkspaceContent';
-import WorkspaceSpecs from './WorkspaceSpecs';
+import WorkspaceTheme from './WorkspaceTheme'
+import WorkspaceConfig from './WorkspaceConfig'
+import WorkspacePortalConfig from './WorkspacePortalConfig'
+import WorkspaceContent from './WorkspaceContent'
+import WorkspaceSpecs from './WorkspaceSpecs'
 import WorkspaceEmails from './WorkspaceEmails'
-import WorkspaceRouterConfig from './WorkspaceRouterConfig';
+import WorkspaceRouterConfig from './WorkspaceRouterConfig'
 
 export default class Workspace {
-  public name: string;
-  public path: string;
-  public config: WorkspaceConfig;
-  public portalConfig: WorkspacePortalConfig;
-  public routerConfig: WorkspaceRouterConfig;
+  public name: string
+  public path: string
+  public config: WorkspaceConfig
+  public portalConfig: WorkspacePortalConfig
+  public routerConfig: WorkspaceRouterConfig
 
   public constructor(name: string) {
-    this.name = name;
-    this.path = Workspace.getDirectoryPath(name);
-    this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml');
-    this.portalConfig = new WorkspacePortalConfig(this.path, 'portal.conf.yaml');
-    this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml');
+    this.name = name
+    this.path = Workspace.getDirectoryPath(name)
+    this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml')
+    this.portalConfig = new WorkspacePortalConfig(this.path, 'portal.conf.yaml')
+    this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml')
   }
 
   public getCurrentThemeName(): string {
-    return this.portalConfig.theme;
+    return this.portalConfig.theme
   }
 
   public async getContent(): Promise<WorkspaceContent> {
-    return await WorkspaceContent.init(this.path);
+    return await WorkspaceContent.init(this.path)
   }
 
   public async getEmails(): Promise<WorkspaceContent> {
-    return await WorkspaceEmails.init(this.path);
+    return await WorkspaceEmails.init(this.path)
   }
 
   public async getSpecs(): Promise<WorkspaceSpecs> {
-    return await WorkspaceSpecs.init(this.path);
+    return await WorkspaceSpecs.init(this.path)
   }
 
   public async getTheme(name: string): Promise<WorkspaceTheme> {
-    return await WorkspaceTheme.init(this.path, name);
+    return await WorkspaceTheme.init(this.path, name)
   }
 
   public async getCurrentTheme(): Promise<WorkspaceTheme> {
-    return this.getTheme(this.getCurrentThemeName());
+    return this.getTheme(this.getCurrentThemeName())
   }
 
   public async getThemes(): Promise<WorkspaceTheme[]> {
-    let workspaceThemes: WorkspaceTheme[] = [];
+    let workspaceThemes: WorkspaceTheme[] = []
     let themes: any = await rs.list(path.join(this.path, 'themes'), {
       recursive: false,
       ignoreFolders: false,
-    });
+    })
 
-    themes = themes.filter((element: any): boolean => element.isDirectory);
+    themes = themes.filter((element: any): boolean => element.isDirectory)
 
     for (let theme of themes) {
-      workspaceThemes.push(await this.getTheme(theme.name));
+      workspaceThemes.push(await this.getTheme(theme.name))
     }
 
-    return workspaceThemes;
+    return workspaceThemes
   }
 
   public getLocation(): string {
-    return this.path;
+    return this.path
   }
 
   public getConfig(key: string): any {
-    return key ? this.config[key] : this.config;
+    return key ? this.config[key] : this.config
   }
 
   public getPortalConfig(key: string): any {
-    return key ? this.portalConfig[key] : this.portalConfig;
+    return key ? this.portalConfig[key] : this.portalConfig
   }
 
   public static async init(name: string): Promise<Workspace> {
-    const workspace = new Workspace(name);
-    await workspace.config.load();
+    const workspace = new Workspace(name)
+    await workspace.config.load()
 
     if (process.env.KONG_ADMIN_URL) {
       workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
@@ -89,22 +89,22 @@ export default class Workspace {
       workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
     }
 
-    await workspace.portalConfig.load();
-    await workspace.routerConfig.load();
+    await workspace.portalConfig.load()
+    await workspace.routerConfig.load()
 
-    return workspace;
+    return workspace
   }
 
   public static async exists(name: string): Promise<boolean> {
     try {
-      const stat = await fs.lstat(Workspace.getDirectoryPath(name));
-      return stat && stat.isDirectory();
+      const stat = await fs.lstat(Workspace.getDirectoryPath(name))
+      return stat && stat.isDirectory()
     } catch (e) {
-      return false;
+      return false
     }
   }
 
   public static getDirectoryPath(name: string): string {
-    return path.join(process.cwd(), 'workspaces', name);
+    return path.join(process.cwd(), 'workspaces', name)
   }
 }

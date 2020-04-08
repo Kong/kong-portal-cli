@@ -1,30 +1,30 @@
-import FileResource from '../Resources/FileResource';
-import RestCollection from '../RestCollection';
+import FileResource from '../Resources/FileResource'
+import RestCollection from '../RestCollection'
 
 export interface FilesCollectionJSON {
-  data: [];
-  next: string | null;
+  data: []
+  next: string | null
 }
 
 export interface IFilesCollection {
-  data?: FileResource[];
-  files?: FileResource[];
-  next: string | null;
+  data?: FileResource[]
+  files?: FileResource[]
+  next: string | null
 }
 
 export default class FilesCollection extends RestCollection {
-  public files: FileResource[];
-  public next: string | null;
+  public files: FileResource[]
+  public next: string | null
 
   public constructor(json: IFilesCollection) {
-    super('/files');
+    super('/files')
 
-    this.files = json.data || json.files || [];
-    this.next = json.next;
+    this.files = json.data || json.files || []
+    this.next = json.next
   }
 
   public async getNext(): Promise<FilesCollection | void> {
-    const nextRes: FilesCollection = await super.getNext(this.next, FilesCollection);
+    const nextRes: FilesCollection = await super.getNext(this.next, FilesCollection)
     if (!nextRes) {
       return
     }
@@ -34,6 +34,6 @@ export default class FilesCollection extends RestCollection {
   }
 
   public static fromJSON(json: FilesCollectionJSON): FilesCollection {
-    return RestCollection.fromJSON(FilesCollection, FileResource, json) as FilesCollection;
+    return RestCollection.fromJSON(FilesCollection, FileResource, json) as FilesCollection
   }
 }

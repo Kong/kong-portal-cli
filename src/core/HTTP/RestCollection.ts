@@ -1,66 +1,71 @@
-import { IRestCollection, IRestResponse } from './RestInterfaces';
-import { join } from 'upath';
-import RestClient from './RestClient';
+import { IRestCollection, IRestResponse } from './RestInterfaces'
+import { join } from 'upath'
+import RestClient from './RestClient'
 
 export default class RestCollection implements IRestCollection {
-  public resourcePath: string;
-  public client?: RestClient;
-  public next?: string | null;
+  public resourcePath: string
+  public client?: RestClient
+  public next?: string | null
 
   public constructor(resourcePath: string) {
-    this.resourcePath = resourcePath;
+    this.resourcePath = resourcePath
   }
 
   public async save<T>(entity: any, options?: any): Promise<IRestResponse<any> | void> {
     if (this.client) {
-      return await this.client.save<T>(entity, options);
+      return await this.client.save<T>(entity, options)
     }
 
-    return console.log('no rest client passed');
+    return console.log('no rest client passed')
   }
 
   public async delete(entity: any, options?: any): Promise<IRestResponse<any> | void> {
     if (this.client) {
-      return await this.client.delete<any>(entity, options);
+      return await this.client.delete<any>(entity, options)
     }
 
-    return console.log('no rest client passed');
+    return console.log('no rest client passed')
   }
 
   public async getNext(next: string | null, entity?: any): Promise<any | void> {
     if (!next) {
-      return;
+      return
     }
 
     if (this.client) {
-      let response = await this.client.get<any>(next);
-      return entity.fromJSON(response.result);
+      next = next
+        .split('/')
+        .slice(2)
+        .join('/')
+
+      let response = await this.client.get<any>(next)
+      return entity.fromJSON(response.result)
     }
 
-    return console.log('no rest client passed');
+    return console.log('no rest client passed')
   }
 
   public toObject(): any {
-    let o = Object.assign({}, this);
-    delete o.resourcePath;
-    return o;
+    let o = Object.assign({}, this)
+    delete o.resourcePath
+    return o
   }
 
   public toJSON(): string {
-    return this.toObject();
+    return this.toObject()
   }
 
   public getResourcePath(path: string = ''): string {
-    return join(this.resourcePath, path);
+    return join(this.resourcePath, path)
   }
 
   public static fromJSON(entity: any, children: any, json: any): any {
     if (json.data) {
       json.data = json.data.map((element: any): any => {
-        return children.fromJSON(element);
-      });
+        return children.fromJSON(element)
+      })
     }
 
-    return new entity(json);
+    return new entity(json)
   }
 }

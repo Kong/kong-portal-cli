@@ -1,52 +1,51 @@
-import { UsageError } from 'clipanion';
+import { UsageError } from 'clipanion'
 
-import RestClient from '../core/HTTP/RestClient';
-import WorkspaceRepository from '../core/HTTP/Repositories/WorkspaceRepository';
-import Workspace from '../core/Workspace';
-import * as ora from 'ora';
+import RestClient from '../core/HTTP/RestClient'
+import WorkspaceRepository from '../core/HTTP/Repositories/WorkspaceRepository'
+import Workspace from '../core/Workspace'
+import * as ora from 'ora'
 
 function MissingWorkspaceError(name: string): void {
   const message: string[] = [
     `No workspace named "${name}" was found.`,
-    ``,
-    `Directories scanned:`,
+    '',
+    'Directories scanned:',
     `\t${Workspace.getDirectoryPath(name)}`,
-  ];
+  ]
 
-  throw new UsageError(message.join('\n'));
-};
+  throw new UsageError(message.join('\n'))
+}
 
 export default async (args): Promise<void> => {
-  let workspace: Workspace;
-  let client: RestClient;
+  let workspace: Workspace
+  let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace);
+    workspace = await Workspace.init(args.workspace)
   } catch (e) {
-    return MissingWorkspaceError(args.workspace);
+    return MissingWorkspaceError(args.workspace)
   }
 
   let spinner: ora.Ora = ora({
-    prefixText: `Enabling ${workspace.name} Portal...`
-  });
+    prefixText: `Enabling ${workspace.name} Portal...`,
+  })
 
-  spinner.start();
+  spinner.start()
 
   try {
-    client = new RestClient(workspace.config, workspace.name);
-    let wsRepository = new WorkspaceRepository(client);
-    let ws = await wsRepository.getWorkspace(workspace.name);
+    client = new RestClient(workspace.config, workspace.name)
+    let wsRepository = new WorkspaceRepository(client)
+    let ws = await wsRepository.getWorkspace(workspace.name)
 
-    ws.config.portal = true;
+    ws.config.portal = true
     await client.save(ws, {
-      body: ws.toObject()
-    });
+      body: ws.toObject(),
+    })
 
-    spinner.prefixText = `\t`;
-    spinner.text = `'${workspace.name}' Portal Enabled`;
-    spinner.succeed();
-
+    spinner.prefixText = '\t'
+    spinner.text = `'${workspace.name}' Portal Enabled`
+    spinner.succeed()
   } catch (e) {
-    spinner.fail(e.message);
+    spinner.fail(e.message)
   }
-};
+}
