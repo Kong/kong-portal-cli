@@ -1,4 +1,3 @@
-import RestResource from '../RestResource'
 
 export interface FileResourceJSON {
   /** UUID */
@@ -13,7 +12,7 @@ export interface FileResourceJSON {
   auth?: boolean
 }
 
-export default class FileResource extends RestResource implements FileResourceJSON {
+export default class FileResource implements FileResourceJSON {
   public id?: string
   public path: string
   public contents: string
@@ -21,7 +20,7 @@ export default class FileResource extends RestResource implements FileResourceJS
   public auth?: boolean
 
   public constructor(json: FileResourceJSON) {
-    super('/files')
+    // super('/files')
 
     this.id = json.id
     this.path = json.path
@@ -30,11 +29,11 @@ export default class FileResource extends RestResource implements FileResourceJS
     this.auth = json.auth
   }
 
-  public getResourcePath(): string {
-    return super.getResourcePath(this.id || this.path)
-  }
+  // public getResourcePath(): string {
+  //   return super.getResourcePath(this.id || this.path)
+  // }
 
-  public static fromJSON(json: FileResourceJSON): FileResource {
-    return RestResource.fromJSON(FileResource, json) as FileResource
-  }
+  // public static fromJSON(json: FileResourceJSON): FileResource {
+  //   return RestResource.fromJSON(FileResource, json) as FileResource
+  // }
 }

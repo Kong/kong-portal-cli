@@ -2,12 +2,8 @@ import * as rs from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
 import * as path from 'upath'
 
-import WorkspaceTheme from './WorkspaceTheme'
 import WorkspaceConfig from './WorkspaceConfig'
 import WorkspacePortalConfig from './WorkspacePortalConfig'
-import WorkspaceContent from './WorkspaceContent'
-import WorkspaceSpecs from './WorkspaceSpecs'
-import WorkspaceEmails from './WorkspaceEmails'
 import WorkspaceRouterConfig from './WorkspaceRouterConfig'
 
 export default class Workspace {
@@ -25,69 +21,44 @@ export default class Workspace {
     this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml')
   }
 
-  public getCurrentThemeName(): string {
-    return this.portalConfig.theme
-  }
-
-  public async getContent(): Promise<WorkspaceContent> {
-    return await WorkspaceContent.init(this.path)
-  }
-
-  public async getEmails(): Promise<WorkspaceContent> {
-    return await WorkspaceEmails.init(this.path)
-  }
-
-  public async getSpecs(): Promise<WorkspaceSpecs> {
-    return await WorkspaceSpecs.init(this.path)
-  }
-
-  public async getTheme(name: string): Promise<WorkspaceTheme> {
-    return await WorkspaceTheme.init(this.path, name)
-  }
-
-  public async getCurrentTheme(): Promise<WorkspaceTheme> {
-    return this.getTheme(this.getCurrentThemeName())
-  }
-
-  public async getThemes(): Promise<WorkspaceTheme[]> {
-    let workspaceThemes: WorkspaceTheme[] = []
-    let themes: any = await rs.list(path.join(this.path, 'themes'), {
-      recursive: false,
-      ignoreFolders: false,
-    })
-
-    themes = themes.filter((element: any): boolean => element.isDirectory)
-
-    for (let theme of themes) {
-      workspaceThemes.push(await this.getTheme(theme.name))
-    }
-
-    return workspaceThemes
-  }
-
-  public getLocation(): string {
-    return this.path
-  }
-
-  public getConfig(key: string): any {
-    return key ? this.config[key] : this.config
-  }
-
-  public getPortalConfig(key: string): any {
-    return key ? this.portalConfig[key] : this.portalConfig
-  }
-
   public static async init(name: string): Promise<Workspace> {
     const workspace = new Workspace(name)
     await workspace.config.load()
 
     if (process.env.KONG_ADMIN_URL) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
     }
 
     if (process.env.KONG_ADMIN_TOKEN) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
     }
+
+    console.log('Config:')
+    console.log('')
+    console.log('\t', 'Workspace:', workspace.name)
+
+    if (workspace.config.kongAdminUrl) {
+      console.log(
+        '\t',
+        'Workspace Upstream:',
+        `${workspace.config.kongAdminUrl}/${workspace.name}`,
+        workspace.config.kongAdminToken ? '(authenticated)' : '',
+      )
+    } else if (workspace.config.upstream) {
+      console.log(
+        '\t',
+        'Workspace Upstream:',
+        `${workspace.config.upstream}`,
+        workspace.config.kongAdminToken ? '(authenticated)' : '',
+      )
+    }
+
+    console.log('\t', 'Workspace Directory:', workspace.path)
+    console.log('')
+    console.log('Changes:')
+    console.log('')
 
     await workspace.portalConfig.load()
     await workspace.routerConfig.load()

@@ -1,8 +1,7 @@
-import * as got from 'got'
-
 import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces'
-
+import * as got from 'got'
+import { GotOptions } from 'got'
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
 
@@ -13,15 +12,17 @@ export class RestClientError<T> extends Error {
 }
 
 export default class RestClient {
-  public client: got.GotInstance<got.GotJSONFn>
-  public clientHeaders: OutgoingHttpHeaders
+  public client
+  public clientHeaders
   public clientUrl: string
+  public workspaceName: string
 
   public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: string) {
     this.clientHeaders = workspaceConfig.headers || {}
+    this.workspaceName = workspaceName
 
     if (workspaceConfig.kongAdminUrl) {
-      this.clientUrl = `${workspaceConfig.kongAdminUrl}/${workspaceName}`
+      this.clientUrl = `${workspaceConfig.kongAdminUrl}/`
     } else if (workspaceConfig.upstream) {
       console.log(
         'upstream is deprecated and will cease to function in a later release. Please use kong_admin_url (upstream url without the workspace suffix)',
@@ -35,20 +36,27 @@ export default class RestClient {
       this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.kongAdminToken
     }
 
-    this.client = got.extend({
-      baseUrl: this.clientUrl,
+    const options: GotOptions = {
+      prefixUrl: this.clientUrl,
       headers: this.clientHeaders,
-      json: true,
-    })
+      responseType: 'json',
+    }
+
+    this.client = got.default.extend(options)
   }
 
-  public async get<T>(resource: string, options: Partial<got.GotJSONOptions> = {}): Promise<IRestResponse<T>> {
+  public async get<T>(resource: string, options: Partial<got.GotOptions> = {}): Promise<IRestResponse<T>> {
+    console.log(resource)
     return this.handleResponse(await this.client.get(resource, options))
+  }
+
+  public async getAll<T>(resource: string, options: Partial<got.GotOptions> = {}): Promise<IRestResponse<T>> {
+    return this.handleResponse(await this.client.get(`${this.workspaceName}/${resource}`, options))
   }
 
   public async create<Output>(
     resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
+    options: Partial<got.GotOptions> = {},
   ): Promise<IRestResponse<Output>> {
     options.body = resource.toObject()
     return this.handleResponse(await this.client.post(resource.getResourcePath(), options))
@@ -56,7 +64,7 @@ export default class RestClient {
 
   public async update<Output>(
     resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
+    options: Partial<got.GotOptions> = {},
   ): Promise<IRestResponse<Output>> {
     options.body = resource.toObject()
     return this.handleResponse(await this.client.patch(resource.getResourcePath(), options))
@@ -64,7 +72,7 @@ export default class RestClient {
 
   public async save<Output>(
     resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
+    options: Partial<got.GotOptions> = {},
   ): Promise<IRestResponse<Output>> {
     options.body = resource.toObject()
     try {
@@ -76,10 +84,7 @@ export default class RestClient {
     }
   }
 
-  public async delete<T>(
-    resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<T>> {
+  public async delete<T>(resource: IRestResource, options: Partial<got.GotOptions> = {}): Promise<IRestResponse<T>> {
     return this.handleResponse(await this.client.delete(resource.getResourcePath(), options))
   }
 
