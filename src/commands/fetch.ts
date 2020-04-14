@@ -8,13 +8,6 @@ import RestClient from '../core/HTTP/RestClient'
 
 import { MissingWorkspaceError } from '../helpers'
 
-function writeOrWrite64(contents: string, file: File, keepEncode: boolean): void {
-  if (!keepEncode && file.location.includes('assets') && contents.startsWith('data:')) {
-    file.write64(contents)
-    return
-  }
-  file.write(contents)
-}
 
 async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Promise<boolean> {
   const shasum = await file.getShaSum()
@@ -25,9 +18,9 @@ async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Pro
   if (keepEncode && (await isBinaryFile(file.location))) {
     return true
   }
-  if (!keepEncode && file.location.includes('assets')) {
-    const contents = await file.read()
-    if (contents.startsWith('data:')) {
+  if (!keepEncode && file.isBase64Asset()) {
+    await file.read()
+    if (file.resource.contents.startsWith('data:')) {
       return true
     }
   }
@@ -48,33 +41,34 @@ export default async (args): Promise<void> => {
   client = new RestClient(workspace.config, workspace.name)
   let response
   try {
-    response = await client.getAll('files')
+    response = await client.getAllFiles()
   } catch (e) {
     console.log(e)
-    throw e
     return
   }
 
   let added = 0
   let modified = 0
 
-  if (response.result && response.result.data) {
-    for (let resource of response.result.data) {
+  if (response) {
+    for (let resource of response) {
       let path: string = join(workspace.path, resource.path)
-      let file: File = new File(path)
+      let file: File = new File(path, workspace.path)
       if (await file.exists()) {
         if (await shouldRewriteFile(resource, file, args.keepEncode)) {
-          writeOrWrite64(resource.contents, file, args.keepEncode)
+          file.write(resource.contents)
           console.log('\t', 'Modified:', resource.path)
           modified += 1
         }
       } else {
-        writeOrWrite64(resource.contents, file, args.keepEncode)
+        file.write(resource.contents)
         console.log('\t', 'Added:', resource.path)
         added += 1
       }
     }
   }
+
+  console.log('\t', `Fetched ${response.length} files`)
 
   if (!modified || added) {
     console.log('\t', 'No changes.')

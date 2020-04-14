@@ -8,7 +8,7 @@ export interface IncomingHttpHeaders {
 
 export interface IRestResponse<T> {
   statusCode: number
-  result: T
+  data: T
   headers: IncomingHttpHeaders
 }
 

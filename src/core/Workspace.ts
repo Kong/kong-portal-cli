@@ -1,24 +1,23 @@
 import * as rs from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
-import * as path from 'upath'
+import { join, toUnix } from 'upath'
 
 import WorkspaceConfig from './WorkspaceConfig'
-import WorkspacePortalConfig from './WorkspacePortalConfig'
-import WorkspaceRouterConfig from './WorkspaceRouterConfig'
+
+import File from './File'
 
 export default class Workspace {
   public name: string
   public path: string
+  public files: File[]
   public config: WorkspaceConfig
-  public portalConfig: WorkspacePortalConfig
-  public routerConfig: WorkspaceRouterConfig
+
 
   public constructor(name: string) {
+    this.files = []
     this.name = name
     this.path = Workspace.getDirectoryPath(name)
     this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml')
-    this.portalConfig = new WorkspacePortalConfig(this.path, 'portal.conf.yaml')
-    this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml')
   }
 
   public static async init(name: string): Promise<Workspace> {
@@ -57,13 +56,20 @@ export default class Workspace {
 
     console.log('\t', 'Workspace Directory:', workspace.path)
     console.log('')
-    console.log('Changes:')
-    console.log('')
-
-    await workspace.portalConfig.load()
-    await workspace.routerConfig.load()
 
     return workspace
+  }
+
+  public async scan(): Promise<void> {
+    let files = await rs.list(this.path, { exclude: ['.DS_Store'] })
+
+    if (files) {
+      this.files = files.map(
+        (file: any): File => {
+          return new File(file.fullname, this.path)
+        },
+      )
+    }
   }
 
   public static async exists(name: string): Promise<boolean> {
@@ -76,6 +82,6 @@ export default class Workspace {
   }
 
   public static getDirectoryPath(name: string): string {
-    return path.join(process.cwd(), 'workspaces', name)
+    return join(process.cwd(), 'workspaces', name)
   }
 }

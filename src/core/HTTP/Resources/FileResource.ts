@@ -20,7 +20,6 @@ export default class FileResource implements FileResourceJSON {
   public auth?: boolean
 
   public constructor(json: FileResourceJSON) {
-    // super('/files')
 
     this.id = json.id
     this.path = json.path
@@ -28,12 +27,3 @@ export default class FileResource implements FileResourceJSON {
     this.checksum = json.checksum
     this.auth = json.auth
   }
-
-  // public getResourcePath(): string {
-  //   return super.getResourcePath(this.id || this.path)
-  // }
-
-  // public static fromJSON(json: FileResourceJSON): FileResource {
-  //   return RestResource.fromJSON(FileResource, json) as FileResource
-  // }
-}

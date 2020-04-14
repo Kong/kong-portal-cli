@@ -1,7 +1,9 @@
 import * as fs from 'fs-extra'
 import * as crypto from 'crypto-promise'
+import { toUnix } from 'upath'
+import FileResource from './HTTP/Resources/FileResource'
 
-import { isBinaryFile } from 'isbinaryfile'
+import { isBinaryFileSync } from 'isbinaryfile'
 
 export default interface FileInterface {
   location: string
@@ -9,27 +11,42 @@ export default interface FileInterface {
 }
 export default class File implements FileInterface {
   public location: string
+  public workspacePath: string
   public encoding: string
+  public resource: FileResource
 
   public constructor(
     location: string,
+    workspacePath: string,
     options = {
       encoding: 'utf8',
     },
   ) {
-    this.location = location
+    this.location = toUnix(location)
     this.encoding = options.encoding || 'utf8'
+    this.workspacePath = toUnix(workspacePath)
+    this.resource = new FileResource({
+      path: this.location.replace(`${this.workspacePath}/`, ''),
+      contents: '',
+    })
   }
 
   public async write(contents: string): Promise<void> {
+    if (this.isBase64Asset() && contents.startsWith('data:')) {
+      return await this.write64(contents)
+    }
     return await fs.outputFile(this.location, contents, this.encoding)
   }
 
-  public async read(): Promise<string> {
-    return await fs.readFile(this.location, this.encoding)
+  public async read(): Promise<void> {
+    if (this.isBase64Asset()) {
+      this.resource.contents = await this.read64()
+      return
+    }
+    this.resource.contents = await fs.readFile(this.location, this.encoding)
   }
 
-  public async read64(): Promise<string> {
+  private async read64(): Promise<string> {
     let fileExtMatch = this.location.match(/\w+$/)
     let fileExt = 'unknown'
     if (fileExtMatch) {
@@ -39,7 +56,7 @@ export default class File implements FileInterface {
     return `data:image/${fileExt};base64,${encoded}`
   }
 
-  public async write64(contents: string): Promise<void> {
+  private async write64(contents: string): Promise<void> {
     contents = contents.split(';base64,')[1]
     return await fs.outputFile(this.location, Buffer.from(contents, 'base64'), this.encoding)
   }
@@ -49,15 +66,17 @@ export default class File implements FileInterface {
   }
 
   public async getShaSum(algorithm = '256'): Promise<string> {
-    let contents: string
+    await this.read()
 
-    if (await isBinaryFile(this.location)) {
-      contents = await this.read64()
-    } else {
-      contents = await this.read()
-    }
-
-    const buffer: Buffer = await crypto.hash('sha' + algorithm)(contents)
+    const buffer: Buffer = await crypto.hash('sha' + algorithm)(this.resource.contents)
     return buffer.toString('hex')
+  }
+
+  public isBase64Path(): boolean {
+    return /themes\/\w*\/assets\//.test(this.location)
+  }
+
+  public isBase64Asset(): boolean {
+    return /themes\/\w*\/assets\//.test(this.location) && isBinaryFileSync(this.location)
   }
 }

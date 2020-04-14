@@ -2,20 +2,20 @@
 
 import { clipanion } from 'clipanion'
 
-// import DeployCommand from './commands/deploy'
+import DeployCommand from './commands/deploy'
 // import WipeCommand from './commands/wipe'
 import FetchCommand from './commands/fetch'
 // import DisableCommand from './commands/disable'
 // import EnableCommand from './commands/enable'
 
-// clipanion
-//   .command('deploy <workspace> [-W,--watch] [-P,--preserve]')
-//   .describe(
-//     `Deploy changes made locally under the given workspace upstream. \n
-//     [-W, --watch] to make changes reactively \n
-//     [-P, --preserve] to avoid deleting files upstream that you do not have locally`,
-//   )
-//   .action(DeployCommand)
+clipanion
+  .command('deploy <workspace> [-W,--watch] [-P,--preserve]')
+  .describe(
+    `Deploy changes made locally under the given workspace upstream. \n
+    [-W, --watch] to make changes reactively \n
+    [-P, --preserve] to avoid deleting files upstream that you do not have locally`,
+  )
+  .action(DeployCommand)
 
 clipanion
   .command('fetch <workspace> [-K,--keep-encode]')
