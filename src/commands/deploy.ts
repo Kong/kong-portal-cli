@@ -1,16 +1,12 @@
-import { UsageError } from 'clipanion'
 import * as chokidar from 'chokidar'
 import * as ora from 'ora'
-
-// import { isBinaryFile } from 'isbinaryfile'
 
 import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
 
-// import wipe from './wipe'
+import wipe from './wipe'
 
 import { MissingWorkspaceError } from '../helpers'
-
 
 async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   let client: RestClient
@@ -27,8 +23,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
     }).start()
 
     await workspace.scan()
-    let contents = workspace.files
-    for (let file of contents) {
+    for (let file of workspace.files) {
       if (path && file.location.split(path)[1] !== '') {
         continue
       }
@@ -40,7 +35,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
     spinner.prefixText = `\t`
     if (!path) {
-      spinner.text = 'All Files'
+      spinner.text = `Deployed all Files to ${workspace.name}`
     }
     spinner.succeed()
 
@@ -52,7 +47,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
 export default async (args: any): Promise<void> => {
   if (!args.preserve) {
-    // await wipe(args)
+    await wipe(args)
   }
 
   let workspace: Workspace

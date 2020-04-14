@@ -32,7 +32,7 @@ export default class File implements FileInterface {
   }
 
   public async write(contents: string): Promise<void> {
-    if (this.isBase64Asset() && contents.startsWith('data:')) {
+    if (this.isBase64Path() && contents.startsWith('data:')) {
       return await this.write64(contents)
     }
     return await fs.outputFile(this.location, contents, this.encoding)

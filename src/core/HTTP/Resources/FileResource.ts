@@ -27,3 +27,4 @@ export default class FileResource implements FileResourceJSON {
     this.checksum = json.checksum
     this.auth = json.auth
   }
+}
