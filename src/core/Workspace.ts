@@ -68,7 +68,7 @@ export default class Workspace {
   }
 
   public async scan(): Promise<void> {
-    let files = await rs.list(this.path, { exclude: ['.DS_Store'] })
+    let files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
 
     if (files) {
       this.files = files.map(
