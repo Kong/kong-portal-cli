@@ -23,16 +23,20 @@ export default async (args): Promise<void> => {
   }).start()
 
   let files: FileResource[]
-  files = await client.getAllFiles()
+  try {
 
-  for (let file of files) {
-    spinner.text = file.path
-    try {
+    files = await client.getAllFiles()
+
+    for (let file of files) {
+      spinner.text = file.path
       await client.deleteFile(file)
-    } catch (e) {
-      console.log(e)
     }
+  } catch (e) {
+    spinner.text = client.handleError(e)
+    spinner.fail()
+    return
   }
+
   spinner.prefixText = `\t`
   spinner.text = `Wiped all Files from ${workspace.name}`
   spinner.succeed()

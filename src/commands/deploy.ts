@@ -11,17 +11,17 @@ import { MissingWorkspaceError } from '../helpers'
 async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   let client: RestClient
 
+  console.log(`Deploying ${workspace.name}:`)
+  console.log(``)
+
+  let spinner = ora({
+    prefixText: `Deploying ${path || 'file'}...`,
+    text: `reading files...`,
+  }).start()
+
+  client = new RestClient(workspace.config, workspace.name)
+
   try {
-    client = new RestClient(workspace.config, workspace.name)
-
-    console.log(`Deploying ${workspace.name}:`)
-    console.log(``)
-
-    let spinner = ora({
-      prefixText: `Deploying ${path || 'file'}...`,
-      text: `reading files...`,
-    }).start()
-
     await workspace.scan()
     for (let file of workspace.files) {
       if (path && file.location.split(path)[1] !== '') {
@@ -41,7 +41,9 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
     console.log(``)
   } catch (e) {
-    console.log(e.url, e.message)
+    spinner.text = client.handleError(e)
+    spinner.fail()
+    return
   }
 }
 

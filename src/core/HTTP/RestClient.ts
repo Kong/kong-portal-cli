@@ -66,12 +66,7 @@ export default class RestClient {
   }
 
   public async saveFile<Output>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
-    try {
-      await this.client.put(`/files/${file.path}`, file, options)
-    } catch (e) {
-      console.log(e)
-      throw e
-    }
+    await this.client.put(`/files/${file.path}`, file, options)
   }
 
   public async deleteFile<T>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
@@ -102,8 +97,13 @@ export default class RestClient {
     return res.data.data
   }
 
-  private handleError<T>(err: AxiosError): Error {
-    console.log(err.toJSON())
-    throw new Error()
+  public handleError<T>(err: AxiosError): string {
+    if (err.response && err.response.status === 401) {
+      return err.message + '\n\t Make sure you have the correct admin token and RBAC settings for that token'
+    }
+    if (err.response && err.response.status === 404) {
+      return err.message + '\n\t Make sure Portal is enabled on this workspace: \n\t "portal enable <workspace>"'
+    }
+    return err.message
   }
 }
