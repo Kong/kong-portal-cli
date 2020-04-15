@@ -7,6 +7,7 @@ import WipeCommand from './commands/wipe'
 import FetchCommand from './commands/fetch'
 import DisableCommand from './commands/disable'
 import EnableCommand from './commands/enable'
+import ConfigComand from './commands/config'
 
 clipanion
   .command('deploy <workspace> [-W,--watch] [-P,--preserve]')
@@ -30,10 +31,10 @@ clipanion
   .describe('Deletes all content and themes from upstream workspace.')
   .action(WipeCommand)
 
-// clipanion
-//   .command('config <workspace>')
-//   .describe('Output or change configuration of the portal on the given workspace, locally.')
-//   .action(require('./commands/config'))
+clipanion
+  .command('config <workspace>')
+  .describe('Output or change configuration of the portal on the given workspace, locally.')
+  .action(ConfigComand)
 
 clipanion
   .command('enable <workspace>')

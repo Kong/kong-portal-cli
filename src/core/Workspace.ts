@@ -1,8 +1,10 @@
 import * as rs from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
-import { join, toUnix } from 'upath'
+import { join } from 'upath'
 
 import WorkspaceConfig from './WorkspaceConfig'
+import WorkspaceTheme from './WorkspaceTheme'
+import Config from './Config'
 
 import File from './File'
 
@@ -11,18 +13,23 @@ export default class Workspace {
   public path: string
   public files: File[]
   public config: WorkspaceConfig
-
+  public portalConfig: Config
+  public routerConfig: Config
 
   public constructor(name: string) {
     this.files = []
     this.name = name
     this.path = Workspace.getDirectoryPath(name)
     this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml')
+    this.portalConfig = new Config(this.path, 'portal.conf.yaml')
+    this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
   public static async init(name: string): Promise<Workspace> {
     const workspace = new Workspace(name)
     await workspace.config.load()
+    await workspace.portalConfig.load()
+    await workspace.routerConfig.load()
 
     if (process.env.KONG_ADMIN_URL) {
       // eslint-disable-next-line @typescript-eslint/camelcase
@@ -84,4 +91,33 @@ export default class Workspace {
   public static getDirectoryPath(name: string): string {
     return join(process.cwd(), 'workspaces', name)
   }
+
+  public async getThemes(): Promise<WorkspaceTheme[]> {
+    let workspaceThemes: WorkspaceTheme[] = []
+    let themes: any = await rs.list(join(this.path, 'themes'), {
+      recursive: false,
+      ignoreFolders: false,
+    })
+
+    themes = themes.filter((element: any): boolean => element.isDirectory)
+
+    for (let theme of themes) {
+      workspaceThemes.push(await this.getTheme(theme.name))
+    }
+
+    return workspaceThemes
+  }
+
+  public getCurrentThemeName(): string {
+    return this.portalConfig.data.theme.name
+  }
+
+  public async getTheme(name: string): Promise<WorkspaceTheme> {
+    return await WorkspaceTheme.init(this.path, name)
+  }
+
+  public async getCurrentTheme(): Promise<WorkspaceTheme> {
+    return this.getTheme(this.getCurrentThemeName())
+  }
+
 }

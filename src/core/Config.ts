@@ -24,8 +24,12 @@ export default class Config {
   }
 
   public async load(): Promise<void> {
-    const content = await fs.readFile(this.path, this.encoding)
-    this.data = yaml.safeLoad(content)
+    try {
+      const content = await fs.readFile(this.path, this.encoding)
+      this.data = yaml.safeLoad(content)
+    } catch (e) {
+      this.data = null
+    }
   }
 
   public async save(): Promise<void> {
@@ -38,6 +42,10 @@ export default class Config {
   }
 
   public toConsole(): void {
+    if (this.data === null) {
+      console.log('No Config')
+      return
+    }
     const lines = this.dump().split('\n')
     for (var line of lines) {
       console.log('  ', line)
