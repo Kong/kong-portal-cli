@@ -38,7 +38,6 @@
     "fengari": "^0.1.4",
     "fengari-interop": "^0.1.2",
     "fs-extra": "^8.0.1",
-    "got": "^10.7.0",
     "isbinaryfile": "^4.0.3",
     "js-yaml": "^3.13.1",
     "ora": "^3.4.0",
