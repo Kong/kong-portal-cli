@@ -1,49 +1,43 @@
-import { UsageError } from 'clipanion';
-import { join } from 'upath';
+import * as ora from 'ora'
 
-import Workspace from '../core/Workspace';
-import RestClient from '../core/HTTP/RestClient';
-import FilesRepository from '../core/HTTP/Repositories/FileRepository';
-import FileResource from '../core/HTTP/Resources/FileResource';
-import { Content } from '../core/WorkspaceContent';
-
-function MissingWorkspaceError(name: string): void {
-  const message: string[] = [
-    `No workspace named "${name}" was found.`,
-    ``,
-    `Directories scanned:`,
-    `\t${Workspace.getDirectoryPath(name)}`,
-  ];
-
-  throw new UsageError(message.join('\n'));
-}
+import Workspace from '../core/Workspace'
+import RestClient from '../core/HTTP/RestClient'
+import FileResource from '../core/HTTP/Resources/FileResource'
+import { MissingWorkspaceError } from '../helpers'
 
 export default async (args): Promise<void> => {
-  let workspace: Workspace;
-  let client: RestClient;
-  let repository: FilesRepository;
+  let workspace: Workspace
+  let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace);
+    workspace = await Workspace.init(args.workspace)
   } catch (e) {
-    return MissingWorkspaceError(args.workspace);
+    return MissingWorkspaceError(args.workspace)
   }
 
-  client = new RestClient(workspace.config, workspace.name);
-  repository = new FilesRepository(client);
+  client = new RestClient(workspace.config, workspace.name)
 
-  let collection = await repository.getFiles();
-  if (collection.files) {
-    let resource: FileResource;
-    for (resource of collection.files) {
-      try {
-        await resource.delete();
-        console.log(`\tDeleted ${resource.path}`);
-      } catch(e) {
-        console.log(e);
-      }
+  let spinner = ora({
+    prefixText: `Wiping...`,
+    text: `reading files...`,
+  }).start()
+
+  let files: FileResource[]
+  try {
+
+    files = await client.getAllFiles()
+
+    for (let file of files) {
+      spinner.text = file.path
+      await client.deleteFile(file)
     }
+  } catch (e) {
+    spinner.text = client.handleError(e)
+    spinner.fail()
+    return
   }
 
-  console.log('Done.');
-};
+  spinner.prefixText = `\t`
+  spinner.text = `Wiped all Files from ${workspace.name}`
+  spinner.succeed()
+}

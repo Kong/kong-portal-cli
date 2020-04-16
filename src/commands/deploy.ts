@@ -1,344 +1,135 @@
-import { UsageError } from 'clipanion';
-import * as chokidar from 'chokidar';
-import * as ora from 'ora';
-import * as chalk from 'chalk';
+import * as chokidar from 'chokidar'
+import * as ora from 'ora'
 
-import { isBinaryFile } from 'isbinaryfile';
+import Workspace from '../core/Workspace'
+import RestClient from '../core/HTTP/RestClient'
+import File from '../core/File'
 
-import Workspace from '../core/Workspace';
-import RestClient from '../core/HTTP/RestClient';
-import FilesRepository from '../core/HTTP/Repositories/FileRepository';
-import FileResource from '../core/HTTP/Resources/FileResource';
-import WorkspaceTheme from '../core/WorkspaceTheme';
-import FilesCollection from '../core/HTTP/Collections/FilesCollection';
-import wipe from './wipe';
+import wipe from './wipe'
 
-function MissingWorkspaceError(name: string): void {
-  const message: string[] = [
-    `No workspace named "${name}" was found.`,
-    ``,
-    `Scanned directories for workspace configurations:`,
-    `\t${Workspace.getDirectoryPath(name)}`,
-  ];
+import { MissingWorkspaceError } from '../helpers'
 
-  throw new UsageError(message.join('\n'));
-}
-
-async function DeployWorkspaceConfig(workspace: Workspace, client: RestClient, path?: any): Promise<void> {
-  if (path && workspace.portalConfig.path.split(path)[1] !== '') {
-    return;
-  }
-
-  let spinner: ora.Ora = ora({
-    prefixText: `Deploying configuration...`,
-    text: workspace.portalConfig.path,
-  });
-
-  spinner.start();
-
-  try {
-    let portalConfigPath: string = workspace.portalConfig.path.replace(workspace.path + '/', '');
-    let portalConfigResource = new FileResource({
-      path: portalConfigPath,
-      contents: workspace.portalConfig.dump(),
-    });
-
-    await client.save(portalConfigResource, {
-      body: portalConfigResource.toObject(),
-    });
-
-    spinner.prefixText = `\t`;
-    spinner.text = 'Deploy configuration';
-    spinner.succeed();
-  } catch (e) {
-    spinner.fail(e.message);
+async function asyncForEach(array: any[], callback: (arg0: any, arg1: number, arg2: any) => any): Promise<void> {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
   }
 }
 
-async function DeployWorkspaceRouter(workspace: Workspace, client: RestClient, path: any): Promise<void> {
-  if (!workspace.routerConfig.data) {
-    return;
+function buildFilesObject<T>(fileObj: any, files: File[], filterBy: string): File[] {
+  // each time this function runs we create a new property based on filterBy and remove it from files
+  // this way we never miss anything from files
+
+  if (filterBy === 'configs') {
+    fileObj.configs = files.filter((file): boolean => {
+      // eslint-disable-next-line prettier/prettier
+      return !(/\//.test(file.resource.path))
+    })
+
+    files = files.filter((file: { resource: { path: string } }): boolean => {
+      return /\//.test(file.resource.path)
+    })
+    return files
   }
 
-  if (path && workspace.routerConfig.path.split(path)[1] !== '') {
-    return;
-  }
+  fileObj[filterBy] = files.filter((file): boolean => {
+    return file.resource.path.startsWith(filterBy)
+  })
 
-  let spinner: ora.Ora = ora({
-    prefixText: `Deploying router...`,
-    text: workspace.routerConfig.path,
-  });
-
-  spinner.start();
-
-  try {
-    let routerConfigPath: string = workspace.routerConfig.path.replace(workspace.path + '/', '');
-    let routerConfigResource = new FileResource({
-      path: routerConfigPath,
-      contents: workspace.routerConfig.dump(),
-    });
-
-    await client.save(routerConfigResource, {
-      body: routerConfigResource.toObject(),
-    });
-
-    spinner.prefixText = `\t`;
-    spinner.text = 'Deploy router';
-    spinner.succeed();
-  } catch (e) {
-    spinner.fail(e.message);
-  }
-}
-
-async function DeployWorkspaceContent(
-  workspace: Workspace,
-  client: RestClient,
-  collection: FilesCollection,
-  path: any,
-): Promise<void> {
-  if (path && path.indexOf('content') < 0) {
-    return;
-  }
-
-  let spinner = ora({
-    prefixText: `Deploying ${path || 'content'}...`,
-    text: `reading files...`,
-  });
-
-  spinner.start();
-
-  try {
-    let contents = await workspace.getContent();
-    if (contents.files) {
-      for (let content of contents.files) {
-        if (path && content.file.location.split(path)[1] !== '') {
-          continue;
-        }
-
-        spinner.text = content.file.location;
-        content.resource.contents = await content.file.read();
-        await collection.save(content.resource);
-      }
-    }
-
-    spinner.prefixText = `\t`;
-    spinner.text = `Deploy ${path || 'content'}`;
-    spinner.succeed();
-  } catch (e) {
-    spinner.fail(e.message);
-  }
-}
-
-async function DeployWorkspaceEmails(
-  workspace: Workspace,
-  client: RestClient,
-  collection: FilesCollection,
-  path: any,
-): Promise<void> {
-  if (path && path.indexOf('emails') < 0) {
-    return;
-  }
-
-  let spinner = ora({
-    prefixText: `Deploying ${path || 'emails'}...`,
-    text: `reading files...`,
-  });
-
-  spinner.start();
-
-  try {
-    let contents = await workspace.getEmails();
-    if (contents.files) {
-      for (let content of contents.files) {
-        if (path && content.file.location.split(path)[1] !== '') {
-          continue;
-        }
-
-        spinner.text = content.file.location;
-        content.resource.contents = await content.file.read();
-        await collection.save(content.resource);
-      }
-    }
-
-    spinner.prefixText = `\t`;
-    spinner.text = `Deploy ${path || 'email'}`;
-    spinner.succeed();
-  } catch (e) {
-    spinner.fail(e.message);
-  }
-}
-
-async function DeployWorkspaceSpecs(
-  workspace: Workspace,
-  client: RestClient,
-  collection: FilesCollection,
-  path: any,
-): Promise<void> {
-  if (path && path.indexOf('specs') < 0) {
-    return;
-  }
-
-  let spinner = ora({
-    prefixText: `Deploying ${path || 'specs'}...`,
-    text: `reading files...`,
-  });
-
-  spinner.start();
-
-  try {
-    let specs = await workspace.getSpecs();
-    if (specs.files) {
-      for (let spec of specs.files) {
-        if (path && spec.file.location.split(path)[1] !== '') {
-          continue;
-        }
-
-        spinner.text = spec.file.location;
-        spec.resource.contents = await spec.file.read();
-        await collection.save(spec.resource);
-      }
-    }
-
-    spinner.prefixText = `\t`;
-    spinner.text = `Deploy ${path || 'specs'}`;
-    spinner.succeed();
-  } catch (e) {
-    spinner.fail(e.message);
-  }
-}
-
-async function DeployWorkspaceThemeConfig(workspace, theme, client, spinner, path): Promise<void> {
-  if (path && theme.config.path.split(path)[1] !== '') {
-    return;
-  }
-
-  try {
-    spinner.text = theme.config.path;
-
-    let themeConfigPath = theme.config.path.replace(workspace.path + '/', '');
-    let themeConfigResource = new FileResource({
-      path: themeConfigPath,
-      contents: theme.config.dump(),
-    });
-
-    await client.save(themeConfigResource, {
-      body: themeConfigResource.toObject(),
-    });
-  } catch (e) {
-    spinner.fail(e.message);
-  }
-}
-
-async function DeployWorkspaceThemeFolder(folder, collection, spinner, path): Promise<void> {
-  try {
-    if (folder) {
-      for (let content of folder) {
-        if (path && content.file.location.split(path)[1] !== '') {
-          continue;
-        }
-
-        let resource = content.resource;
-        spinner.text = content.file.location;
-
-        if (await isBinaryFile(content.file.location)) {
-          resource.contents = await content.file.read64();
-        } else {
-          resource.contents = await content.file.read();
-        }
-        await collection.save(resource);
-      }
-    }
-  } catch (e) {
-    spinner.fail(e.message);
-    console.log(e);
-  }
-}
-
-async function DeployWorkspaceThemes(
-  workspace: Workspace,
-  client: RestClient,
-  collection: FilesCollection,
-  path: any,
-): Promise<void> {
-  if (path && path.indexOf('themes') < 0) {
-    return;
-  }
-
-  let spinner = ora({
-    prefixText: `Deploying ${path || 'themes'}...`,
-    text: `reading files...`,
-  });
-
-  spinner.start();
-
-  let themes = await workspace.getThemes();
-  let theme: WorkspaceTheme;
-  for (theme of themes) {
-    await DeployWorkspaceThemeConfig(workspace, theme, client, spinner, path);
-    await DeployWorkspaceThemeFolder(theme.assets, collection, spinner, path);
-    await DeployWorkspaceThemeFolder(theme.layouts, collection, spinner, path);
-    await DeployWorkspaceThemeFolder(theme.partials, collection, spinner, path);
-  }
-
-  spinner.prefixText = `\t`;
-  spinner.text = `Deploy ${path || 'themes'}`;
-  spinner.succeed();
+  files = files.filter((file): boolean => {
+    return !file.resource.path.startsWith(filterBy)
+  })
+  return files
 }
 
 async function Deploy(workspace: Workspace, path?: any): Promise<void> {
-  let client: RestClient;
-  let repository: FilesRepository;
-  let collection: FilesCollection;
+  let client: RestClient
+
+  console.log(`Deploying ${workspace.name}:`)
+  console.log(``)
+
+  let spinner = ora({
+    prefixText: `Deploying ${path || 'file'}...`,
+    text: `reading files...`,
+  }).start()
+
+  client = new RestClient(workspace.config, workspace.name)
 
   try {
-    client = new RestClient(workspace.config, workspace.name);
-    repository = new FilesRepository(client);
-    collection = await repository.getFiles();
+    await workspace.scan()
 
-    console.log(`Deploying ${workspace.name}:`);
-    console.log(``);
+    const fileObj = {}
+    let files: File[] = workspace.files
+    files = buildFilesObject(fileObj, files, 'configs')
+    files = buildFilesObject(fileObj, files, 'content')
+    files = buildFilesObject(fileObj, files, 'specs')
+    files = buildFilesObject(fileObj, files, 'emails')
+    files = buildFilesObject(fileObj, files, 'themes')
 
-    await DeployWorkspaceConfig(workspace, client, path);
-    await DeployWorkspaceRouter(workspace, client, path);
-    await DeployWorkspaceContent(workspace, client, collection, path);
-    await DeployWorkspaceEmails(workspace, client, collection, path);
-    await DeployWorkspaceSpecs(workspace, client, collection, path);
-    await DeployWorkspaceThemes(workspace, client, collection, path);
+    if (files.length > 0) {
+      fileObj['other files'] = files
+      console.log(files)
+    }
 
-    console.log(``);
+    await asyncForEach(
+      Object.keys(fileObj),
+      async (fileType): Promise<void> => {
+        let files: File[] = fileObj[fileType]
+        spinner.prefixText = `Deploying ${fileType}`
+        for (let file of files) {
+          if (path && file.location.split(path)[1] !== '') {
+            continue
+          }
+
+          spinner.text = file.resource.path
+          await file.read()
+          await client.saveFile(file.resource)
+        }
+        spinner.prefixText = 'Deployed'
+        spinner.succeed(fileType).start()
+      },
+    )
+    spinner.prefixText = ''
+    if (!path) {
+      spinner.text = `Deployed all files to ${workspace.name}`
+    }
+    spinner.succeed()
+
+    console.log(``)
   } catch (e) {
-    console.log(e.url, e.message);
+    spinner.text = client.handleError(e)
+    spinner.fail()
+    return
   }
 }
 
 export default async (args: any): Promise<void> => {
   if (!args.preserve) {
-    await wipe(args);
+    await wipe(args)
   }
 
-  let workspace: Workspace;
+  let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace);
+    workspace = await Workspace.init(args.workspace)
   } catch (e) {
-    return MissingWorkspaceError(args.workspace);
+    return MissingWorkspaceError(args.workspace)
   }
 
-  await Deploy(workspace);
+  await Deploy(workspace)
 
   if (args.watch) {
-    console.log(`Watching`, `${workspace.path}/*`);
-    console.log(``);
+    console.log(`Watching`, `${workspace.path}/*`)
+    console.log(``)
 
     let watcher: any = chokidar.watch('.', {
       cwd: workspace.path,
       alwaysStat: true,
-    });
+    })
 
-    watcher.on('change', (path, stats): void => {
+    watcher.on('change', (path: any, stats: { isFile: () => any }): void => {
       if (stats && stats.isFile()) {
-        Deploy(workspace, path);
+        Deploy(workspace, path)
       }
-    });
+    })
   }
-};
+}

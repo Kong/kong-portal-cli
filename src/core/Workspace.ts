@@ -1,110 +1,100 @@
-import * as rs from 'recursive-readdir-async';
-import * as fs from 'fs-extra';
-import * as path from 'upath';
+import * as rs from 'recursive-readdir-async'
+import * as fs from 'fs-extra'
+import { join } from 'upath'
 
-import WorkspaceTheme from './WorkspaceTheme';
-import WorkspaceConfig from './WorkspaceConfig';
-import WorkspacePortalConfig from './WorkspacePortalConfig';
-import WorkspaceContent from './WorkspaceContent';
-import WorkspaceSpecs from './WorkspaceSpecs';
-import WorkspaceEmails from './WorkspaceEmails'
-import WorkspaceRouterConfig from './WorkspaceRouterConfig';
+import WorkspaceConfig from './WorkspaceConfig'
+import WorkspaceTheme from './WorkspaceTheme'
+import Config from './Config'
+
+import File from './File'
 
 export default class Workspace {
-  public name: string;
-  public path: string;
-  public config: WorkspaceConfig;
-  public portalConfig: WorkspacePortalConfig;
-  public routerConfig: WorkspaceRouterConfig;
+  public name: string
+  public path: string
+  public files: File[]
+  public config: WorkspaceConfig
+  public portalConfig: Config
+  public routerConfig: Config
 
   public constructor(name: string) {
-    this.name = name;
-    this.path = Workspace.getDirectoryPath(name);
-    this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml');
-    this.portalConfig = new WorkspacePortalConfig(this.path, 'portal.conf.yaml');
-    this.routerConfig = new WorkspaceRouterConfig(this.path, 'router.conf.yaml');
-  }
-
-  public getCurrentThemeName(): string {
-    return this.portalConfig.theme;
-  }
-
-  public async getContent(): Promise<WorkspaceContent> {
-    return await WorkspaceContent.init(this.path);
-  }
-
-  public async getEmails(): Promise<WorkspaceContent> {
-    return await WorkspaceEmails.init(this.path);
-  }
-
-  public async getSpecs(): Promise<WorkspaceSpecs> {
-    return await WorkspaceSpecs.init(this.path);
-  }
-
-  public async getTheme(name: string): Promise<WorkspaceTheme> {
-    return await WorkspaceTheme.init(this.path, name);
-  }
-
-  public async getCurrentTheme(): Promise<WorkspaceTheme> {
-    return this.getTheme(this.getCurrentThemeName());
-  }
-
-  public async getThemes(): Promise<WorkspaceTheme[]> {
-    let workspaceThemes: WorkspaceTheme[] = [];
-    let themes: any = await rs.list(path.join(this.path, 'themes'), {
-      recursive: false,
-      ignoreFolders: false,
-    });
-
-    themes = themes.filter((element: any): boolean => element.isDirectory);
-
-    for (let theme of themes) {
-      workspaceThemes.push(await this.getTheme(theme.name));
-    }
-
-    return workspaceThemes;
-  }
-
-  public getLocation(): string {
-    return this.path;
-  }
-
-  public getConfig(key: string): any {
-    return key ? this.config[key] : this.config;
-  }
-
-  public getPortalConfig(key: string): any {
-    return key ? this.portalConfig[key] : this.portalConfig;
+    this.files = []
+    this.name = name
+    this.path = Workspace.getDirectoryPath(name)
+    this.config = new WorkspaceConfig(this.path, 'cli.conf.yaml')
+    this.portalConfig = new Config(this.path, 'portal.conf.yaml')
+    this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
   public static async init(name: string): Promise<Workspace> {
-    const workspace = new Workspace(name);
-    await workspace.config.load();
+    const workspace = new Workspace(name)
+    await workspace.config.load()
+    await workspace.portalConfig.load()
+    await workspace.routerConfig.load()
 
     if (process.env.KONG_ADMIN_URL) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
     }
 
     if (process.env.KONG_ADMIN_TOKEN) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
     }
 
-    await workspace.portalConfig.load();
-    await workspace.routerConfig.load();
+    return workspace
+  }
 
-    return workspace;
+  public async scan(): Promise<void> {
+    let files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
+
+    if (files) {
+      this.files = files.map(
+        (file: any): File => {
+          return new File(file.fullname, this.path)
+        },
+      )
+    }
   }
 
   public static async exists(name: string): Promise<boolean> {
     try {
-      const stat = await fs.lstat(Workspace.getDirectoryPath(name));
-      return stat && stat.isDirectory();
+      const stat = await fs.lstat(Workspace.getDirectoryPath(name))
+      return stat && stat.isDirectory()
     } catch (e) {
-      return false;
+      return false
     }
   }
 
   public static getDirectoryPath(name: string): string {
-    return path.join(process.cwd(), 'workspaces', name);
+    return join(process.cwd(), 'workspaces', name)
   }
+
+  public async getThemes(): Promise<WorkspaceTheme[]> {
+    let workspaceThemes: WorkspaceTheme[] = []
+    let themes: any = await rs.list(join(this.path, 'themes'), {
+      recursive: false,
+      ignoreFolders: false,
+    })
+
+    themes = themes.filter((element: any): boolean => element.isDirectory)
+
+    for (let theme of themes) {
+      workspaceThemes.push(await this.getTheme(theme.name))
+    }
+
+    return workspaceThemes
+  }
+
+  public getCurrentThemeName(): string {
+    return this.portalConfig.data.theme.name
+  }
+
+  public async getTheme(name: string): Promise<WorkspaceTheme> {
+    return await WorkspaceTheme.init(this.path, name)
+  }
+
+  public async getCurrentTheme(): Promise<WorkspaceTheme> {
+    return this.getTheme(this.getCurrentThemeName())
+  }
+
 }

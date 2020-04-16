@@ -1,41 +1,33 @@
+import { UsageError } from 'clipanion'
+
 import Workspace from '../core/Workspace'
 import Config from '../core/Config'
+import { MissingWorkspaceError } from '../helpers'
 
-import {UsageError} from 'clipanion'
-
-function MissingWorkspaceError (name: string) {
-  const message: Array<String> = [
-    `No workspace named "${name}" was found.`,
-    ``,
-    `Directories scanned:`,
-    `\t${Workspace.getDirectoryPath(name)}`
-  ]
-
-  throw new UsageError(message.join('\n'))
-}
-
-function MissingWorkspaceThemeError (workspace: Workspace) {
-  const message: Array<String> = [
+function MissingWorkspaceThemeError(workspace: Workspace): void {
+  const message: string[] = [
     `Unable to find theme "${workspace.getCurrentThemeName()}" in workspace "${workspace.name}".`,
   ]
 
   throw new UsageError(message.join('\n'))
 }
 
-function ConfigToConsole (name: string, config: Config) {
+function ConfigToConsole(name: string, config: Config): void {
   console.log(``)
   console.log(`${name}:`)
   config.toConsole()
 }
 
-module.exports = async (args) => {
+export default async (args): Promise<void> => {
   const workspaceExists = await Workspace.exists(args.workspace)
-  if (!workspaceExists) MissingWorkspaceError(args.workspace)
-
+  if (!workspaceExists) {
+    MissingWorkspaceError(args.workspace)
+  }
   const workspace = await Workspace.init(args.workspace)
   ConfigToConsole('CLI Config', workspace.config)
   ConfigToConsole('Portal Config', workspace.portalConfig)
-  
+  ConfigToConsole('Router Config', workspace.routerConfig)
+
   try {
     const theme = await workspace.getCurrentTheme()
     ConfigToConsole('Theme Config Options', theme.config)

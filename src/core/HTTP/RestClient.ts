@@ -1,104 +1,109 @@
-import * as got from 'got';
-
-import { IWorkspaceConfig } from '../WorkspaceConfig';
-import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces';
+import { IWorkspaceConfig } from '../WorkspaceConfig'
+import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces'
+import FileResource, { FileResourceJSON } from './Resources/FileResource'
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 
 export class RestClientError<T> extends Error {
-  public response: IRestResponse<T>;
+  public response: IRestResponse<T>
 
   public constructor(res: IRestResponse<T>, message?: string) {
-    super(message);
-    this.response = res;
+    super(message)
+    this.response = res
   }
 }
 
 export default class RestClient {
-  public client: got.GotInstance<got.GotJSONFn>;
-  public clientHeaders: OutgoingHttpHeaders;
-  public clientUrl: string;
+  public client
+  public clientHeaders
+  public clientUrl: string
+  public workspaceName: string
 
   public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: string) {
-    this.clientHeaders = workspaceConfig.headers || {};
+    this.clientHeaders = workspaceConfig.headers || {}
+    this.workspaceName = workspaceName
+
+    let workspaceUrl
 
     if (workspaceConfig.kongAdminUrl) {
-      this.clientUrl = `${workspaceConfig.kongAdminUrl}/${workspaceName}`
+      // workspaceUrl is removed when paginating, kong offset includes it.
+      this.clientUrl = `${workspaceConfig.kongAdminUrl}`
+      workspaceUrl = workspaceName
     } else if (workspaceConfig.upstream) {
-      console.log('upstream is deprecated and will cease to function in a later release. Please use kong_admin_url (upstream url without the workspace suffix)')
+      console.log(
+        'upstream is deprecated and will cease to function in a later release. Please use kong_admin_url (upstream url without the workspace suffix)',
+      )
       this.clientUrl = workspaceConfig.upstream
+      this.clientUrl = ''
     } else {
       this.clientUrl = ''
     }
 
     if (workspaceConfig.kongAdminToken) {
-      this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.kongAdminToken;
+      this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.kongAdminToken
     }
 
-    this.client = got.extend({
-      baseUrl: this.clientUrl,
+    this.client = axios.create({
+      baseURL: this.clientUrl,
+      url: workspaceUrl,
       headers: this.clientHeaders,
-      json: true,
-    });
+    })
   }
 
-  public async get<T>(resource: string, options: Partial<got.GotJSONOptions> = {}): Promise<IRestResponse<T>> {
-    return this.handleResponse(await this.client.get(resource, options));
+  public async getFiles<T>(options?: AxiosRequestConfig): Promise<FileResourceJSON[]> {
+    return this.handleResponse(await this.client.get('/files', options))
   }
 
-  public async create<Output>(
-    resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject();
-    return this.handleResponse(await this.client.post(resource.getResourcePath(), options));
-  }
-
-  public async update<Output>(
-    resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject();
-    return this.handleResponse(await this.client.patch(resource.getResourcePath(), options));
-  }
-
-  public async save<Output>(
-    resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<Output>> {
-    options.body = resource.toObject();
-    try {
-      let response = await this.client.put(resource.getResourcePath(), options);
-      return this.handleResponse(response);
-    } catch (e) {
-      console.log(e);
-      throw e;
-    }
-  }
-
-  public async delete<T>(
-    resource: IRestResource,
-    options: Partial<got.GotJSONOptions> = {},
-  ): Promise<IRestResponse<T>> {
-    return this.handleResponse(await this.client.delete(resource.getResourcePath(), options));
-  }
-
-  private handleResponse<T>(res: any): IRestResponse<T> {
-    let statusCode: number = res.statusCode || 500;
-    let result: any = res.body;
-
-    if (statusCode > 399) {
-      throw new RestClientError<T>({
-        statusCode,
-        result,
-        headers: res.headers,
-      });
+  public async getAllFiles<T>(): Promise<FileResourceJSON[]> {
+    let res = await this.client.get('/files')
+    let files: FileResourceJSON[] = this.handleResponse(res)
+    while (res.data.next) {
+      // url is set to empty because next already has workspace
+      res = await this.client.get(res.data.next, { url: '' })
+      files = files.concat(this.handleResponse(res))
     }
 
-    const response: IRestResponse<T> = {
-      statusCode,
-      result,
-      headers: res.headers,
-    };
+    return files
+  }
 
-    return response;
+  public async saveFile<Output>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
+    await this.client.put(`/files/${file.path}`, file, options)
+  }
+
+  public async deleteFile<T>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
+    await this.client.delete(`/files/${file.path}`, options)
+  }
+
+  public async enablePortal(options: AxiosRequestConfig = {}): Promise<void> {
+    await this.client.patch(
+      `/${this.workspaceName}/workspaces/${this.workspaceName}`,
+      { config: { portal: true } },
+      options,
+    )
+  }
+
+  public async disablePortal(options: AxiosRequestConfig = {}): Promise<void> {
+    await this.client.patch(
+      `/${this.workspaceName}/workspaces/${this.workspaceName}`,
+      { config: { portal: false } },
+      options,
+    )
+  }
+
+  private handleResponse<T>(res: AxiosResponse): FileResourceJSON[] {
+    if (!res.data) {
+      console.log('malformed server reply')
+      throw new Error()
+    }
+    return res.data.data
+  }
+
+  public handleError<T>(err: AxiosError): string {
+    if (err.response && err.response.status === 401) {
+      return err.message + '\n\t Make sure you have the correct admin token and RBAC settings for that token'
+    }
+    if (err.response && err.response.status === 404) {
+      return err.message + '\n\t Make sure Portal is enabled on this workspace: \n\t "portal enable <workspace>"'
+    }
+    return err.message
   }
 }
