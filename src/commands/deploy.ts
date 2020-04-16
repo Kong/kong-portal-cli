@@ -80,7 +80,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
             continue
           }
 
-          spinner.text = file.location
+          spinner.text = file.resource.path
           await file.read()
           await client.saveFile(file.resource)
         }
