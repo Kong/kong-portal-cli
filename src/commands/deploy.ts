@@ -3,10 +3,43 @@ import * as ora from 'ora'
 
 import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
+import File from '../core/File'
 
 import wipe from './wipe'
 
 import { MissingWorkspaceError } from '../helpers'
+
+async function asyncForEach(array: any[], callback: (arg0: any, arg1: number, arg2: any) => any): Promise<void> {
+  for (let index = 0; index < array.length; index++) {
+    await callback(array[index], index, array)
+  }
+}
+
+function buildFilesObject<T>(fileObj: any, files: File[], filterBy: string): File[] {
+  // each time this function runs we create a new property based on filterBy and remove it from files
+  // this way we never miss anything from files
+
+  if (filterBy === 'configs') {
+    fileObj.configs = files.filter((file): boolean => {
+      // eslint-disable-next-line prettier/prettier
+      return !(/\//.test(file.resource.path))
+    })
+
+    files = files.filter((file: { resource: { path: string } }): boolean => {
+      return /\//.test(file.resource.path)
+    })
+    return files
+  }
+
+  fileObj[filterBy] = files.filter((file): boolean => {
+    return file.resource.path.startsWith(filterBy)
+  })
+
+  files = files.filter((file): boolean => {
+    return !file.resource.path.startsWith(filterBy)
+  })
+  return files
+}
 
 async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   let client: RestClient
@@ -23,15 +56,37 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
   try {
     await workspace.scan()
-    for (let file of workspace.files) {
-      if (path && file.location.split(path)[1] !== '') {
-        continue
-      }
 
-      spinner.text = file.location
-      await file.read()
-      await client.saveFile(file.resource)
+    const fileObj = {}
+    let files: File[] = workspace.files
+    files = buildFilesObject(fileObj, files, 'configs')
+    files = buildFilesObject(fileObj, files, 'content')
+    files = buildFilesObject(fileObj, files, 'specs')
+    files = buildFilesObject(fileObj, files, 'emails')
+    files = buildFilesObject(fileObj, files, 'themes')
+
+    if (files.length > 0) {
+      fileObj['other files'] = files
+      console.log(files)
     }
+
+    await asyncForEach(
+      Object.keys(fileObj),
+      async (fileType): Promise<void> => {
+        let files: File[] = fileObj[fileType]
+        for (let file of files) {
+          if (path && file.location.split(path)[1] !== '') {
+            continue
+          }
+
+          spinner.text = file.location
+          await file.read()
+          await client.saveFile(file.resource)
+        }
+
+        spinner.succeed(fileType).start()
+      },
+    )
 
     spinner.prefixText = `\t`
     if (!path) {
@@ -71,7 +126,7 @@ export default async (args: any): Promise<void> => {
       alwaysStat: true,
     })
 
-    watcher.on('change', (path, stats): void => {
+    watcher.on('change', (path: any, stats: { isFile: () => any }): void => {
       if (stats && stats.isFile()) {
         Deploy(workspace, path)
       }
