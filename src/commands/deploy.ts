@@ -74,6 +74,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
       Object.keys(fileObj),
       async (fileType): Promise<void> => {
         let files: File[] = fileObj[fileType]
+        spinner.prefixText = `Deploying ${fileType}`
         for (let file of files) {
           if (path && file.location.split(path)[1] !== '') {
             continue
@@ -83,14 +84,13 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
           await file.read()
           await client.saveFile(file.resource)
         }
-
+        spinner.prefixText = 'Deployed'
         spinner.succeed(fileType).start()
       },
     )
-
-    spinner.prefixText = `\t`
+    spinner.prefixText = ''
     if (!path) {
-      spinner.text = `Deployed all Files to ${workspace.name}`
+      spinner.text = `Deployed all files to ${workspace.name}`
     }
     spinner.succeed()
 
