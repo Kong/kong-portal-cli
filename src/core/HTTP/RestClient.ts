@@ -60,7 +60,7 @@ export default class RestClient {
     let files: FileResourceJSON[] = this.handleResponse(res)
     while (res.data.next) {
       // url already has workspace
-      res = await this.client.get(res.data.nex)
+      res = await this.client.get(res.data.next)
       files = files.concat(this.handleResponse(res))
     }
 
