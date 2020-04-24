@@ -1,6 +1,6 @@
 {
   "name": "kong-portal-cli",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "CLI tool to manage your Kong Developer Portals for Kong Enterprise",
   "main": "index.js",
   "bin": {
