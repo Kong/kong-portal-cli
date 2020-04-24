@@ -22,20 +22,23 @@ export default class RestClient {
     this.clientHeaders = workspaceConfig.headers || {}
     this.workspaceName = workspaceName
 
-    let workspaceUrl
 
     if (workspaceConfig.kongAdminUrl) {
       // workspaceUrl is removed when paginating, kong offset includes it.
       this.clientUrl = `${workspaceConfig.kongAdminUrl}`
-      workspaceUrl = workspaceName
     } else if (workspaceConfig.upstream) {
       console.log(
         'upstream is deprecated and will cease to function in a later release. Please use kong_admin_url (upstream url without the workspace suffix)',
       )
-      this.clientUrl = workspaceConfig.upstream
-      this.clientUrl = ''
+      let match = workspaceConfig.upstream.match(/.*\//)
+      if (!match) {
+        console.log('unable to parse upstream url')
+        throw new Error()
+      }
+      this.clientUrl = match[0]
     } else {
-      this.clientUrl = ''
+      console.log('kongAdminUrl not set')
+      throw new Error()
     }
 
     if (workspaceConfig.kongAdminToken) {
@@ -44,21 +47,20 @@ export default class RestClient {
 
     this.client = axios.create({
       baseURL: this.clientUrl,
-      url: workspaceUrl,
       headers: this.clientHeaders,
     })
   }
 
   public async getFiles<T>(options?: AxiosRequestConfig): Promise<FileResourceJSON[]> {
-    return this.handleResponse(await this.client.get('/files', options))
+    return this.handleResponse(await this.client.get(`${this.workspaceName}/files`, options))
   }
 
   public async getAllFiles<T>(): Promise<FileResourceJSON[]> {
-    let res = await this.client.get('/files')
+    let res = await this.client.get(`${this.workspaceName}/files`)
     let files: FileResourceJSON[] = this.handleResponse(res)
     while (res.data.next) {
-      // url is set to empty because next already has workspace
-      res = await this.client.get(res.data.next, { url: '' })
+      // url already has workspace
+      res = await this.client.get(res.data.next)
       files = files.concat(this.handleResponse(res))
     }
 
@@ -66,16 +68,16 @@ export default class RestClient {
   }
 
   public async saveFile<Output>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
-    await this.client.put(`/files/${file.path}`, file, options)
+    await this.client.put(`${this.workspaceName}/files/${file.path}`, file, options)
   }
 
   public async deleteFile<T>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
-    await this.client.delete(`/files/${file.path}`, options)
+    await this.client.delete(`${this.workspaceName}/files/${file.path}`, options)
   }
 
   public async enablePortal(options: AxiosRequestConfig = {}): Promise<void> {
     await this.client.patch(
-      `/${this.workspaceName}/workspaces/${this.workspaceName}`,
+      `${this.workspaceName}/workspaces/${this.workspaceName}`,
       { config: { portal: true } },
       options,
     )
@@ -83,7 +85,7 @@ export default class RestClient {
 
   public async disablePortal(options: AxiosRequestConfig = {}): Promise<void> {
     await this.client.patch(
-      `/${this.workspaceName}/workspaces/${this.workspaceName}`,
+      `${this.workspaceName}/workspaces/${this.workspaceName}`,
       { config: { portal: false } },
       options,
     )
