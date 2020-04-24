@@ -26,9 +26,6 @@ export default class Workspace {
   }
 
   public static async init(name: string): Promise<Workspace> {
-    if ((await this.exists(name)) === false) {
-      throw new Error()
-    }
     const workspace = new Workspace(name)
     await workspace.config.load()
     await workspace.portalConfig.load()
