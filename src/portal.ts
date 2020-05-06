@@ -1,49 +1,159 @@
 #!/usr/bin/env node
 
-import { clipanion } from 'clipanion'
+import { Cli, Command } from 'clipanion'
 
-import DeployCommand from './commands/deploy'
-import WipeCommand from './commands/wipe'
-import FetchCommand from './commands/fetch'
-import DisableCommand from './commands/disable'
-import EnableCommand from './commands/enable'
-import ConfigComand from './commands/config'
+import Deploy from './commands/deploy'
+import Wipe from './commands/wipe'
+import Fetch from './commands/fetch'
+import Disable from './commands/disable'
+import Enable from './commands/enable'
+import Config from './commands/config'
 
-clipanion
-  .command('deploy <workspace> [-W,--watch] [-P,--preserve]')
-  .describe(
-    `Deploy changes made locally under the given workspace upstream. \n
-    [-W, --watch] to make changes reactively \n
-    [-P, --preserve] to avoid deleting files upstream that you do not have locally`,
-  )
-  .action(DeployCommand)
+import * as packageJson from '../package.json'
 
-clipanion
-  .command('fetch <workspace> [-K,--keep-encode]')
-  .describe(
-    `Fetches content and themes from the given workspace. \n
-    [-k, --keep-encode] to store binary assets locally as base64 encoded string`,
-  )
-  .action(FetchCommand)
+const cli = new Cli({
+  binaryLabel: `Kong Portal CLI Tool`,
+  binaryName: `portal`,
+  binaryVersion: packageJson.version,
+})
 
-clipanion
-  .command('wipe <workspace>')
-  .describe('Deletes all content and themes from upstream workspace.')
-  .action(WipeCommand)
+class DeployCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Deploy changes made locally under the given workspace upstream.',
+    details: `
+    This command will deploy local templates upstream from given workspace folder to the same workspace upstream.\n
+    If \`-P,--preserve\` option is given a wipe operation will NOT be run first. This will persist the files upstream not found locally.\n
+    If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace`,
+  })
 
-clipanion
-  .command('config <workspace>')
-  .describe('Output or change configuration of the portal on the given workspace, locally.')
-  .action(ConfigComand)
+  @Command.String({ required: true })
+  public workspace!: string
 
-clipanion
-  .command('enable <workspace>')
-  .describe('Enable the portal on the given workspace.')
-  .action(EnableCommand)
+  @Command.Boolean(`-P,--preserve`)
+  public preserve: boolean = false
 
-clipanion
-  .command('disable <workspace>')
-  .describe('Disable the portal on the given workspace.')
-  .action(DisableCommand)
+  @Command.Boolean(`-W,--watch`)
+  public watch: boolean = false
 
-clipanion.runExit('portal', process.argv.slice(2))
+  @Command.Path(`deploy`)
+  public async execute(): Promise<void> {
+    await Deploy(this)
+  }
+}
+
+class FetchCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Fetches content and themes from the given workspace.',
+    details: `
+    This command will fetch local templates upstream from given workspace upstream to the workspace folder locally.\n
+    The workspace folder must already exist locally with a \`cli.conf.yaml\`.\n
+    If \`-K,--keep-encode\` option is given base64 assets will remain as base64 strings instead of converting to binary files.`,
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Boolean(`-K,--keep-encode`)
+  public keep_encode: boolean = false
+
+  @Command.Path(`fetch`)
+  public async execute(): Promise<void> {
+    await Fetch(this)
+  }
+}
+
+class WipeCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Deletes all content and themes from upstream workspace.',
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Path(`wipe`)
+  public async execute(): Promise<void> {
+    await Wipe(this)
+  }
+}
+
+class ConfigCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Output configuration of the portal on the given workspace, locally.',
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Path(`config`)
+  public async execute(): Promise<void> {
+    await Config(this)
+  }
+}
+
+class EnableCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Enable the portal on the given workspace.',
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Path(`enable`)
+  public async execute(): Promise<void> {
+    await Enable(this)
+  }
+}
+
+class DisableCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Disable the portal on the given workspace.',
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Path(`disable`)
+  public async execute(): Promise<void> {
+    await Disable(this)
+  }
+}
+
+class VersionCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Display version',
+  })
+
+  @Command.Path(`--version`)
+  @Command.Path(`-v`)
+  @Command.Path(`-V`)
+  public async execute(): Promise<void> {
+    this.context.stdout.write(`${cli.binaryLabel}, version ${cli.binaryVersion}\n`)
+  }
+}
+
+class HelpCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Display help text',
+  })
+
+  @Command.Path(`--help`)
+  @Command.Path(`-h`)
+  @Command.Path(`-H`)
+  public async execute(): Promise<void> {
+    this.context.stdout.write(this.cli.usage(null))
+  }
+}
+
+cli.register(DisableCommand)
+cli.register(EnableCommand)
+cli.register(ConfigCommand)
+cli.register(WipeCommand)
+cli.register(FetchCommand)
+cli.register(DeployCommand)
+cli.register(VersionCommand)
+
+cli.register(HelpCommand)
+
+cli.runExit(process.argv.slice(2), {
+  ...Cli.defaultContext,
+})
