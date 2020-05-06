@@ -40,7 +40,6 @@ Where `<command>` is one of:
  - `disable`   Disable the portal on the given workspace.
  - `enable`    Enable the portal on the given workspace.
  - `fetch`     Fetches content and themes from the given workspace.
- - `serve`     Run the portal of a given workspace locally.
  - `wipe`      Deletes all content and themes from upstream workspace.
 
  Where `<workspace>` indicates the directory/workspace pairing you would like to operate on.
