@@ -4,10 +4,10 @@
   "description": "CLI tool to manage your Kong Developer Portals for Kong Enterprise",
   "main": "index.js",
   "bin": {
-    "portal": "./bin/portal.js"
+    "portal": "./bin/src/portal.js"
   },
   "scripts": {
-    "build": "rm -rf bin && tsc && chmod +x ./bin/portal.js",
+    "build": "rm -rf bin && tsc && chmod +x ./bin/src/portal.js",
     "prepublishOnly": "npm run build"
   },
   "repository": {
@@ -33,7 +33,7 @@
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "chokidar": "^3.0.1",
-    "clipanion": "^0.15.0",
+    "clipanion": "^2.3.1",
     "crypto-promise": "^2.1.0",
     "fs-extra": "^8.0.1",
     "isbinaryfile": "^4.0.3",

@@ -1,6 +1,8 @@
 
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
+    "experimentalDecorators": true,
     "noImplicitAny": false,
     "noImplicitThis": true,
     "alwaysStrict": true,
@@ -13,7 +15,7 @@
     "noUnusedParameters": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    
+
     "target": "es2017",
     "module": "commonjs",
     "moduleResolution": "node",
@@ -27,7 +29,8 @@
     ]
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "package.json"
   ],
   "exclude": [
     "node_modules",
