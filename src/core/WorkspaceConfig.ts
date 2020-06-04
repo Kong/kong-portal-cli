@@ -2,12 +2,14 @@ import Config from './Config'
 import { OutgoingHttpHeaders } from './HTTP/RestInterfaces'
 
 export interface IWorkspaceConfig {
+  data: {}
   name?: string
   description?: string
   upstream?: string
   headers?: OutgoingHttpHeaders
   kongAdminUrl?: string
   kongAdminToken?: string
+  disableSSLVerification?: boolean
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -66,4 +68,15 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     // eslint-disable-next-line @typescript-eslint/camelcase
     this.data.kong_admin_token = token
   }
+
+  public set disableSSLVerification(isDisable: boolean) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    this.data.disable_ssl_verification = isDisable
+  }
+
+  public get disableSSLVerification(): boolean {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return this.data.disable_ssl_verification
+  }
+
 }

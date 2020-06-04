@@ -35,6 +35,9 @@ class DeployCommand extends Command {
   @Command.Boolean(`-W,--watch`)
   public watch: boolean = false
 
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
+
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
     await Deploy(this)
