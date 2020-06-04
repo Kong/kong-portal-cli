@@ -33,7 +33,7 @@ export default async (args): Promise<void> => {
   let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace)
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
