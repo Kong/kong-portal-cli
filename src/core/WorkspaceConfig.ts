@@ -9,7 +9,11 @@ export interface IWorkspaceConfig {
   headers?: OutgoingHttpHeaders
   kongAdminUrl?: string
   kongAdminToken?: string
+<<<<<<< HEAD
   disableSSLVerification?: boolean
+=======
+  ignoreSpecs?: boolean
+>>>>>>> master
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -69,6 +73,7 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.kong_admin_token = token
   }
 
+<<<<<<< HEAD
   public set disableSSLVerification(isDisable: boolean) {
     // eslint-disable-next-line @typescript-eslint/camelcase
     this.data.disable_ssl_verification = isDisable
@@ -79,4 +84,15 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     return this.data.disable_ssl_verification
   }
 
+=======
+  public set ignoreSpecs(isIgnore: boolean) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    this.data.ignore_specs = isIgnore
+  }
+
+  public get ignoreSpecs(): boolean {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return this.data.ignore_specs
+  }
+>>>>>>> master
 }

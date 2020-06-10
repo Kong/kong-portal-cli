@@ -33,7 +33,7 @@ export default async (args): Promise<void> => {
   let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification)
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
@@ -49,26 +49,35 @@ export default async (args): Promise<void> => {
 
   let added = 0
   let modified = 0
+  let specs = 0
 
   if (response) {
     for (let resource of response) {
+      if (workspace.config.ignoreSpecs && resource.path.startsWith('specs')) {
+        specs++
+        continue
+      }
       let path: string = join(workspace.path, resource.path)
       let file: File = new File(path, workspace.path)
       if (await file.exists()) {
         if (await shouldRewriteFile(resource, file, args.keepEncode)) {
           file.write(resource.contents)
           console.log('\t', 'Modified:', resource.path)
-          modified += 1
+          modified++
         }
       } else {
         file.write(resource.contents)
         console.log('\t', 'Added:', resource.path)
-        added += 1
+        added++
       }
     }
   }
 
   console.log('\t', `Fetched ${response.length} files`)
+
+  if (specs) {
+    console.log('\t', `Ignored ${specs} specs`)
+  }
 
   if (!modified || added) {
     console.log('\t', 'No changes.')

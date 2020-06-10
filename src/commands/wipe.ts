@@ -10,7 +10,7 @@ export default async (args): Promise<void> => {
   let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification)
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
@@ -24,10 +24,12 @@ export default async (args): Promise<void> => {
 
   let files: FileResource[]
   try {
-
     files = await client.getAllFiles()
 
     for (let file of files) {
+      if (workspace.config.ignoreSpecs && file.path.startsWith('specs')) {
+        continue
+      }
       spinner.text = file.path
       await client.deleteFile(file)
     }
@@ -38,6 +40,8 @@ export default async (args): Promise<void> => {
   }
 
   spinner.prefixText = `\t`
-  spinner.text = `Wiped all Files from ${workspace.name}`
+  spinner.text = workspace.config.ignoreSpecs
+    ? `Wiped all non-spec Files from ${workspace.name}`
+    : `Wiped all Files from ${workspace.name}`
   spinner.succeed()
 }
