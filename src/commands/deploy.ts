@@ -67,12 +67,14 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
     if (files.length > 0) {
       fileObj['other files'] = files
-      console.log(files)
     }
 
     await asyncForEach(
       Object.keys(fileObj),
       async (fileType): Promise<void> => {
+        if (fileType === 'specs' && workspace.config.ignoreSpecs) {
+          return
+        }
         let files: File[] = fileObj[fileType]
         spinner.prefixText = `Deploying ${fileType}`
         for (let file of files) {
@@ -90,7 +92,9 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
     )
     spinner.prefixText = ''
     if (!path) {
-      spinner.text = `Deployed all files to ${workspace.name}`
+      spinner.text = workspace.config.ignoreSpecs
+        ? `Deployed all non-spec files to ${workspace.name}`
+        : `Deployed all files to ${workspace.name}`
     }
     spinner.succeed()
 
@@ -110,7 +114,7 @@ export default async (args: any): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace)
+    workspace = await Workspace.init(args.workspace, args.ignoreSpecs)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }

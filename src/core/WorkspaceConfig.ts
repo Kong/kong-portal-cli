@@ -8,6 +8,7 @@ export interface IWorkspaceConfig {
   headers?: OutgoingHttpHeaders
   kongAdminUrl?: string
   kongAdminToken?: string
+  ignoreSpecs?: boolean
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -65,5 +66,15 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   public set kongAdminToken(token: string) {
     // eslint-disable-next-line @typescript-eslint/camelcase
     this.data.kong_admin_token = token
+  }
+
+  public set ignoreSpecs(isIgnore: boolean) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    this.data.ignore_specs = isIgnore
+  }
+
+  public get ignoreSpecs(): boolean {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return this.data.ignore_specs
   }
 }
