@@ -35,8 +35,8 @@ class DeployCommand extends Command {
   @Command.Boolean(`-W,--watch`)
   public watch: boolean = false
 
-  @Command.Boolean(`-i,--ignore-specs`)
-  public ignore_specs: boolean = false
+  @Command.Boolean(`-I,--ignore-specs`)
+  public ignoreSpecs: boolean = false
 
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
@@ -57,10 +57,10 @@ class FetchCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-K,--keep-encode`)
-  public keep_encode: boolean = false
+  public keepEncode: boolean = false
 
-  @Command.Boolean(`-i,--ignore-specs`)
-  public ignore_specs: boolean = false
+  @Command.Boolean(`-I,--ignore-specs`)
+  public ignoreSpecs: boolean = false
 
   @Command.Path(`fetch`)
   public async execute(): Promise<void> {
@@ -76,8 +76,8 @@ class WipeCommand extends Command {
   @Command.String({ required: true })
   public workspace!: string
 
-  @Command.Boolean(`-i,--ignore-specs`)
-  public ignore_specs: boolean = false
+  @Command.Boolean(`-I,--ignore-specs`)
+  public ignoreSpecs: boolean = false
 
   @Command.Path(`wipe`)
   public async execute(): Promise<void> {

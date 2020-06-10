@@ -45,7 +45,8 @@ export default class Workspace {
     }
 
     if (ignoreSpecs) {
-      workspace.config.data.ignoreSpecs = true
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      workspace.config.data.ignore_specs = true
     }
 
     return workspace

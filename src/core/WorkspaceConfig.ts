@@ -68,13 +68,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
     this.data.kong_admin_token = token
   }
 
-  public set ignoreSpecs(isDisable: boolean) {
+  public set ignoreSpecs(isIgnore: boolean) {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.disable_ssl_verification = isDisable
+    this.data.ignore_specs = isIgnore
   }
 
   public get ignoreSpecs(): boolean {
     // eslint-disable-next-line @typescript-eslint/camelcase
-    return this.data.disable_ssl_verification
+    return this.data.ignore_specs
   }
 }
