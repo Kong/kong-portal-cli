@@ -25,7 +25,7 @@ export default class Workspace {
     this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
-  public static async init(name: string): Promise<Workspace> {
+  public static async init(name: string, ignoreSpecs?: boolean): Promise<Workspace> {
     if ((await this.exists(name)) === false) {
       throw new Error()
     }
@@ -42,6 +42,10 @@ export default class Workspace {
     if (process.env.KONG_ADMIN_TOKEN) {
       // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
+    }
+
+    if (ignoreSpecs) {
+      workspace.config.data.ignoreSpecs = true
     }
 
     return workspace

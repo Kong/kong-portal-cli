@@ -35,6 +35,9 @@ class DeployCommand extends Command {
   @Command.Boolean(`-W,--watch`)
   public watch: boolean = false
 
+  @Command.Boolean(`-i,--ignore-specs`)
+  public ignore_specs: boolean = false
+
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
     await Deploy(this)
@@ -56,6 +59,9 @@ class FetchCommand extends Command {
   @Command.Boolean(`-K,--keep-encode`)
   public keep_encode: boolean = false
 
+  @Command.Boolean(`-i,--ignore-specs`)
+  public ignore_specs: boolean = false
+
   @Command.Path(`fetch`)
   public async execute(): Promise<void> {
     await Fetch(this)
@@ -69,6 +75,9 @@ class WipeCommand extends Command {
 
   @Command.String({ required: true })
   public workspace!: string
+
+  @Command.Boolean(`-i,--ignore-specs`)
+  public ignore_specs: boolean = false
 
   @Command.Path(`wipe`)
   public async execute(): Promise<void> {
