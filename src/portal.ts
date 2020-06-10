@@ -35,13 +35,10 @@ class DeployCommand extends Command {
   @Command.Boolean(`-W,--watch`)
   public watch: boolean = false
 
-<<<<<<< HEAD
   @Command.Boolean(`-D,--disable-ssl-verification`)
   public disableSSLVerification: boolean = false
-=======
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
->>>>>>> master
 
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
@@ -84,13 +81,10 @@ class WipeCommand extends Command {
   @Command.String({ required: true })
   public workspace!: string
 
-<<<<<<< HEAD
   @Command.Boolean(`-D,--disable-ssl-verification`)
   public disableSSLVerification: boolean = false
-=======
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
->>>>>>> master
 
   @Command.Path(`wipe`)
   public async execute(): Promise<void> {
