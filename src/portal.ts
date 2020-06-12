@@ -35,6 +35,8 @@ class DeployCommand extends Command {
   @Command.Boolean(`-W,--watch`)
   public watch: boolean = false
 
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
 
@@ -62,6 +64,9 @@ class FetchCommand extends Command {
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
 
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
+
   @Command.Path(`fetch`)
   public async execute(): Promise<void> {
     await Fetch(this)
@@ -76,6 +81,8 @@ class WipeCommand extends Command {
   @Command.String({ required: true })
   public workspace!: string
 
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
 
@@ -107,6 +114,9 @@ class EnableCommand extends Command {
   @Command.String({ required: true })
   public workspace!: string
 
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
+
   @Command.Path(`enable`)
   public async execute(): Promise<void> {
     await Enable(this)
@@ -120,6 +130,9 @@ class DisableCommand extends Command {
 
   @Command.String({ required: true })
   public workspace!: string
+
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification: boolean = false
 
   @Command.Path(`disable`)
   public async execute(): Promise<void> {

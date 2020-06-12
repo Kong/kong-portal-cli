@@ -2,6 +2,7 @@ import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import * as https from 'https'
 
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
@@ -45,9 +46,18 @@ export default class RestClient {
       this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.kongAdminToken
     }
 
+    let httpsAgent
+
+    if (workspaceConfig.disableSSLVerification) {
+      httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+      })
+    }
+
     this.client = axios.create({
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
+      httpsAgent,
     })
   }
 

@@ -25,7 +25,7 @@ export default class Workspace {
     this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
-  public static async init(name: string, ignoreSpecs?: boolean): Promise<Workspace> {
+  public static async init(name: string, disableSSLVerification?: boolean, ignoreSpecs?: boolean,): Promise<Workspace> {
     if ((await this.exists(name)) === false) {
       throw new Error()
     }
@@ -44,6 +44,10 @@ export default class Workspace {
       workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
     }
 
+    if (disableSSLVerification) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      workspace.config.data.disable_ssl_verification = true
+    }
     if (ignoreSpecs) {
       // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.ignore_specs = true
