@@ -47,20 +47,20 @@ Where `<command>` is one of:
 ### For `deploy`
 - Add `-W` or `--watch` to make changes reactive.
 - Add `-P` or `--preserve` to avoid deleting files upstream that you do not have locally.
-- Add `-D` or `--disable-ssl-verification` to disable SSL verification to use self-signed certs.
+- Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
 
 ### For `fetch`
 - Add `-K` or `--keep-encode` to keep binary assets as base64 encoded strings locally.
-- Add `-D` or `--disable-ssl-verification` to disable SSL verification to use self-signed certs.
+- Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
 
 ### For `wipe`
-- Add `-D` or `--disable-ssl-verification` to disable SSL verification to use self-signed certs.
+- Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
 
 ### For `enable` and `disable`
-- Add `-D` or `--disable-ssl-verification` to disable SSL verification to use self-signed certs.
+- Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 
 
 ### Using `cli.conf.yaml`
@@ -68,10 +68,10 @@ In addition to `kong_admin_uri` and `kong_admin_token`, you can also add:
 - `disable_ssl_verification: true` and
 - `ignore_specs: true`
 
-In order to always enable those settings on that workspace instead of using the flags.
+Set the options in the CLI configuration file to always enable those settings on that Workspace instead of passing the option flags with every command.
 
 ### Using Environment Variables
-You can override some config values set in `cli.conf.yaml` via environment variables.  If you wanted to override the kong admin url for example, you can run:
+You can override some config values set in `cli.conf.yaml` via environment variables.  For example, If you wanted to override the Kong Admin URL, you can run:
 
 ```
 KONG_ADMIN_URL=http://new-admin-url.com portal deploy default

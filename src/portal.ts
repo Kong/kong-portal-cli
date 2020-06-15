@@ -24,8 +24,8 @@ class DeployCommand extends Command {
     This command will deploy local templates upstream from given workspace folder to the same workspace upstream.\n
     If \`-P,--preserve\` option is given a wipe operation will NOT be run first. This will persist the files upstream not found locally.\n
     If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
-    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` in cli.conf.yaml, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in cli.conf.yaml the '\\specs' folder will be ignored.`,
+    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in `cli.conf.yaml`, SSL verification will be disabled to allow for use of self-signed certs.\n
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in `cli.conf.yaml`, the '\\specs' folder will be ignored.`,
   })
 
   @Command.String({ required: true })
@@ -55,9 +55,9 @@ class FetchCommand extends Command {
     details: `
     This command will fetch local templates upstream from given workspace upstream to the workspace folder locally.\n
     The workspace folder must already exist locally with a \`cli.conf.yaml\`.\n
-    If \`-K,--keep-encode\` option is given base64 assets will remain as base64 strings instead of converting to binary files.\n
-    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` in cli.conf.yaml, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in cli.conf.yaml the '\\specs' folder will be ignored.`,
+    If \`-K,--keep-encode\` option is given, base64 assets will remain as base64 strings instead of converting to binary files.\n
+    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in `cli.conf.yaml`, SSL verification will be disabled to allow for use of self-signed certs.\n
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in `cli.conf.yaml`, the '\\specs' folder will be ignored.`,
   })
 
   @Command.String({ required: true })
@@ -82,9 +82,9 @@ class WipeCommand extends Command {
   public static usage = Command.Usage({
     description: 'Deletes all content and themes from upstream workspace.',
     details: `
-    This command will delete all content and themes from upstream workspace.\n
-    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` in cli.conf.yaml, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in cli.conf.yaml the '\\specs' folder will be ignored.`,
+    This command will delete all content and themes from the Upstream Workspace.\n
+    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in `cli.conf.yaml`, SSL verification will be disabled to allow for use of self-signed certs.\n
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in `cli.conf.yaml`, the '\\specs' folder will be ignored.`,
   })
 
   @Command.String({ required: true })
