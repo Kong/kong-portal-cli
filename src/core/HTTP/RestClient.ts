@@ -57,6 +57,7 @@ export default class RestClient {
     this.client = axios.create({
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
+      maxContentLength: 10 * 1000000, // 10mb is kong file system
       httpsAgent,
     })
   }
@@ -110,6 +111,9 @@ export default class RestClient {
   }
 
   public handleError<T>(err: AxiosError): string {
+    if (err.message === 'Request body larger than maxBodyLength limit') {
+      return '\nFiles must be less than 10mb'
+    }
     if (err.response && err.response.status === 401) {
       return err.message + '\n\t Make sure you have the correct admin token and RBAC settings for that token'
     }
