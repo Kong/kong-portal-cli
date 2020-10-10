@@ -2,6 +2,7 @@
 
 import { Cli, Command } from 'clipanion'
 
+import Init from './commands/init'
 import Deploy from './commands/deploy'
 import Wipe from './commands/wipe'
 import Fetch from './commands/fetch'
@@ -16,6 +17,23 @@ const cli = new Cli({
   binaryName: `portal`,
   binaryVersion: packageJson.version,
 })
+
+class InitCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Initialize a local workspace with a default \`cli.conf.yaml\` configuration file.',
+    details: `
+    This command will initialize a local workspace with a default \`cli.conf.yaml\` configuration file. \n
+    `,
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Path(`init`)
+  public async execute(): Promise<void> {
+    await Init(this)
+  }
+}
 
 class DeployCommand extends Command {
   public static usage = Command.Usage({
@@ -181,6 +199,7 @@ class HelpCommand extends Command {
   }
 }
 
+cli.register(InitCommand)
 cli.register(DisableCommand)
 cli.register(EnableCommand)
 cli.register(ConfigCommand)

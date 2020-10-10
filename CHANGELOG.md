@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Deploy script terminates with exit code 1 when an error occurs
+## [Unreleased]
+### Added
+- Add new command `init` to initialize a local workspace with a default cli.conf.yaml configuration file
 
 ## [3.1.0] - 2020-06-15
 ### Added

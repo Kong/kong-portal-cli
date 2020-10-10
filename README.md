@@ -40,6 +40,7 @@ Where `<command>` is one of:
  - `disable`   Disable the portal on the given workspace.
  - `enable`    Enable the portal on the given workspace.
  - `fetch`     Fetches content and themes from the given workspace.
+ - `init`      Initialize a local workspace with a default cli.conf.yaml configuration file.
  - `wipe`      Deletes all content and themes from upstream workspace.
 
  Where `<workspace>` indicates the directory/workspace pairing you would like to operate on.
