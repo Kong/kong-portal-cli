@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Deploy script terminates with exit code 1 when an error occurs
+- Add new option `-S/--skip-path` to skip files and directories that match the given path
 
 ## [3.1.0] - 2020-06-15
 ### Added

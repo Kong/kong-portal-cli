@@ -43,7 +43,8 @@ class DeployCommand extends Command {
     If \`-P,--preserve\` option is given a wipe operation will NOT be run first. This will persist the files upstream not found locally.\n
     If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.`,
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
+    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.`,
   })
 
   @Command.String({ required: true })
@@ -60,6 +61,9 @@ class DeployCommand extends Command {
 
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
+
+  @Command.Array(`-S,--skip-path`)
+  public skipPath: string[] = []
 
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
