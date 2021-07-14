@@ -102,7 +102,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   } catch (e) {
     spinner.text = client.handleError(e)
     spinner.fail()
-    return
+    throw e
   }
 }
 
