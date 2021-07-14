@@ -25,7 +25,7 @@ export default class Workspace {
     this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
-  public static async init(name: string, disableSSLVerification?: boolean, ignoreSpecs?: boolean,): Promise<Workspace> {
+  public static async init(name: string, disableSSLVerification?: boolean, ignoreSpecs?: boolean, skipPath?: string[]): Promise<Workspace> {
     if ((await this.exists(name)) === false) {
       throw new Error()
     }
@@ -51,6 +51,11 @@ export default class Workspace {
     if (ignoreSpecs) {
       // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.ignore_specs = true
+    }
+
+    if (skipPath && skipPath.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      workspace.config.data.skip_paths = skipPath
     }
 
     return workspace

@@ -11,6 +11,7 @@ export interface IWorkspaceConfig {
   kongAdminToken?: string
   disableSSLVerification?: boolean
   ignoreSpecs?: boolean
+  skipPaths?: string[]
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -88,5 +89,15 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   public get ignoreSpecs(): boolean {
     // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.ignore_specs
+  }
+
+  public set skipPaths(skipPaths: string[]) {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    this.data.skip_paths = skipPaths
+  }
+
+  public get skipPaths(): string[] {
+    // eslint-disable-next-line @typescript-eslint/camelcase
+    return this.data.skip_paths
   }
 }
