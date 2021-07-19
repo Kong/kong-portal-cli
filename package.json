@@ -29,28 +29,28 @@
   },
   "homepage": "https://github.com/Kong/kong-portal-cli#readme",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
-    "chalk": "^2.4.2",
+    "chalk": "^4.1.1",
     "chokidar": "^3.0.1",
     "clipanion": "^2.3.1",
     "crypto-promise": "^2.1.0",
-    "fs-extra": "^8.0.1",
+    "fs-extra": "^10.0.0",
     "isbinaryfile": "^4.0.3",
-    "js-yaml": "^3.13.1",
-    "ora": "^3.4.0",
+    "js-yaml": "^4.1.0",
+    "ora": "^5.4.1",
     "recursive-readdir-async": "^1.1.5",
-    "upath": "^1.2.0"
+    "upath": "^2.0.1"
   },
   "devDependencies": {
-    "@types/node": "^12.0.8",
+    "@types/node": "^16.3.3",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "eslint": "^5.16.0",
-    "eslint-config-prettier": "^5.0.0",
+    "eslint-config-prettier": "^6.15.0",
     "eslint-plugin-prettier": "^3.1.0",
-    "prettier": "^1.18.2",
-    "ts-node": "^8.3.0",
-    "typescript": "^3.5.2"
+    "prettier": "^2.3.2",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
   }
 }
