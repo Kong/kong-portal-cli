@@ -60,6 +60,7 @@ Where `<command>` is one of:
 ### For `wipe`
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
+- Add `-S` or `--skip-path` to skip files or directories that match the given path. This option can be repeated.
 
 ### For `enable` and `disable`
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.

@@ -78,12 +78,10 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
         let files: File[] = fileObj[fileType]
 
         if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
-          // Remove skipped files and directories from the files array
-          files = fileObj[fileType].filter(function(pathElement) {
-            return workspace.config.skipPaths.filter(function(skipPathElement) {
-              return pathElement.resource.path.startsWith(skipPathElement)
-            }).length == 0
-          })
+          files = fileObj[fileType].filter(
+            (file: File): boolean =>
+              !workspace.config.skipPaths.some((path): boolean => file.resource.path.startsWith(path)),
+          )
         }
 
         spinner.prefixText = `Deploying ${fileType}`

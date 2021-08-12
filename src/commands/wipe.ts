@@ -10,7 +10,7 @@ export default async (args): Promise<void> => {
   let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs, args.skipPath)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
@@ -25,6 +25,13 @@ export default async (args): Promise<void> => {
   let files: FileResource[]
   try {
     files = await client.getAllFiles()
+
+    if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
+      files = files.filter(
+        (file: FileResource): boolean =>
+          !workspace.config.skipPaths.some((path): boolean => file.path.startsWith(path)),
+      )
+    }
 
     for (let file of files) {
       if (workspace.config.ignoreSpecs && file.path.startsWith('specs')) {

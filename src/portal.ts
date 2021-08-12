@@ -106,7 +106,8 @@ class WipeCommand extends Command {
     details: `
     This command will delete all content and themes from the Upstream Workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.`,
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
+    If \`-S,--skip-path\` option is given files or directories that match the path will be ignored. The \`--skip-path\` option can be repeated.`,
   })
 
   @Command.String({ required: true })
@@ -114,8 +115,12 @@ class WipeCommand extends Command {
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
   public disableSSLVerification: boolean = false
+
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs: boolean = false
+
+  @Command.Array(`-S,--skip-path`)
+  public skipPath: string[] = []
 
   @Command.Path(`wipe`)
   public async execute(): Promise<void> {
