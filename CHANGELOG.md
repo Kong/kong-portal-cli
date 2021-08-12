@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Added
 - Add new command `init` to initialize a local workspace with a default cli.conf.yaml configuration file
+- Add new option `-S/--skip-path` to skip files and directories that match the given path
 
 ## [3.2.0] - 2021-07-14
 ### Changed
@@ -15,7 +16,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Deploy script terminates with exit code 1 when an error occurs
-- Add new option `-S/--skip-path` to skip files and directories that match the given path
 
 ## [3.1.0] - 2020-06-15
 ### Added
