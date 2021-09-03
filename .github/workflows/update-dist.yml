@@ -1,4 +1,4 @@
-name: Update build
+name: Audit fix
 on:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ jobs:
         with:
           node-version: 16.x
       - run: npm ci
-      - run: npm run build
+      - run: npm audit --fix
       - name: Commit changes
         uses: EndBug/add-and-commit@v7
         with:
