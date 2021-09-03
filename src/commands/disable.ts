@@ -1,6 +1,6 @@
 import RestClient from '../core/HTTP/RestClient'
 import Workspace from '../core/Workspace'
-import * as ora from 'ora'
+import ora from 'ora'
 
 import { MissingWorkspaceError } from '../helpers'
 
@@ -14,11 +14,9 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace)
   }
 
-  let spinner: ora.Ora = ora({
+  let spinner = ora({
     prefixText: `Enabling ${workspace.name} Portal...`,
-  })
-
-  spinner.start()
+  }).start()
 
   try {
     client = new RestClient(workspace.config, workspace.name)

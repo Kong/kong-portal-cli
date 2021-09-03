@@ -1,4 +1,4 @@
-import * as ora from 'ora'
+import ora from 'ora'
 
 import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
