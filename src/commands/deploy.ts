@@ -76,7 +76,16 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
           return
         }
         let files: File[] = fileObj[fileType]
+
+        if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
+          files = fileObj[fileType].filter(
+            (file: File): boolean =>
+              !workspace.config.skipPaths.some((path): boolean => file.resource.path.startsWith(path)),
+          )
+        }
+
         spinner.prefixText = `Deploying ${fileType}`
+
         for (let file of files) {
           if (path && file.location.split(path)[1] !== '') {
             continue
@@ -114,7 +123,7 @@ export default async (args: any): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs, args.skipPath)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
