@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add new command `init` to initialize a local workspace with a default cli.conf.yaml configuration file
 - Add new option `-S/--skip-path` to skip files and directories that match the given path
 
+## [3.2.1] - 2021-11-05
+### Fixed
+- Bump glob-parent from 5.0.0 to 5.1.2
+- Bump axios from 0.19.2 to 0.21.2
+- Bump lodash from 4.17.15 to 4.17.21
+
 ## [3.2.0] - 2021-07-14
 ### Changed
 - File size limit for uploaded files set to 10MB
