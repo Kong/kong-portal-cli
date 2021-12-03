@@ -1,7 +1,7 @@
 import { IWorkspaceConfig } from '../WorkspaceConfig'
-import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces'
+import { IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import * as https from 'https'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
@@ -24,7 +24,6 @@ export default class RestClient {
   public constructor(workspaceConfig: IWorkspaceConfig, workspaceName: string) {
     this.clientHeaders = workspaceConfig.headers || {}
     this.workspaceName = workspaceName
-
 
     if (workspaceConfig.kongAdminUrl) {
       // workspaceUrl is removed when paginating, kong offset includes it.

@@ -20,7 +20,7 @@ const cli = new Cli({
 
 class InitCommand extends Command {
   public static usage = Command.Usage({
-    description: 'Initialize a local workspace with a default \`cli.conf.yaml\` configuration file.',
+    description: 'Initialize a local workspace with a default `cli.conf.yaml` configuration file.',
     details: `
     This command will initialize a local workspace with a default \`cli.conf.yaml\` configuration file. \n
     `,

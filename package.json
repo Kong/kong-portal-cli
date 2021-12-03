@@ -7,6 +7,8 @@
     "portal": "./bin/src/portal.js"
   },
   "scripts": {
+    "lint":"eslint --ext .ts ./src",
+    "lint:fix": "eslint --ext .ts ./src --fix",
     "build": "rm -rf bin && tsc && chmod +x ./bin/src/portal.js",
     "prepublishOnly": "npm run build"
   },

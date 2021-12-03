@@ -25,7 +25,12 @@ export default class Workspace {
     this.routerConfig = new Config(this.path, 'router.conf.yaml')
   }
 
-  public static async init(name: string, disableSSLVerification?: boolean, ignoreSpecs?: boolean, skipPath?: string[]): Promise<Workspace> {
+  public static async init(
+    name: string,
+    disableSSLVerification?: boolean,
+    ignoreSpecs?: boolean,
+    skipPath?: string[],
+  ): Promise<Workspace> {
     if ((await this.exists(name)) === false) {
       throw new Error()
     }
@@ -113,5 +118,4 @@ export default class Workspace {
   public async getCurrentTheme(): Promise<WorkspaceTheme> {
     return this.getTheme(this.getCurrentThemeName())
   }
-
 }
