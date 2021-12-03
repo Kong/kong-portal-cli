@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
-import { join, toUnix } from 'upath'
+import { join } from 'upath'
 
 import Config from './Config'
 import File from './File'

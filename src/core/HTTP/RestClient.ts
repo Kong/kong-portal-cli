@@ -1,7 +1,7 @@
 import { IWorkspaceConfig } from '../WorkspaceConfig'
-import { OutgoingHttpHeaders, IRestResponse, IRestResource } from './RestInterfaces'
+import { IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
-import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import * as https from 'https'
 
 export class RestClientError<T> extends Error {
