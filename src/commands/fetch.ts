@@ -1,4 +1,3 @@
-
 import { join } from 'upath'
 import { isBinaryFile } from 'isbinaryfile'
 
@@ -7,7 +6,6 @@ import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
 
 import { MissingWorkspaceError } from '../helpers'
-
 
 async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Promise<boolean> {
   const shasum = await file.getShaSum()

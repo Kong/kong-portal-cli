@@ -1,4 +1,3 @@
-
 export interface FileResourceJSON {
   /** UUID */
   id?: string
@@ -20,7 +19,6 @@ export default class FileResource implements FileResourceJSON {
   public auth?: boolean
 
   public constructor(json: FileResourceJSON) {
-
     this.id = json.id
     this.path = json.path
     this.contents = json.contents

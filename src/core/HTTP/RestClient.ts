@@ -23,7 +23,6 @@ export default class RestClient {
     this.clientHeaders = workspaceConfig.headers || {}
     this.workspaceName = workspaceName
 
-
     if (workspaceConfig.kongAdminUrl) {
       // workspaceUrl is removed when paginating, kong offset includes it.
       this.clientUrl = `${workspaceConfig.kongAdminUrl}`
