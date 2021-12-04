@@ -7,7 +7,7 @@
     "portal": "./bin/src/portal.js"
   },
   "scripts": {
-    "test":"npx tap --ts src/**/*.test.ts",
+    "test": "npx tap --ts src/**/*.test.ts",
     "lint": "eslint --ext .ts ./src",
     "lint:fix": "eslint --ext .ts ./src --fix",
     "build": "rm -rf bin && tsc && chmod +x ./bin/src/portal.js",
@@ -47,6 +47,7 @@
   },
   "devDependencies": {
     "@types/node": "^12.0.8",
+    "@types/tap": "^15.0.5",
     "@typescript-eslint/eslint-plugin": "^1.10.2",
     "@typescript-eslint/parser": "^1.10.2",
     "eslint": "^5.16.0",
