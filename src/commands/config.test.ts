@@ -8,16 +8,20 @@ import { UsageError } from 'clipanion'
 //     '../core/Config': {}
 //   })
 //   await _config({ workspace: 'foo' })
-// 
+//
 // })
 
-tap.test('Fails because missing workspace', async t => {
+tap.test('Fails because missing workspace', async (t) => {
   const _config = tap.mock('./config', {
     '../core/Workspace': {
-      exists: async () => { return false },
-      getDirectoryPath: () => { return 'path' }
+      exists: async () => {
+        return false
+      },
+      getDirectoryPath: () => {
+        return 'path'
+      },
     },
-    '../core/Config': {}
+    '../core/Config': {},
   }).default
 
   await _config({ workspace: 'foo' })
@@ -29,8 +33,8 @@ tap.test('Fails because missing workspace', async t => {
   t.end()
 })
 
-tap.test('Fails because missing theme', async t => {
-  const noop = () => { }
+tap.test('Fails because missing theme', async (t) => {
+  const noop = () => {}
   const _config = tap.mock('./config', {
     '../core/Workspace': {
       exists: async () => true,
@@ -41,20 +45,21 @@ tap.test('Fails because missing theme', async t => {
           config: { toConsole: noop },
           portalConfig: { toConsole: noop },
           routerConfig: { toConsole: noop },
-          toConsole: () => { }
+          toConsole: () => {},
         }
       },
-      getCurrentTheme: async () => { throw Error('F') }
+      getCurrentTheme: async () => {
+        throw Error('F')
+      },
     },
-    '../core/Config': {}
+    '../core/Config': {},
   }).default
 
   await _config({ workspace: 'foo' })
     .then(() => t.fail('Should throw'))
-    .catch((e:Error) => {
+    .catch((e: Error) => {
       t.ok(e)
       t.type(e, UsageError)
     })
   t.end()
 })
-
