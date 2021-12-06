@@ -7,7 +7,8 @@
     "portal": "./bin/src/portal.js"
   },
   "scripts": {
-    "test": "npx tap --ts src/**/*.test.ts",
+    "test": "npx tap -J --ts src/**/*.test.ts",
+    "test:ci": "npm run test -- --cov --coverage-report=lcovonly",
     "lint": "eslint --ext .ts ./src",
     "lint:fix": "eslint --ext .ts ./src --fix",
     "build": "rm -rf bin && tsc && chmod +x ./bin/src/portal.js",
@@ -57,5 +58,8 @@
     "tap": "^15.1.5",
     "ts-node": "^10.4.0",
     "typescript": "^3.5.2"
+  },
+  "tap": {
+    "check-coverage": false
   }
 }
