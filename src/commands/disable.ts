@@ -1,6 +1,6 @@
 import RestClient from '../core/HTTP/RestClient'
 import Workspace from '../core/Workspace'
-import * as ora from 'ora'
+import ora from 'ora'
 
 import { MissingWorkspaceError } from '../helpers'
 
