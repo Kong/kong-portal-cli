@@ -37,6 +37,7 @@
     "node_modules",
     "templates",
     "fixtures",
-    "workspaces"
+    "workspaces",
+    "**/*.test.ts"
   ]
 }

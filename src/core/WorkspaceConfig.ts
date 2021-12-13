@@ -15,12 +15,16 @@ export interface IWorkspaceConfig {
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
-  // deprecated
+  /**
+   * @deprecated
+   */
   public get name(): string {
     return this.data.name
   }
 
-  // deprecated
+  /**
+   * @deprecated
+   */
   public set name(name: string) {
     this.data.name = name
   }
@@ -34,21 +38,23 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   }
 
   public get kongAdminUrl(): string {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.kong_admin_url
   }
 
   public set kongAdminUrl(url: string) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.kong_admin_url = url
+    this.data['kong_admin_url'] = url
   }
 
-  // deprecated
+  /**
+   * @deprecated
+   */
   public get upstream(): string {
     return this.data.upstream
   }
 
-  // deprecated
+  /**
+   * @deprecated
+   */
   public set upstream(url: string) {
     this.data.upstream = url
   }
@@ -67,37 +73,30 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   }
 
   public set kongAdminToken(token: string) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.kong_admin_token = token
+    this.data['kong_admin_token'] = token
   }
 
   public set disableSSLVerification(isDisable: boolean) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.disable_ssl_verification = isDisable
+    this.data['disable_ssl_verification'] = isDisable
   }
 
   public get disableSSLVerification(): boolean {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.disable_ssl_verification
   }
 
   public set ignoreSpecs(isIgnore: boolean) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.ignore_specs = isIgnore
+    this.data['ignore_specs'] = isIgnore
   }
 
   public get ignoreSpecs(): boolean {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.ignore_specs
   }
 
   public set skipPaths(skipPaths: string[]) {
-    // eslint-disable-next-line @typescript-eslint/camelcase
-    this.data.skip_paths = skipPaths
+    this.data['skip_paths'] = skipPaths
   }
 
   public get skipPaths(): string[] {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.skip_paths
   }
 }
