@@ -70,4 +70,3 @@ bin
 workspaces
 
 yarn.lock
-package-lock.json
