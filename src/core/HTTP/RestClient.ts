@@ -2,7 +2,6 @@ import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
-import * as https from 'https'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 

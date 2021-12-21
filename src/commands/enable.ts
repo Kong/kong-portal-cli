@@ -1,10 +1,10 @@
 import RestClient from '../core/HTTP/RestClient'
 import Workspace from '../core/Workspace'
-import * as ora from 'ora'
+import ora from 'ora'
 
 import { MissingWorkspaceError } from '../helpers'
 
-export default async (args): Promise<void> => {
+export default async (args: { workspace: string; disableSSLVerification: boolean }): Promise<void> => {
   let workspace: Workspace
   let client: RestClient
 

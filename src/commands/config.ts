@@ -18,7 +18,7 @@ function ConfigToConsole(name: string, config: Config): void {
   config.toConsole()
 }
 
-export default async (args): Promise<void> => {
+export default async (args: { workspace: string }): Promise<void> => {
   const workspaceExists = await Workspace.exists(args.workspace)
   if (!workspaceExists) {
     MissingWorkspaceError(args.workspace)

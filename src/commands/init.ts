@@ -11,7 +11,7 @@ kong_admin_url: http://localhost:8001
 # @optional
 kong_admin_token: ''`
 
-export default async (args): Promise<void> => {
+export default async (args: { workspace: string }): Promise<void> => {
   let path = join('workspaces', args.workspace)
 
   await fs.ensureDir(path)

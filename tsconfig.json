@@ -1,6 +1,7 @@
 
 {
   "compilerOptions": {
+    "esModuleInterop": true,
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "noImplicitAny": false,
@@ -36,6 +37,7 @@
     "node_modules",
     "templates",
     "fixtures",
-    "workspaces"
+    "workspaces",
+    "**/*.test.ts"
   ]
 }
