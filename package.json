@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/Kong/kong-portal-cli#readme",
   "dependencies": {
-    "axios": "^0.21.2",
+    "axios": "^0.25.0",
     "body-parser": "^1.19.0",
     "chalk": "^2.4.2",
     "chokidar": "^3.0.1",
