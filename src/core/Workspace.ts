@@ -30,6 +30,7 @@ export default class Workspace {
     disableSSLVerification?: boolean,
     ignoreSpecs?: boolean,
     skipPath?: string[],
+    enablePath?: string[],
   ): Promise<Workspace> {
     if ((await this.exists(name)) === false) {
       throw new Error()
@@ -63,6 +64,10 @@ export default class Workspace {
       workspace.config.data.skip_paths = skipPath
     }
 
+    if (enablePath && enablePath.length > 0) {
+      // eslint-disable-next-line @typescript-eslint/camelcase
+      workspace.config.data.enable_paths = enablePath
+    }
     return workspace
   }
 

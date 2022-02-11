@@ -12,6 +12,7 @@ export interface IWorkspaceConfig {
   disableSSLVerification?: boolean
   ignoreSpecs?: boolean
   skipPaths?: string[]
+  enablePaths?: string[]
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -98,5 +99,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
 
   public get skipPaths(): string[] {
     return this.data.skip_paths
+  }
+
+  public set enablePaths(enablePaths: string[]) {
+    this.data['enable_paths'] = enablePaths
+  }
+
+  public get enablePaths(): string[] {
+    return this.data.enable_paths
   }
 }

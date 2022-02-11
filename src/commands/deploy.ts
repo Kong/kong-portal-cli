@@ -77,6 +77,12 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
         }
         let files: File[] = fileObj[fileType]
 
+        if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+          files = fileObj[fileType].filter((file: File): boolean =>
+            workspace.config.enablePaths.some((path): boolean => file.resource.path.startsWith(path)),
+          )
+        }
+
         if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
           files = fileObj[fileType].filter(
             (file: File): boolean =>
@@ -123,7 +129,13 @@ export default async (args: any): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs, args.skipPath)
+    workspace = await Workspace.init(
+      args.workspace,
+      args.disableSSLVerification,
+      args.ignoreSpecs,
+      args.skipPath,
+      args.enablePath,
+    )
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }

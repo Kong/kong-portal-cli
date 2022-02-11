@@ -4,6 +4,7 @@ import { isBinaryFile } from 'isbinaryfile'
 import File from '../core/File'
 import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
+import FileResource from '../core/HTTP/Resources/FileResource'
 
 import { MissingWorkspaceError } from '../helpers'
 
@@ -31,15 +32,21 @@ export default async (args): Promise<void> => {
   let client: RestClient
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
+    workspace = await Workspace.init(
+      args.workspace,
+      args.disableSSLVerification,
+      args.ignoreSpecs,
+      args.skipPath,
+      args.enablePath,
+    )
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
 
   client = new RestClient(workspace.config, workspace.name)
-  let response
+  let files: FileResource[]
   try {
-    response = await client.getAllFiles()
+    files = await client.getAllFiles()
   } catch (e) {
     console.log(e)
     return
@@ -49,8 +56,14 @@ export default async (args): Promise<void> => {
   let modified = 0
   let specs = 0
 
-  if (response) {
-    for (let resource of response) {
+  if (files) {
+    if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+      files = files.filter((file: FileResource): boolean =>
+        workspace.config.enablePaths.some((path): boolean => file.path.startsWith(path)),
+      )
+    }
+
+    for (let resource of files) {
       if (workspace.config.ignoreSpecs && resource.path.startsWith('specs')) {
         specs++
         continue
@@ -71,7 +84,7 @@ export default async (args): Promise<void> => {
     }
   }
 
-  console.log('\t', `Fetched ${response.length} files`)
+  console.log('\t', `Fetched ${files.length} files`)
 
   if (specs) {
     console.log('\t', `Ignored ${specs} specs`)
