@@ -47,6 +47,8 @@ export default class Workspace {
 
     if (process.env.KONG_ADMIN_TOKEN_FILE) {
       if ((await this.exists(process.env.KONG_ADMIN_TOKEN_FILE)) === false) {
+        console.log(`File specified by KONG_ADMIN_TOKEN_FILE is missing at ${process.env.KONG_ADMIN_TOKEN_FILE}`)
+        console.log(``)      
         throw new Error()
       }    
       // eslint-disable-next-line @typescript-eslint/camelcase
