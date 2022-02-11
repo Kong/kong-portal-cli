@@ -63,7 +63,8 @@ export default class RestClient {
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
       httpAgent: new HTTPAgent({ keepAlive: true }),
-      maxContentLength: 10 * 1000000, // 10mb is kong file system
+      maxContentLength: Infinity, 
+      maxBodyLength: Infinity, 
       httpsAgent,
     })
   }
