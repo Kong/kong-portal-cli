@@ -63,8 +63,8 @@ export default class RestClient {
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
       httpAgent: new HTTPAgent({ keepAlive: true }),
-      maxContentLength: Infinity, 
-      maxBodyLength: Infinity, 
+      maxContentLength: Infinity,
+      maxBodyLength: Infinity,
       httpsAgent,
     })
   }
