@@ -51,16 +51,19 @@ Where `<command>` is one of:
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
 - Add `-S` or `--skip-path` to skip files or directories that match the given path. This option can be repeated.
+- Add `-E` or `--enable-path` to enable files or directories that match the given path. This option can be repeated.
 
 ### For `fetch`
 - Add `-K` or `--keep-encode` to keep binary assets as base64 encoded strings locally.
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
+- Add `-E` or `--enable-path` to enable files or directories that match the given path. This option can be repeated.
 
 ### For `wipe`
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
 - Add `-I` or `--ignore-specs` to ignore the '/specs' directory.
 - Add `-S` or `--skip-path` to skip files or directories that match the given path. This option can be repeated.
+- Add `-E` or `--enable-path` to enable files or directories that match the given path. This option can be repeated.
 
 ### For `enable` and `disable`
 - Add `-D` or `--disable-ssl-verification` to disable SSL verification and use self-signed certs.
