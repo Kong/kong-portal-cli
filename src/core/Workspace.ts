@@ -1,6 +1,6 @@
 import * as rs from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
-import { readFileSync } from 'fs';
+import { readFileSync } from 'fs'
 import { join } from 'upath'
 
 import WorkspaceConfig from './WorkspaceConfig'
@@ -48,18 +48,18 @@ export default class Workspace {
     if (process.env.KONG_ADMIN_TOKEN_FILE) {
       if ((await this.exists(process.env.KONG_ADMIN_TOKEN_FILE)) === false) {
         console.log(`File specified by KONG_ADMIN_TOKEN_FILE is missing at ${process.env.KONG_ADMIN_TOKEN_FILE}`)
-        console.log(``)      
+        console.log(``)
         throw new Error()
-      }    
+      }
       // eslint-disable-next-line @typescript-eslint/camelcase
-      workspace.config.data.kong_admin_token = readFileSync(process.env.KONG_ADMIN_TOKEN_FILE, 'utf-8').trim();
+      workspace.config.data.kong_admin_token = readFileSync(process.env.KONG_ADMIN_TOKEN_FILE, 'utf-8').trim()
     } else {
       if (process.env.KONG_ADMIN_TOKEN) {
-         // eslint-disable-next-line @typescript-eslint/camelcase
-         workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
-       }
-   }
- 
+        // eslint-disable-next-line @typescript-eslint/camelcase
+        workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
+      }
+    }
+
     if (disableSSLVerification) {
       // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.disable_ssl_verification = true
