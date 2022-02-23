@@ -39,7 +39,7 @@
     "chokidar": "^3.0.1",
     "clipanion": "^2.3.1",
     "crypto-promise": "^2.1.0",
-    "fs-extra": "^8.0.1",
+    "fs-extra": "^10.0.1",
     "isbinaryfile": "^4.0.3",
     "js-yaml": "^3.13.1",
     "ora": "^3.4.0",
