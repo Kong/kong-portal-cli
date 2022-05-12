@@ -87,6 +87,7 @@ Environment variables are useful for scripting as well as temporarily overriding
 
 Available environment variables include:
   - `KONG_ADMIN_URL` Kong Admin URL the CLI should target for uploading files.
+  - `KONG_ADMIN_TOKEN_FILE` Kong Admin Token token file path used to authenticate with the Kong Admin API, this will take precedence to `KONG_ADMIN_TOKEN`.
   - `KONG_ADMIN_TOKEN` Kong Admin Token token used to authenticate with the Kong Admin API.
 
 ## Contributing
