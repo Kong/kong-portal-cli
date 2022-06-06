@@ -10,7 +10,7 @@ jobs:
     name: build
     strategy:
       matrix:
-        node-version: [12, 14, 16, 17]
+        node-version: [12, 14, 16]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
