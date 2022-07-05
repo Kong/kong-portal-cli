@@ -89,7 +89,7 @@ export default class RestClient {
       await this.client.put(`${this.workspaceName}/files/${file.path}`, file, options)
     } catch (e) {
       console.log(`\n\nError uploading file: ${file.path}\n`)
-      console.error(e.response?.data || e)
+      console.error((e.response && e.response.data) || e)
       throw e
     }
   }
@@ -99,7 +99,7 @@ export default class RestClient {
       await this.client.delete(`${this.workspaceName}/files/${file.path}`, options)
     } catch (e) {
       console.log(`\n\nError deleting file: ${file.path}\n`)
-      console.error(e.response?.data || e)
+      console.error((e.response && e.response.data) || e)
       throw e
     }
   }
