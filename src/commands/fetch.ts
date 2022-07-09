@@ -28,7 +28,6 @@ async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Pro
 
 export default async (args): Promise<void> => {
   let workspace: Workspace
-  let client: RestClient
 
   try {
     workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
@@ -36,7 +35,7 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace)
   }
 
-  client = new RestClient(workspace.config, workspace.name)
+  const client = new RestClient(workspace.config, workspace.name)
   let response
   try {
     response = await client.getAllFiles()
@@ -50,13 +49,13 @@ export default async (args): Promise<void> => {
   let specs = 0
 
   if (response) {
-    for (let resource of response) {
+    for (const resource of response) {
       if (workspace.config.ignoreSpecs && resource.path.startsWith('specs')) {
         specs++
         continue
       }
-      let path: string = join(workspace.path, resource.path)
-      let file: File = new File(path, workspace.path)
+      const path: string = join(workspace.path, resource.path)
+      const file: File = new File(path, workspace.path)
       if (await file.exists()) {
         if (await shouldRewriteFile(resource, file, args.keepEncode)) {
           file.write(resource.contents)

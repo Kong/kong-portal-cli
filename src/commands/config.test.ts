@@ -34,7 +34,9 @@ tap.test('Fails because missing workspace', async (t) => {
 })
 
 tap.test('Fails because missing theme', async (t) => {
-  const noop = () => {}
+  const noop = () => {
+    return
+  }
   const _config = tap.mock('./config', {
     '../core/Workspace': {
       exists: async () => true,
@@ -45,7 +47,9 @@ tap.test('Fails because missing theme', async (t) => {
           config: { toConsole: noop },
           portalConfig: { toConsole: noop },
           routerConfig: { toConsole: noop },
-          toConsole: () => {},
+          toConsole: () => {
+            return
+          },
         }
       },
       getCurrentTheme: async () => {

@@ -47,7 +47,7 @@ export default class Config {
       return
     }
     const lines = this.dump().split('\n')
-    for (var line of lines) {
+    for (const line of lines) {
       console.log('  ', line)
     }
   }

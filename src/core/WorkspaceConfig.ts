@@ -2,7 +2,7 @@ import Config from './Config'
 import { OutgoingHttpHeaders } from './HTTP/RestInterfaces'
 
 export interface IWorkspaceConfig {
-  data: {}
+  data: Record<string, unknown>
   name?: string
   description?: string
   upstream?: string
@@ -68,7 +68,6 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   }
 
   public get kongAdminToken(): string {
-    // eslint-disable-next-line @typescript-eslint/camelcase
     return this.data.kong_admin_token
   }
 

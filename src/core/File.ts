@@ -47,7 +47,7 @@ export default class File implements FileInterface {
   }
 
   private async read64(): Promise<string> {
-    let fileExtMatch = this.location.match(/\w+$/)
+    const fileExtMatch = this.location.match(/\w+$/)
     let fileExt = 'unknown'
     if (fileExtMatch) {
       fileExt = fileExtMatch[0]

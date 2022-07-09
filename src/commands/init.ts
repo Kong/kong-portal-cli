@@ -12,11 +12,11 @@ kong_admin_url: http://localhost:8001
 kong_admin_token: ''`
 
 export default async (args: { workspace: string }): Promise<void> => {
-  let path = join('workspaces', args.workspace)
+  const path = join('workspaces', args.workspace)
 
   await fs.ensureDir(path)
 
-  let file: File = new File(join(path, 'cli.conf.yaml'), path)
+  const file: File = new File(join(path, 'cli.conf.yaml'), path)
 
   if (await file.exists()) {
     console.log("cli.conf.yaml already exist in workspace '" + args.workspace + "'")

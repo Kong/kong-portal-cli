@@ -41,7 +41,6 @@ export default class Workspace {
     await workspace.routerConfig.load()
 
     if (process.env.KONG_ADMIN_URL) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
     }
 
@@ -51,26 +50,22 @@ export default class Workspace {
         console.log(``)
         throw new Error()
       }
-      // eslint-disable-next-line @typescript-eslint/camelcase
+
       workspace.config.data.kong_admin_token = readFileSync(process.env.KONG_ADMIN_TOKEN_FILE, 'utf-8').trim()
     } else {
       if (process.env.KONG_ADMIN_TOKEN) {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
       }
     }
 
     if (disableSSLVerification) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.disable_ssl_verification = true
     }
     if (ignoreSpecs) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.ignore_specs = true
     }
 
     if (skipPath && skipPath.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.skip_paths = skipPath
     }
 
@@ -78,14 +73,12 @@ export default class Workspace {
   }
 
   public async scan(): Promise<void> {
-    let files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
+    const files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
 
     if (files) {
-      this.files = files.map(
-        (file: any): File => {
-          return new File(file.fullname, this.path)
-        },
-      )
+      this.files = files.map((file: any): File => {
+        return new File(file.fullname, this.path)
+      })
     }
   }
 
@@ -103,7 +96,7 @@ export default class Workspace {
   }
 
   public async getThemes(): Promise<WorkspaceTheme[]> {
-    let workspaceThemes: WorkspaceTheme[] = []
+    const workspaceThemes: WorkspaceTheme[] = []
     let themes: any = await rs.list(join(this.path, 'themes'), {
       recursive: false,
       ignoreFolders: false,
@@ -111,7 +104,7 @@ export default class Workspace {
 
     themes = themes.filter((element: any): boolean => element.isDirectory)
 
-    for (let theme of themes) {
+    for (const theme of themes) {
       workspaceThemes.push(await this.getTheme(theme.name))
     }
 
