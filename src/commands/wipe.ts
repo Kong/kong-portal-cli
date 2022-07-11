@@ -7,7 +7,6 @@ import { MissingWorkspaceError } from '../helpers'
 
 export default async (args): Promise<void> => {
   let workspace: Workspace
-  let client: RestClient
 
   try {
     workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs, args.skipPath)
@@ -15,9 +14,9 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace)
   }
 
-  client = new RestClient(workspace.config, workspace.name)
+  const client = new RestClient(workspace.config, workspace.name)
 
-  let spinner = ora({
+  const spinner = ora({
     prefixText: `Wiping...`,
     text: `reading files...`,
   }).start()
@@ -33,7 +32,7 @@ export default async (args): Promise<void> => {
       )
     }
 
-    for (let file of files) {
+    for (const file of files) {
       if (workspace.config.ignoreSpecs && file.path.startsWith('specs')) {
         continue
       }

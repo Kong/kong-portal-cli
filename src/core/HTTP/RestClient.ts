@@ -31,7 +31,7 @@ export default class RestClient {
       console.log(
         'upstream is deprecated and will cease to function in a later release. Please use kong_admin_url (upstream url without the workspace suffix)',
       )
-      let match = workspaceConfig.upstream.match(/.*\//)
+      const match = workspaceConfig.upstream.match(/.*\//)
       if (!match) {
         console.log('unable to parse upstream url')
         throw new Error()

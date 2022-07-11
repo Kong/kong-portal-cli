@@ -51,16 +51,16 @@ class DeployCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-P,--preserve`)
-  public preserve: boolean = false
+  public preserve = false
 
   @Command.Boolean(`-W,--watch`)
-  public watch: boolean = false
+  public watch = false
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
@@ -86,13 +86,13 @@ class FetchCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-K,--keep-encode`)
-  public keepEncode: boolean = false
+  public keepEncode = false
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Path(`fetch`)
   public async execute(): Promise<void> {
@@ -114,10 +114,10 @@ class WipeCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
@@ -154,7 +154,7 @@ class EnableCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Path(`enable`)
   public async execute(): Promise<void> {
@@ -174,7 +174,7 @@ class DisableCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Path(`disable`)
   public async execute(): Promise<void> {

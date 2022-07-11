@@ -14,7 +14,7 @@ export default async (args): Promise<void> => {
     return MissingWorkspaceError(args.workspace)
   }
 
-  let spinner: ora.Ora = ora({
+  const spinner: ora.Ora = ora({
     prefixText: `Enabling ${workspace.name} Portal...`,
   })
 
