@@ -85,11 +85,23 @@ export default class RestClient {
   }
 
   public async saveFile<Output>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
-    await this.client.put(`${this.workspaceName}/files/${file.path}`, file, options)
+    try {
+      await this.client.put(`${this.workspaceName}/files/${file.path}`, file, options)
+    } catch (e) {
+      console.log(`\n\nError uploading file: ${file.path}\n`)
+      console.error((e.response && e.response.data) || e)
+      throw e
+    }
   }
 
   public async deleteFile<T>(file: FileResource, options: AxiosRequestConfig = {}): Promise<void> {
-    await this.client.delete(`${this.workspaceName}/files/${file.path}`, options)
+    try {
+      await this.client.delete(`${this.workspaceName}/files/${file.path}`, options)
+    } catch (e) {
+      console.log(`\n\nError deleting file: ${file.path}\n`)
+      console.error((e.response && e.response.data) || e)
+      throw e
+    }
   }
 
   public async enablePortal(options: AxiosRequestConfig = {}): Promise<void> {
