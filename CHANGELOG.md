@@ -5,6 +5,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2022-07-11
+### Added
+- Add env variable `KONG_ADMIN_TOKEN_FILE` for loading Kong Admin Token from file path
+- Log errors from response when uploading or deleting remote files
+
 ## [3.3.1] - 2021-12-03
 ### Fixed
 - Use HTTP keep-alive to improve performance
