@@ -1,9 +1,10 @@
-import WorkspaceConfig, { IWorkspaceConfig } from '../WorkspaceConfig'
+import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
+import { MAX_CONTENT_LENGTH_MB, ONE_MB } from '../constants'
 
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
@@ -64,9 +65,7 @@ export default class RestClient {
       headers: this.clientHeaders,
       httpAgent: new HTTPAgent({ keepAlive: true, maxSockets: 10 }),
       maxContentLength:
-        (workspaceConfig.maxContentLengthInMb
-          ? workspaceConfig.maxContentLengthInMb
-          : WorkspaceConfig.MAX_CONTENT_LENGTH_MB) * WorkspaceConfig.ONE_MB,
+        (workspaceConfig.maxContentLengthInMb ? workspaceConfig.maxContentLengthInMb : MAX_CONTENT_LENGTH_MB) * ONE_MB,
       httpsAgent,
     })
   }
