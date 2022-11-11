@@ -63,7 +63,7 @@ export default class RestClient {
     this.client = axios.create({
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
-      httpAgent: new HTTPAgent({ keepAlive: true, maxSockets: 10 }),
+      httpAgent: new HTTPAgent({ keepAlive: true }),
       maxContentLength:
         (workspaceConfig.maxContentLengthInMb ? workspaceConfig.maxContentLengthInMb : MAX_CONTENT_LENGTH_MB) * ONE_MB,
       httpsAgent,
