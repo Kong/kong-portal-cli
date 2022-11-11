@@ -5,7 +5,6 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 
-
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
 
