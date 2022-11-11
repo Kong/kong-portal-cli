@@ -16,6 +16,9 @@ export interface IWorkspaceConfig {
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
+  public static readonly MAX_CONTENT_LENGTH_MB = 10 // 10mb (default) is kong file system
+  public static readonly ONE_MB = 1000000
+
   /**
    * @deprecated
    */

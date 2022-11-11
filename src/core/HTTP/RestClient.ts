@@ -1,4 +1,4 @@
-import { IWorkspaceConfig } from '../WorkspaceConfig'
+import WorkspaceConfig, { IWorkspaceConfig } from '../WorkspaceConfig'
 import { IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
@@ -63,7 +63,10 @@ export default class RestClient {
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
       httpAgent: new HTTPAgent({ keepAlive: true, maxSockets: 10 }),
-      maxContentLength: (workspaceConfig.maxContentLengthInMb ? workspaceConfig.maxContentLengthInMb : 10) * 1000000, // 10mb (default) is kong file system
+      maxContentLength:
+        (workspaceConfig.maxContentLengthInMb
+          ? workspaceConfig.maxContentLengthInMb
+          : WorkspaceConfig.MAX_CONTENT_LENGTH_MB) * WorkspaceConfig.ONE_MB,
       httpsAgent,
     })
   }
