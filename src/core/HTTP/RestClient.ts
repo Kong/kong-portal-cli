@@ -5,6 +5,7 @@ import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 
+
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
 
@@ -62,8 +63,8 @@ export default class RestClient {
     this.client = axios.create({
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
-      httpAgent: new HTTPAgent({ keepAlive: true }),
-      maxContentLength: 10 * 1000000, // 10mb is kong file system
+      httpAgent: new HTTPAgent({ keepAlive: true, maxSockets: 10 }),
+      maxContentLength: (workspaceConfig.maxContentLengthInMb ? workspaceConfig.maxContentLengthInMb : 10) * 1000000, // 10mb (default) is kong file system
       httpsAgent,
     })
   }
