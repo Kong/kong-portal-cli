@@ -101,10 +101,10 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
   }
 
   public set maxContentLengthInMb(maxContentLengthInMb: number) {
-    this.data['maxContentLengthInMb'] = maxContentLengthInMb
+    this.data['max_content_length_mb'] = maxContentLengthInMb
   }
 
   public get maxContentLengthInMb(): number {
-    return this.data.maxContentLengthInMb
+    return this.data.max_content_length_mb
   }
 }
