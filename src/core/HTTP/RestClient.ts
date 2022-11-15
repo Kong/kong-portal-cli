@@ -4,6 +4,7 @@ import FileResource, { FileResourceJSON } from './Resources/FileResource'
 import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
+import { MAX_CONTENT_LENGTH_MB, ONE_MB } from '../constants'
 
 export class RestClientError<T> extends Error {
   public response: IRestResponse<T>
@@ -63,7 +64,8 @@ export default class RestClient {
       baseURL: this.clientUrl,
       headers: this.clientHeaders,
       httpAgent: new HTTPAgent({ keepAlive: true }),
-      maxContentLength: 10 * 1000000, // 10mb is kong file system
+      maxContentLength:
+        (workspaceConfig.maxContentLengthInMb ? workspaceConfig.maxContentLengthInMb : MAX_CONTENT_LENGTH_MB) * ONE_MB,
       httpsAgent,
     })
   }

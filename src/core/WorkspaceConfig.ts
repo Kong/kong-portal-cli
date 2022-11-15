@@ -12,6 +12,7 @@ export interface IWorkspaceConfig {
   disableSSLVerification?: boolean
   ignoreSpecs?: boolean
   skipPaths?: string[]
+  maxContentLengthInMb?: number
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -97,5 +98,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
 
   public get skipPaths(): string[] {
     return this.data.skip_paths
+  }
+
+  public set maxContentLengthInMb(maxContentLengthInMb: number) {
+    this.data['max_content_length_mb'] = maxContentLengthInMb
+  }
+
+  public get maxContentLengthInMb(): number {
+    return this.data.max_content_length_mb
   }
 }

@@ -70,6 +70,7 @@ Where `<command>` is one of:
 In addition to `kong_admin_uri` and `kong_admin_token`, you can also add:
 - `disable_ssl_verification: true` and
 - `ignore_specs: true`
+- `max_content_length_mb` - maximum size allowed to be transferred in Mb - default is 10 (10Mb)
 
 Set the options in the CLI configuration file to always enable those settings on that Workspace instead of passing the option flags with every command.
 
