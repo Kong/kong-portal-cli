@@ -80,7 +80,8 @@ class SyncCommand extends Command {
     If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
     If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
-    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.`,
+    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.
+    If \`-v,--verbose\` option is given, the command will print more details about the files synchronization process`,
   })
 
   @Command.String({ required: true })
@@ -97,6 +98,9 @@ class SyncCommand extends Command {
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
+
+  @Command.Boolean(`-v,--verbose`)
+  public verbose: boolean = false
 
   @Command.Path(`sync`)
   public async execute(): Promise<void> {
