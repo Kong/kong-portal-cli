@@ -23,20 +23,19 @@ export default async (args): Promise<void> => {
 
   let files: FileResource[]
   try {
-    files = await client.getAllFiles()
+    files = await client.getAllFiles({ fields: 'path' })
 
     if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
       files = files.filter(
-        (file: FileResource): boolean =>
-          !workspace.config.skipPaths.some((path): boolean => file.path.startsWith(path)),
+        (file: FileResource): boolean => !workspace.config.skipPaths.some((path) => file.path?.startsWith(path)),
       )
     }
 
     for (const file of files) {
-      if (workspace.config.ignoreSpecs && file.path.startsWith('specs')) {
+      if (workspace.config.ignoreSpecs && file.path?.startsWith('specs')) {
         continue
       }
-      spinner.text = file.path
+      spinner.text = file.path || file.id || 'file'
       await client.deleteFile(file)
     }
   } catch (e) {

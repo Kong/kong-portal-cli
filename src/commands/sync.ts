@@ -5,8 +5,6 @@ import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
 import File from '../core/File'
 
-import wipe from './wipe'
-
 import { MissingWorkspaceError } from '../helpers'
 
 async function asyncForEach(array: any[], callback: (arg0: any, arg1: number, arg2: any) => any): Promise<void> {
@@ -41,8 +39,8 @@ function buildFilesObject<T>(fileObj: any, files: File[], filterBy: string): Fil
   return files
 }
 
-async function Deploy(workspace: Workspace, path?: any): Promise<void> {
-  console.log(`Deploying ${workspace.name}:`)
+async function Sync(workspace: Workspace, path?: string): Promise<void> {
+  console.log(`Syncing ${workspace.name}:`)
   console.log(``)
 
   const spinner = ora({
@@ -51,6 +49,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
   }).start()
 
   const client = new RestClient(workspace.config, workspace.name)
+  const remoteFiles = await client.getAllFiles({ fields: 'path,checksum' })
 
   try {
     await workspace.scan()
@@ -79,17 +78,56 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
         )
       }
 
-      spinner.prefixText = `Deploying ${fileType}`
+      spinner.prefixText = `Syncing ${fileType}`
 
       for (const file of files) {
         if (path && file.location.split(path)[1] !== '') {
+          console.debug(`ignoring ${file.location} - path not targeted`)
+          continue
+        }
+
+        // read local file
+        await file.read()
+
+        const remoteFile = remoteFiles.find((f) => f.path?.toLowerCase() === file.resource.path?.toLowerCase())
+        const remoteFileChecksum = remoteFile?.checksum
+        const localFileChecksum = await file.getShaSum()
+
+        // check if the same file and its contents exist on the remote server
+        if (remoteFile && remoteFileChecksum === localFileChecksum) {
+          console.debug(`ignoring ${file.location} - remote file unchanged`)
           continue
         }
 
         spinner.text = file.resource.path || file.resource.id || 'file'
-        await file.read()
         await client.saveFile(file.resource)
+        console.log('saving ', file.resource.path, remoteFileChecksum, localFileChecksum)
       }
+
+      // delete upstream files that don't exist locally anymore
+      for (const remoteFile of remoteFiles) {
+        // process only the current type
+        if (!remoteFile.path?.startsWith(`${fileType}/`)) {
+          // console.debug(`ignoring ${remoteFile.path} - type not targeted`)
+          continue
+        }
+
+        if (files.findIndex((f) => f.resource.path === remoteFile.path) !== -1) {
+          console.debug(`ignoring ${remoteFile.path} - file just uploaded`)
+          continue
+        }
+
+        const localFile = workspace.files.find((f) => f.resource.path === remoteFile.path)
+        if (!localFile) {
+          console.debug('remote file ', remoteFile.path, 'not found locally')
+          console.debug(workspace.files)
+
+          spinner.text = remoteFile.path || 'file'
+          console.log('deleting ', remoteFile.path)
+          await client.deleteFile(remoteFile)
+        }
+      }
+
       spinner.prefixText = 'Deployed'
       spinner.succeed(fileType).start()
     })
@@ -110,10 +148,6 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 }
 
 export default async (args: any): Promise<void> => {
-  if (!args.preserve) {
-    await wipe(args)
-  }
-
   let workspace: Workspace
 
   try {
@@ -122,18 +156,18 @@ export default async (args: any): Promise<void> => {
     return MissingWorkspaceError(args.workspace)
   }
 
-  await Deploy(workspace)
+  await Sync(workspace)
 
   if (args.watch) {
     console.log(`Watching`, `${workspace.path}/*`)
     console.log(``)
 
-    const watcher: any = chokidar.watch('.', {
+    const watcher = chokidar.watch('.', {
       cwd: workspace.path,
       alwaysStat: true,
     })
 
-    watcher.on('change', (path: any, stats: { isFile: () => any }): void => {
+    watcher.on('change', (path, stats) => {
       if (stats && stats.isFile()) {
         Deploy(workspace, path)
       }

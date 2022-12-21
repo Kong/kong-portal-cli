@@ -1,7 +1,7 @@
 import { IWorkspaceConfig } from '../WorkspaceConfig'
-import { IRestResponse } from './RestInterfaces'
+import { IGetAllFilesParams, IRestResponse } from "./RestInterfaces";
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, AxiosInstance } from 'axios';
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 import { MAX_CONTENT_LENGTH_MB, ONE_MB } from '../constants'
@@ -16,7 +16,7 @@ export class RestClientError<T> extends Error {
 }
 
 export default class RestClient {
-  public client
+  public client: AxiosInstance
   public clientHeaders
   public clientUrl: string
   public workspaceName: string
@@ -74,7 +74,7 @@ export default class RestClient {
     return this.handleResponse(await this.client.get(`${this.workspaceName}/files`, options))
   }
 
-  public async getAllFiles<T>(): Promise<FileResourceJSON[]> {
+  public async getAllFiles(params: IGetAllFilesParams = {}): Promise<FileResourceJSON[]> {
     let res = await this.client.get(`${this.workspaceName}/files`)
     let files: FileResourceJSON[] = this.handleResponse(res)
     while (res.data.next) {

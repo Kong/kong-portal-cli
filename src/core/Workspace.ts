@@ -76,7 +76,7 @@ export default class Workspace {
     const files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
 
     if (files) {
-      this.files = files.map((file: any): File => {
+      this.files = files.map((file): File => {
         return new File(file.fullname, this.path)
       })
     }
