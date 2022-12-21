@@ -100,7 +100,7 @@ class SyncCommand extends Command {
   public skipPath: string[] = []
 
   @Command.Boolean(`-v,--verbose`)
-  public verbose: boolean = false
+  public verbose = false
 
   @Command.Path(`sync`)
   public async execute(): Promise<void> {
