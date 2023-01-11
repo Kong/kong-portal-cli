@@ -76,8 +76,8 @@ class SyncCommand extends Command {
   public static usage = Command.Usage({
     description: 'Sync changes made locally under the given workspace upstream with the upstream workspace.',
     details: `
-    This command will sync local templates from given workspace folder to the same workspace upstream.\n
-    If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
+    This command will sync local files from given workspace folder to the same workspace upstream.\n
+    If \`-W,--watch\` option is given after all the local files are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
     If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
     If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.

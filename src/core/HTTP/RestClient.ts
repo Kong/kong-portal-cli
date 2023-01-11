@@ -75,11 +75,15 @@ export default class RestClient {
   }
 
   public async getAllFiles(params: IGetAllFilesParams = {}): Promise<FileResourceJSON[]> {
-    let res = await this.client.get(`${this.workspaceName}/files`)
+    let res = await this.client.get(`${this.workspaceName}/files`, {
+      params,
+    })
     let files: FileResourceJSON[] = this.handleResponse(res)
     while (res.data.next) {
       // url already has workspace
-      res = await this.client.get(res.data.next)
+      res = await this.client.get(res.data.next, {
+        params,
+      })
       files = files.concat(this.handleResponse(res))
     }
 

@@ -68,21 +68,21 @@ async function Sync(workspace: Workspace, args: ISyncArguments, options: ISyncOp
     const upstreamFiles = await client.getAllFiles({ fields: 'path,checksum' })
 
     // scan workspace directories and build list of files
-    const files = await workspace.scan()
+    const allFiles = await workspace.scan()
 
-    spinner.text = `Found ${files.length} files locally and ${upstreamFiles.length} files upstream`
+    spinner.text = `Found ${allFiles.length} files locally and ${upstreamFiles.length} files upstream`
     spinner.succeed().start()
 
     // assign files to their groups
     const fileGroups: FileGroups = {}
-    let remainingFiles = [...files]
+    let remainingFiles = [...allFiles]
     remainingFiles = buildFilesObject(fileGroups, remainingFiles, GroupType.configs)
     remainingFiles = buildFilesObject(fileGroups, remainingFiles, GroupType.content)
     remainingFiles = buildFilesObject(fileGroups, remainingFiles, GroupType.specs)
     remainingFiles = buildFilesObject(fileGroups, remainingFiles, GroupType.emails)
     remainingFiles = buildFilesObject(fileGroups, remainingFiles, GroupType.themes)
 
-    if (files.length > 0) {
+    if (allFiles.length > 0) {
       fileGroups[GroupType.others] = remainingFiles
     }
 
@@ -167,7 +167,7 @@ async function Sync(workspace: Workspace, args: ISyncArguments, options: ISyncOp
 
     spinner.prefixText = ''
     spinner.text = [
-      `Synchronized all ${files.length} (${updatedPaths.length} updated, ${deletedPaths.length} deleted)`,
+      `Synchronized all ${allFiles.length} (${updatedPaths.length} updated, ${deletedPaths.length} deleted)`,
       workspace.config.ignoreSpecs && 'non-spec',
       'changes',
       options.path && `inside ${options.path}`,
