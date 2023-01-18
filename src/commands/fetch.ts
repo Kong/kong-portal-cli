@@ -18,7 +18,7 @@ async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Pro
   }
   if (!keepEncode && file.isBase64Asset()) {
     await file.read()
-    if (file.resource.contents.startsWith('data:')) {
+    if (file.resource.contents?.startsWith('data:')) {
       return true
     }
   }

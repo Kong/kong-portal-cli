@@ -43,7 +43,7 @@
     "isbinaryfile": "^4.0.3",
     "js-yaml": "^3.13.1",
     "ora": "^3.4.0",
-    "recursive-readdir-async": "^1.1.5",
+    "recursive-readdir-async": "^1.2.1",
     "upath": "^1.2.0"
   },
   "devDependencies": {

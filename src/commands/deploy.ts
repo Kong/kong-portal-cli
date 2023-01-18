@@ -22,21 +22,21 @@ function buildFilesObject<T>(fileObj: any, files: File[], filterBy: string): Fil
   if (filterBy === 'configs') {
     fileObj.configs = files.filter((file): boolean => {
       // eslint-disable-next-line prettier/prettier
-      return !(/\//.test(file.resource.path))
+      return !(/\//.test(file.resource.path || ''))
     })
 
-    files = files.filter((file: { resource: { path: string } }): boolean => {
-      return /\//.test(file.resource.path)
+    files = files.filter((file): boolean => {
+      return /\//.test(file.resource.path || '')
     })
     return files
   }
 
-  fileObj[filterBy] = files.filter((file): boolean => {
-    return file.resource.path.startsWith(filterBy)
+  fileObj[filterBy] = files.filter((file) => {
+    return file.resource.path?.startsWith(filterBy)
   })
 
-  files = files.filter((file): boolean => {
-    return !file.resource.path.startsWith(filterBy)
+  files = files.filter((file) => {
+    return !file.resource.path?.startsWith(filterBy)
   })
   return files
 }
@@ -75,8 +75,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
 
       if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
         files = fileObj[fileType].filter(
-          (file: File): boolean =>
-            !workspace.config.skipPaths.some((path): boolean => file.resource.path.startsWith(path)),
+          (file: File): boolean => !workspace.config.skipPaths.some((path) => file.resource.path?.startsWith(path)),
         )
       }
 
@@ -87,7 +86,7 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
           continue
         }
 
-        spinner.text = file.resource.path
+        spinner.text = file.resource.path || file.resource.id || 'file'
         await file.read()
         await client.saveFile(file.resource)
       }

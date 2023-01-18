@@ -1,4 +1,4 @@
-import * as rs from 'recursive-readdir-async'
+import { list as recursiveListFiles } from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
 import { readFileSync } from 'fs'
 import { join } from 'upath'
@@ -72,14 +72,14 @@ export default class Workspace {
     return workspace
   }
 
-  public async scan(): Promise<void> {
-    const files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
-
-    if (files) {
-      this.files = files.map((file: any): File => {
-        return new File(file.fullname, this.path)
-      })
+  public async scan(): Promise<File[]> {
+    const files = await recursiveListFiles(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
+    if (!files || !Array.isArray(files)) {
+      throw new Error(`Unable to scan directories: ${files.error || 'unknown error'}`)
     }
+
+    this.files = files.map((file) => new File(file.fullname, this.path))
+    return this.files
   }
 
   public static async exists(name: string): Promise<boolean> {
@@ -97,7 +97,7 @@ export default class Workspace {
 
   public async getThemes(): Promise<WorkspaceTheme[]> {
     const workspaceThemes: WorkspaceTheme[] = []
-    let themes: any = await rs.list(join(this.path, 'themes'), {
+    let themes: any = await recursiveListFiles(join(this.path, 'themes'), {
       recursive: false,
       ignoreFolders: false,
     })
