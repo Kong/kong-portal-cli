@@ -35,7 +35,7 @@
   "dependencies": {
     "axios": "^0.27.1",
     "body-parser": "^1.19.0",
-    "chalk": "^2.4.2",
+    "chalk": "^5.2.0",
     "chokidar": "^3.0.1",
     "clipanion": "^2.3.1",
     "crypto-promise": "^2.1.0",
