@@ -26,7 +26,7 @@ For Kong Enterprise `<= 0.36`, or for `legacy mode` on Kong Enterprise `>= 1.3` 
 
 The easiest way to start is by cloning the [portal-templates repo][templates] master branch locally.
 
-Then edit `workspaces/default/cli.conf.yaml` to set `kong_admin_uri` and `kong_admin_token` to match your setup.
+Then edit `workspaces/default/cli.conf.yaml` to set `kong_admin_url` and `kong_admin_token` to match your setup.
 
 Make sure Kong is running and portal is on:
 
