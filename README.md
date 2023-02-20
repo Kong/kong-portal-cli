@@ -114,6 +114,6 @@ For other issues, [submit a support ticket][kong-support].
 [sync-script]: https://github.com/Kong/kong-portal-templates/blob/81382f2c7887cf57bb040a6af5ca716b83cc74f3/bin/sync.js
 [cli-support]: https://github.com/Kong/kong-portal-cli/issues/new
 [cli-license]: https://github.com/Kong/kong-portal-cli/blob/master/LICENSE
-[cli-contributors]: (https://github.com/Kong/kong-portal-cli/contributors)
+[cli-contributors]: https://github.com/Kong/kong-portal-cli/contributors
 [kong-support]: https://support.konghq.com/support/s/
 [templates]: https://github.com/Kong/kong-portal-templates
