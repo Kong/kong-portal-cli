@@ -91,7 +91,7 @@ async function Sync(workspace: Workspace, args: ISyncArguments, options: ISyncOp
 
     for (const [group, files] of Object.entries(fileGroups)) {
       if (group === GroupType.specs && workspace.config.ignoreSpecs) {
-        return
+        continue
       }
 
       // check skipPaths
