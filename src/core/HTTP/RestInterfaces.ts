@@ -23,3 +23,8 @@ export interface IRestCollection {
   toJSON(): string
   getResourcePath(path?: string): string
 }
+
+export interface IGetAllFilesParams {
+  fields?: string
+  type?: string
+}

@@ -1,4 +1,4 @@
-import * as rs from 'recursive-readdir-async'
+import { list as recursiveListFiles } from 'recursive-readdir-async'
 import * as fs from 'fs-extra'
 import { readFileSync } from 'fs'
 import { join } from 'upath'
@@ -42,7 +42,6 @@ export default class Workspace {
     await workspace.routerConfig.load()
 
     if (process.env.KONG_ADMIN_URL) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.kong_admin_url = process.env.KONG_ADMIN_URL
     }
 
@@ -52,26 +51,22 @@ export default class Workspace {
         console.log(``)
         throw new Error()
       }
-      // eslint-disable-next-line @typescript-eslint/camelcase
+
       workspace.config.data.kong_admin_token = readFileSync(process.env.KONG_ADMIN_TOKEN_FILE, 'utf-8').trim()
     } else {
       if (process.env.KONG_ADMIN_TOKEN) {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         workspace.config.data.kong_admin_token = process.env.KONG_ADMIN_TOKEN
       }
     }
 
     if (disableSSLVerification) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.disable_ssl_verification = true
     }
     if (ignoreSpecs) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.ignore_specs = true
     }
 
     if (skipPath && skipPath.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.skip_paths = skipPath
     }
 
@@ -82,16 +77,14 @@ export default class Workspace {
     return workspace
   }
 
-  public async scan(): Promise<void> {
-    let files = await rs.list(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
-
-    if (files) {
-      this.files = files.map(
-        (file: any): File => {
-          return new File(file.fullname, this.path)
-        },
-      )
+  public async scan(): Promise<File[]> {
+    const files = await recursiveListFiles(this.path, { exclude: ['.DS_Store', 'cli.conf.yaml'] })
+    if (!files || !Array.isArray(files)) {
+      throw new Error(`Unable to scan directories: ${files.error || 'unknown error'}`)
     }
+
+    this.files = files.map((file) => new File(file.fullname, this.path))
+    return this.files
   }
 
   public static async exists(name: string): Promise<boolean> {
@@ -108,15 +101,15 @@ export default class Workspace {
   }
 
   public async getThemes(): Promise<WorkspaceTheme[]> {
-    let workspaceThemes: WorkspaceTheme[] = []
-    let themes: any = await rs.list(join(this.path, 'themes'), {
+    const workspaceThemes: WorkspaceTheme[] = []
+    let themes: any = await recursiveListFiles(join(this.path, 'themes'), {
       recursive: false,
       ignoreFolders: false,
     })
 
     themes = themes.filter((element: any): boolean => element.isDirectory)
 
-    for (let theme of themes) {
+    for (const theme of themes) {
       workspaceThemes.push(await this.getTheme(theme.name))
     }
 

@@ -9,69 +9,60 @@ tap.test('Instanciate properly', (t): void => {
   t.end()
 })
 
-tap.test(
-  'Loads the data',
-  async (t): Promise<void> => {
-    const _Config = t.mock('./Config', {
-      'fs-extra': {
-        readFile: (path): string => {
-          t.equal(path, 'moon/apollo')
-          return 'foo'
-        },
+tap.test('Loads the data', async (t): Promise<void> => {
+  const _Config = t.mock('./Config', {
+    'fs-extra': {
+      readFile: (path): string => {
+        t.equal(path, 'moon/apollo')
+        return 'foo'
       },
-    }).default
+    },
+  }).default
 
-    const c = new _Config('moon', 'apollo', { encoding: 'utf8' })
-    t.equal(c.data, null)
-    await c.load()
-    t.equal(c.data, 'foo')
+  const c = new _Config('moon', 'apollo', { encoding: 'utf8' })
+  t.equal(c.data, null)
+  await c.load()
+  t.equal(c.data, 'foo')
 
-    t.end()
-  },
-)
+  t.end()
+})
 
-tap.test(
-  'Fails at loading the data',
-  async (t): Promise<void> => {
-    const _Config = t.mock('./Config', {
-      'fs-extra': {
-        readFile: (): never => {
-          throw 'error'
-        },
+tap.test('Fails at loading the data', async (t): Promise<void> => {
+  const _Config = t.mock('./Config', {
+    'fs-extra': {
+      readFile: (): never => {
+        throw 'error'
       },
-    }).default
+    },
+  }).default
 
-    const c = new _Config('moon', 'apollo', { encoding: 'utf8' })
-    t.equal(c.data, null)
-    await c.load()
-    t.equal(c.data, null)
+  const c = new _Config('moon', 'apollo', { encoding: 'utf8' })
+  t.equal(c.data, null)
+  await c.load()
+  t.equal(c.data, null)
 
-    t.end()
-  },
-)
+  t.end()
+})
 
-tap.test(
-  'Saves the data on the filesystem',
-  async (t): Promise<void> => {
-    let assertData: string
-    let assertPath: string
-    const _Config = t.mock('./Config', {
-      'fs-extra': {
-        writeFile: (path, content): void => {
-          t.equal(assertData, content)
-          t.equal(assertPath, path)
-        },
+tap.test('Saves the data on the filesystem', async (t): Promise<void> => {
+  let assertData = ''
+  let assertPath = ''
+  const _Config = t.mock('./Config', {
+    'fs-extra': {
+      writeFile: (path, content): void => {
+        t.equal(assertData, content)
+        t.equal(assertPath, path)
       },
-    }).default
+    },
+  }).default
 
-    const c = new _Config('moon', 'apollo')
-    c.data = { foo: 'bar', fiz: 'buz' }
-    assertPath = c.path
-    assertData = c.dump()
-    await c.save()
-    t.end()
-  },
-)
+  const c = new _Config('moon', 'apollo')
+  c.data = { foo: 'bar', fiz: 'buz' }
+  assertPath = c.path
+  assertData = c.dump()
+  await c.save()
+  t.end()
+})
 
 tap.test('Dump the data', (t): void => {
   const c = new Config('moon', 'apollo')

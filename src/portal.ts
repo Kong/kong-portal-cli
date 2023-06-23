@@ -9,6 +9,7 @@ import Fetch from './commands/fetch'
 import Disable from './commands/disable'
 import Enable from './commands/enable'
 import Config from './commands/config'
+import Sync from './commands/sync'
 
 import * as packageJson from '../package.json'
 
@@ -52,16 +53,16 @@ class DeployCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-P,--preserve`)
-  public preserve: boolean = false
+  public preserve = false
 
   @Command.Boolean(`-W,--watch`)
-  public watch: boolean = false
+  public watch = false
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
@@ -72,6 +73,42 @@ class DeployCommand extends Command {
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
     await Deploy(this)
+  }
+}
+
+class SyncCommand extends Command {
+  public static usage = Command.Usage({
+    description: 'Sync changes made locally under the given workspace upstream with the upstream workspace.',
+    details: `
+    This command will sync local files from given workspace folder to the same workspace upstream.\n
+    If \`-W,--watch\` option is given after all the local files are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
+    If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
+    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.
+    If \`-v,--verbose\` option is given, the command will print more details about the files synchronization process`,
+  })
+
+  @Command.String({ required: true })
+  public workspace!: string
+
+  @Command.Boolean(`-W,--watch`)
+  public watch = false
+
+  @Command.Boolean(`-D,--disable-ssl-verification`)
+  public disableSSLVerification = false
+
+  @Command.Boolean(`-I,--ignore-specs`)
+  public ignoreSpecs = false
+
+  @Command.Array(`-S,--skip-path`)
+  public skipPath: string[] = []
+
+  @Command.Boolean(`-v,--verbose`)
+  public verbose = false
+
+  @Command.Path(`sync`)
+  public async execute(): Promise<void> {
+    await Sync(this)
   }
 }
 
@@ -91,13 +128,13 @@ class FetchCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-K,--keep-encode`)
-  public keepEncode: boolean = false
+  public keepEncode = false
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Array(`-E,--enable-path`)
   public enablePath: string[] = []
@@ -123,10 +160,10 @@ class WipeCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Boolean(`-I,--ignore-specs`)
-  public ignoreSpecs: boolean = false
+  public ignoreSpecs = false
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
@@ -166,7 +203,7 @@ class EnableCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Path(`enable`)
   public async execute(): Promise<void> {
@@ -186,7 +223,7 @@ class DisableCommand extends Command {
   public workspace!: string
 
   @Command.Boolean(`-D,--disable-ssl-verification`)
-  public disableSSLVerification: boolean = false
+  public disableSSLVerification = false
 
   @Command.Path(`disable`)
   public async execute(): Promise<void> {
@@ -228,6 +265,7 @@ cli.register(WipeCommand)
 cli.register(FetchCommand)
 cli.register(DeployCommand)
 cli.register(VersionCommand)
+cli.register(SyncCommand)
 
 cli.register(HelpCommand)
 

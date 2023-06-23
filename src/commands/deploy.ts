@@ -22,37 +22,35 @@ function buildFilesObject<T>(fileObj: any, files: File[], filterBy: string): Fil
   if (filterBy === 'configs') {
     fileObj.configs = files.filter((file): boolean => {
       // eslint-disable-next-line prettier/prettier
-      return !(/\//.test(file.resource.path))
+      return !(/\//.test(file.resource.path || ''))
     })
 
-    files = files.filter((file: { resource: { path: string } }): boolean => {
-      return /\//.test(file.resource.path)
+    files = files.filter((file): boolean => {
+      return /\//.test(file.resource.path || '')
     })
     return files
   }
 
-  fileObj[filterBy] = files.filter((file): boolean => {
-    return file.resource.path.startsWith(filterBy)
+  fileObj[filterBy] = files.filter((file) => {
+    return file.resource.path?.startsWith(filterBy)
   })
 
-  files = files.filter((file): boolean => {
-    return !file.resource.path.startsWith(filterBy)
+  files = files.filter((file) => {
+    return !file.resource.path?.startsWith(filterBy)
   })
   return files
 }
 
 async function Deploy(workspace: Workspace, path?: any): Promise<void> {
-  let client: RestClient
-
   console.log(`Deploying ${workspace.name}:`)
   console.log(``)
 
-  let spinner = ora({
+  const spinner = ora({
     prefixText: `Deploying ${path || 'file'}...`,
     text: `reading files...`,
   }).start()
 
-  client = new RestClient(workspace.config, workspace.name)
+  const client = new RestClient(workspace.config, workspace.name)
 
   try {
     await workspace.scan()
@@ -69,42 +67,38 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
       fileObj['other files'] = files
     }
 
-    await asyncForEach(
-      Object.keys(fileObj),
-      async (fileType): Promise<void> => {
-        if (fileType === 'specs' && workspace.config.ignoreSpecs) {
-          return
+    await asyncForEach(Object.keys(fileObj), async (fileType): Promise<void> => {
+      if (fileType === 'specs' && workspace.config.ignoreSpecs) {
+        return
+      }
+      let files: File[] = fileObj[fileType]
+
+      if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+        files = fileObj[fileType].filter(
+          (file: File): boolean => workspace.config.enablePaths.some((path) => file.resource.path?.startsWith(path)),
+        )
+      }
+
+      if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
+        files = fileObj[fileType].filter(
+          (file: File): boolean => !workspace.config.skipPaths.some((path) => file.resource.path?.startsWith(path)),
+        )
+      }
+
+      spinner.prefixText = `Deploying ${fileType}`
+
+      for (const file of files) {
+        if (path && file.location.split(path)[1] !== '') {
+          continue
         }
-        let files: File[] = fileObj[fileType]
 
-        if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
-          files = fileObj[fileType].filter((file: File): boolean =>
-            workspace.config.enablePaths.some((path): boolean => file.resource.path.startsWith(path)),
-          )
-        }
-
-        if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
-          files = fileObj[fileType].filter(
-            (file: File): boolean =>
-              !workspace.config.skipPaths.some((path): boolean => file.resource.path.startsWith(path)),
-          )
-        }
-
-        spinner.prefixText = `Deploying ${fileType}`
-
-        for (let file of files) {
-          if (path && file.location.split(path)[1] !== '') {
-            continue
-          }
-
-          spinner.text = file.resource.path
-          await file.read()
-          await client.saveFile(file.resource)
-        }
-        spinner.prefixText = 'Deployed'
-        spinner.succeed(fileType).start()
-      },
-    )
+        spinner.text = file.resource.path || file.resource.id || 'file'
+        await file.read()
+        await client.saveFile(file.resource)
+      }
+      spinner.prefixText = 'Deployed'
+      spinner.succeed(fileType).start()
+    })
     spinner.prefixText = ''
     if (!path) {
       spinner.text = workspace.config.ignoreSpecs
@@ -146,7 +140,7 @@ export default async (args: any): Promise<void> => {
     console.log(`Watching`, `${workspace.path}/*`)
     console.log(``)
 
-    let watcher: any = chokidar.watch('.', {
+    const watcher: any = chokidar.watch('.', {
       cwd: workspace.path,
       alwaysStat: true,
     })

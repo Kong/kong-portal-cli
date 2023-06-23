@@ -37,26 +37,24 @@ export default class WorkspaceTheme {
   }
 
   public async scanAssets(): Promise<void> {
-    let assets = await rs.list(this.assetsPath, { exclude: ['.DS_Store'] })
+    const assets = await rs.list(this.assetsPath, { exclude: ['.DS_Store'] })
     this.assets = this.mapFilesToContent(assets)
   }
 
   public async scanLayouts(): Promise<void> {
-    let layouts = await rs.list(this.layoutsPath, { exclude: ['.DS_Store'] })
+    const layouts = await rs.list(this.layoutsPath, { exclude: ['.DS_Store'] })
     this.layouts = this.mapFilesToContent(layouts)
   }
 
   public async scanPartials(): Promise<void> {
-    let partials = await rs.list(this.partialsPath, { exclude: ['.DS_Store'] })
+    const partials = await rs.list(this.partialsPath, { exclude: ['.DS_Store'] })
     this.partials = this.mapFilesToContent(partials)
   }
 
   private mapFilesToContent(files): [] {
-    return files.map(
-      (file: any): File => {
-        return new File(file.fullname, this.location)
-      },
-    )
+    return files.map((file: any): File => {
+      return new File(file.fullname, this.location)
+    })
   }
 
   public async addLayout(): Promise<void> {

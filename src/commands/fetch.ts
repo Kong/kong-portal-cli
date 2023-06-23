@@ -4,7 +4,6 @@ import { isBinaryFile } from 'isbinaryfile'
 import File from '../core/File'
 import Workspace from '../core/Workspace'
 import RestClient from '../core/HTTP/RestClient'
-import FileResource from '../core/HTTP/Resources/FileResource'
 
 import { MissingWorkspaceError } from '../helpers'
 
@@ -19,7 +18,7 @@ async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Pro
   }
   if (!keepEncode && file.isBase64Asset()) {
     await file.read()
-    if (file.resource.contents.startsWith('data:')) {
+    if (file.resource.contents?.startsWith('data:')) {
       return true
     }
   }
@@ -29,24 +28,17 @@ async function shouldRewriteFile(resource, file: File, keepEncode: boolean): Pro
 
 export default async (args): Promise<void> => {
   let workspace: Workspace
-  let client: RestClient
 
   try {
-    workspace = await Workspace.init(
-      args.workspace,
-      args.disableSSLVerification,
-      args.ignoreSpecs,
-      args.skipPath,
-      args.enablePath,
-    )
+    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
 
-  client = new RestClient(workspace.config, workspace.name)
-  let files: FileResource[]
+  const client = new RestClient(workspace.config, workspace.name)
+  let response
   try {
-    files = await client.getAllFiles()
+    response = await client.getAllFiles()
   } catch (e) {
     console.log(e)
     return
@@ -56,20 +48,14 @@ export default async (args): Promise<void> => {
   let modified = 0
   let specs = 0
 
-  if (files) {
-    if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
-      files = files.filter((file: FileResource): boolean =>
-        workspace.config.enablePaths.some((path): boolean => file.path.startsWith(path)),
-      )
-    }
-
-    for (let resource of files) {
+  if (response) {
+    for (const resource of response) {
       if (workspace.config.ignoreSpecs && resource.path.startsWith('specs')) {
         specs++
         continue
       }
-      let path: string = join(workspace.path, resource.path)
-      let file: File = new File(path, workspace.path)
+      const path: string = join(workspace.path, resource.path)
+      const file: File = new File(path, workspace.path)
       if (await file.exists()) {
         if (await shouldRewriteFile(resource, file, args.keepEncode)) {
           file.write(resource.contents)
@@ -84,7 +70,7 @@ export default async (args): Promise<void> => {
     }
   }
 
-  console.log('\t', `Fetched ${files.length} files`)
+  console.log('\t', `Fetched ${response.length} files`)
 
   if (specs) {
     console.log('\t', `Ignored ${specs} specs`)
