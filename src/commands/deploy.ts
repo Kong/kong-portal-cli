@@ -74,8 +74,8 @@ async function Deploy(workspace: Workspace, path?: any): Promise<void> {
       let files: File[] = fileObj[fileType]
 
       if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
-        files = fileObj[fileType].filter(
-          (file: File): boolean => workspace.config.enablePaths.some((path) => file.resource.path?.startsWith(path)),
+        files = fileObj[fileType].filter((file: File): boolean =>
+          workspace.config.enablePaths.some((path) => file.resource.path?.startsWith(path)),
         )
       }
 

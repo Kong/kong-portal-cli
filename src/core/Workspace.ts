@@ -71,7 +71,6 @@ export default class Workspace {
     }
 
     if (enablePath && enablePath.length > 0) {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       workspace.config.data.enable_paths = enablePath
     }
     return workspace
