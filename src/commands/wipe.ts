@@ -33,7 +33,7 @@ export default async (args): Promise<void> => {
 
     if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
       files = files.filter((file: FileResource): boolean =>
-        workspace.config.enablePaths.some((path): boolean => file.path.startsWith(path)),
+        workspace.config.enablePaths.some((path) => file.path?.startsWith(path)),
       )
     }
 
