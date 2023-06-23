@@ -54,6 +54,11 @@ export default async (args): Promise<void> => {
         specs++
         continue
       }
+      if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+          if (!workspace.config.enablePaths.some((path): boolean => resource.path?.startsWith(path))) {
+            continue
+          }
+      }      
       const path: string = join(workspace.path, resource.path)
       const file: File = new File(path, workspace.path)
       if (await file.exists()) {
