@@ -7,6 +7,7 @@ on:
       - master
 jobs:
   build:
+    timeout-minutes: ${{ fromJSON(vars.GHA_DEFAULT_TIMEOUT) }}
     name: build
     strategy:
       matrix:
@@ -48,6 +49,7 @@ jobs:
         run: npm run build
 
   coverage:
+    timeout-minutes: ${{ fromJSON(vars.GHA_DEFAULT_TIMEOUT) }}
     needs: build
     runs-on: ubuntu-latest
     if: needs.build.outputs.COVERALLS != 'failure'
