@@ -44,7 +44,7 @@
     "js-yaml": "^3.13.1",
     "ora": "^3.4.0",
     "recursive-readdir-async": "^1.2.1",
-    "upath": "^1.2.0"
+    "upath": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^17.0.2",
