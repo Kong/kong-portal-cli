@@ -13,6 +13,7 @@ export interface IWorkspaceConfig {
   ignoreSpecs?: boolean
   skipPaths?: string[]
   maxContentLengthInMb?: number
+  enablePaths?: string[]
 }
 
 export default class WorkspaceConfig extends Config implements IWorkspaceConfig {
@@ -106,5 +107,13 @@ export default class WorkspaceConfig extends Config implements IWorkspaceConfig 
 
   public get maxContentLengthInMb(): number {
     return this.data.max_content_length_mb
+  }
+
+  public set enablePaths(enablePaths: string[]) {
+    this.data['enable_paths'] = enablePaths
+  }
+
+  public get enablePaths(): string[] {
+    return this.data.enable_paths
   }
 }
