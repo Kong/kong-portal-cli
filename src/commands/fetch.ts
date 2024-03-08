@@ -30,7 +30,13 @@ export default async (args): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
+    workspace = await Workspace.init(
+      args.workspace,
+      args.disableSSLVerification,
+      args.ignoreSpecs,
+      args.skipPath,
+      args.enablePath,
+    )
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
