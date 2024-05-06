@@ -1,7 +1,7 @@
 import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { IGetAllFilesParams, IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, AxiosInstance } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 import { MAX_CONTENT_LENGTH_MB, ONE_MB } from '../constants'
@@ -17,7 +17,7 @@ export class RestClientError<T> extends Error {
 
 export default class RestClient {
   public client: AxiosInstance
-  public clientHeaders
+  public clientHeaders: AxiosRequestHeaders
   public clientUrl: string
   public workspaceName: string
 
@@ -47,7 +47,7 @@ export default class RestClient {
       this.clientHeaders['Kong-Admin-Token'] = workspaceConfig.kongAdminToken
     }
 
-    let httpsAgent
+    let httpsAgent: HTTPSAgent
 
     if (workspaceConfig.disableSSLVerification) {
       httpsAgent = new HTTPSAgent({
