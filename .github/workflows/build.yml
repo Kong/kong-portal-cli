@@ -15,8 +15,8 @@ jobs:
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@ee0669bd1cc54295c223e0bb666b733df41de1c5
+      - uses: actions/setup-node@f1f314fca9dfce2769ece7d933488f076716723e
         name: Use Node.js ${{ matrix.node-version }}
         with:
           node-version: ${{ matrix.node-version }}
@@ -31,7 +31,7 @@ jobs:
       - name: Coveralls Parallel
         id: coveralls-parallel
         continue-on-error: true
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@09b709cf6a16e30b0808ba050c7a6e8a5ef13f8d
         with:
           github-token: ${{ secrets.github_token }}
           parallel: true
@@ -55,7 +55,7 @@ jobs:
     if: needs.build.outputs.COVERALLS != 'failure'
     steps:
       - name: Coveralls Finished
-        uses: coverallsapp/github-action@master
+        uses: coverallsapp/github-action@09b709cf6a16e30b0808ba050c7a6e8a5ef13f8d
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           parallel-finished: true
