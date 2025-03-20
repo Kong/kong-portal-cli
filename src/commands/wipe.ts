@@ -9,7 +9,13 @@ export default async (args): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs, args.skipPath)
+    workspace = await Workspace.init(
+      args.workspace,
+      args.disableSSLVerification,
+      args.ignoreSpecs,
+      args.skipPath,
+      args.enablePath,
+    )
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
@@ -24,6 +30,12 @@ export default async (args): Promise<void> => {
   let files: FileResource[]
   try {
     files = await client.getAllFiles({ fields: 'path' })
+
+    if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+      files = files.filter((file: FileResource): boolean =>
+        workspace.config.enablePaths.some((path) => file.path?.startsWith(path)),
+      )
+    }
 
     if (workspace.config.skipPaths && workspace.config.skipPaths.length > 0) {
       files = files.filter(

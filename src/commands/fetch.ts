@@ -30,7 +30,13 @@ export default async (args): Promise<void> => {
   let workspace: Workspace
 
   try {
-    workspace = await Workspace.init(args.workspace, args.disableSSLVerification, args.ignoreSpecs)
+    workspace = await Workspace.init(
+      args.workspace,
+      args.disableSSLVerification,
+      args.ignoreSpecs,
+      args.skipPath,
+      args.enablePath,
+    )
   } catch (e) {
     return MissingWorkspaceError(args.workspace)
   }
@@ -53,6 +59,11 @@ export default async (args): Promise<void> => {
       if (workspace.config.ignoreSpecs && resource.path.startsWith('specs')) {
         specs++
         continue
+      }
+      if (workspace.config.enablePaths && workspace.config.enablePaths.length > 0) {
+        if (!workspace.config.enablePaths.some((path): boolean => resource.path?.startsWith(path))) {
+          continue
+        }
       }
       const path: string = join(workspace.path, resource.path)
       const file: File = new File(path, workspace.path)

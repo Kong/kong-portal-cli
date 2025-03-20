@@ -45,7 +45,8 @@ class DeployCommand extends Command {
     If \`-W,--watch\` option is given after all the local templates are deployed the deploy will stay running and push any new changes on the filesystem in the workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
     If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` in is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
-    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.`,
+    If \`-S,--skip-path\` option is given files or directories that match the path will be skipped during the deploy. The \`--skip-path\` option can be repeated.\n
+    If \`-E,--enable-path\` option is given files or directories that match the path will be taken into account during the deploy. The \`--enable-path\` option can be repeated.`,
   })
 
   @Command.String({ required: true })
@@ -65,6 +66,9 @@ class DeployCommand extends Command {
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
+
+  @Command.Array(`-E,--enable-path`)
+  public enablePath: string[] = []
 
   @Command.Path(`deploy`)
   public async execute(): Promise<void> {
@@ -116,7 +120,8 @@ class FetchCommand extends Command {
     The workspace folder must already exist locally with a \`cli.conf.yaml\`.\n
     If \`-K,--keep-encode\` option is given, base64 assets will remain as base64 strings instead of converting to binary files.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
-    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.`,
+    If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
+    If \`-E,--enable-path\` option is given files or directories that match the path will be taken into account. The \`--enable-path\` option can be repeated.`,
   })
 
   @Command.String({ required: true })
@@ -131,6 +136,9 @@ class FetchCommand extends Command {
   @Command.Boolean(`-I,--ignore-specs`)
   public ignoreSpecs = false
 
+  @Command.Array(`-E,--enable-path`)
+  public enablePath: string[] = []
+
   @Command.Path(`fetch`)
   public async execute(): Promise<void> {
     await Fetch(this)
@@ -144,7 +152,8 @@ class WipeCommand extends Command {
     This command will delete all content and themes from the Upstream Workspace.\n
     If \`-D,--disable-ssl-verification\` option is given or \`disable_ssl_verification: true\` is set in \`cli.conf.yaml\`, SSL verification will be disabled to allow for use of self-signed certs.\n
     If \`-I,--ignore-specs\` option is given or \`ignore_specs: true\` is set in \`cli.conf.yaml\`, the '\\specs' folder will be ignored.\n
-    If \`-S,--skip-path\` option is given files or directories that match the path will be ignored. The \`--skip-path\` option can be repeated.`,
+    If \`-S,--skip-path\` option is given files or directories that match the path will be ignored. The \`--skip-path\` option can be repeated.\n
+    If \`-E,--enable-path\` option is given files or directories that match the path will be taken into account. The \`--enable-path\` option can be repeated.`,
   })
 
   @Command.String({ required: true })
@@ -158,6 +167,9 @@ class WipeCommand extends Command {
 
   @Command.Array(`-S,--skip-path`)
   public skipPath: string[] = []
+
+  @Command.Array(`-E,--enable-path`)
+  public enablePath: string[] = []
 
   @Command.Path(`wipe`)
   public async execute(): Promise<void> {
