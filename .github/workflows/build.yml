@@ -11,7 +11,7 @@ jobs:
     name: build
     strategy:
       matrix:
-        node-version: [12, 14, 16]
+        node-version: [20, 22, 24]
         os: [ubuntu-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -35,6 +35,7 @@ jobs:
         with:
           github-token: ${{ secrets.github_token }}
           parallel: true
+          path-to-lcov: ./.tap/report/lcov.info
           flag-name: run-${{ matrix.node-version }}-${{ matrix.os }}
 
       - name: Should Trigger coverallsapp/github-action@master

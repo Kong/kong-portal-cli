@@ -2,15 +2,15 @@ import tap from 'tap'
 import Config from './Config'
 
 tap.test('Instanciate properly', (t): void => {
-  const c = new Config('moon', 'apollo', { encoding: 'utf16' })
-  t.same(c, { filename: 'apollo', location: 'moon', data: null, encoding: 'utf16', path: 'moon/apollo' })
+  const c = new Config('moon', 'apollo', { encoding: 'utf16le' })
+  t.same(c, { filename: 'apollo', location: 'moon', data: null, encoding: 'utf16le', path: 'moon/apollo' })
   const cEncoding = new Config('moon', 'apollo')
   t.same(cEncoding, { filename: 'apollo', location: 'moon', data: null, encoding: 'utf8', path: 'moon/apollo' })
   t.end()
 })
 
 tap.test('Loads the data', async (t): Promise<void> => {
-  const _Config = t.mock('./Config', {
+  const _Config = t.mockRequire('./Config', {
     'fs-extra': {
       readFile: (path): string => {
         t.equal(path, 'moon/apollo')
@@ -28,7 +28,7 @@ tap.test('Loads the data', async (t): Promise<void> => {
 })
 
 tap.test('Fails at loading the data', async (t): Promise<void> => {
-  const _Config = t.mock('./Config', {
+  const _Config = t.mockRequire('./Config', {
     'fs-extra': {
       readFile: (): never => {
         throw 'error'
@@ -47,7 +47,7 @@ tap.test('Fails at loading the data', async (t): Promise<void> => {
 tap.test('Saves the data on the filesystem', async (t): Promise<void> => {
   let assertData = ''
   let assertPath = ''
-  const _Config = t.mock('./Config', {
+  const _Config = t.mockRequire('./Config', {
     'fs-extra': {
       writeFile: (path, content): void => {
         t.equal(assertData, content)

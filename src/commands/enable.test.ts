@@ -4,7 +4,8 @@ import { UsageError } from 'clipanion'
 tap.test('Should succeed', async (t): Promise<void> => {
   let spinnerFailCalled = false
   let spinnerSucceedCalled = false
-  const _e = t.mock('./enable', {
+  const _e = t.mockRequire('./enable', {
+    clipanion: { UsageError },
     '../core/Workspace': {
       init: async () => {
         return { name: 'foo', config: {} }
@@ -43,7 +44,8 @@ tap.test('Should succeed', async (t): Promise<void> => {
 })
 
 tap.test('Fail because of missing workspace', async (t): Promise<void> => {
-  const _e = t.mock('./enable', {
+  const _e = t.mockRequire('./enable', {
+    clipanion: { UsageError },
     '../core/Workspace': {
       getDirectoryPath: () => 'path',
       init: async () => {
@@ -65,7 +67,8 @@ tap.test('Fail because of missing workspace', async (t): Promise<void> => {
 tap.test('Fail because of portal enablement error', async (t): Promise<void> => {
   let spinnerFailCalled = false
   let spinnerSucceedCalled = false
-  const _e = t.mock('./enable', {
+  const _e = t.mockRequire('./enable', {
+    clipanion: { UsageError },
     '../core/Workspace': {
       init: async () => {
         return { name: 'foo', config: {} }

@@ -6,14 +6,14 @@ export default class Config {
   public filename: string
   public location: string
   public path: string
-  public encoding: string
+  public encoding: BufferEncoding
   public data: any
 
   public constructor(
     location: string,
     filename: string,
     options = {
-      encoding: 'utf8',
+      encoding: 'utf8' as BufferEncoding,
     },
   ) {
     this.filename = filename
@@ -26,7 +26,7 @@ export default class Config {
   public async load(): Promise<void> {
     try {
       const content = await fs.readFile(this.path, this.encoding)
-      this.data = yaml.safeLoad(content)
+      this.data = yaml.load(content)
     } catch (e) {
       this.data = null
     }
@@ -38,7 +38,7 @@ export default class Config {
   }
 
   public dump(): string {
-    return yaml.safeDump(this.data)
+    return yaml.dump(this.data)
   }
 
   public toConsole(): void {
