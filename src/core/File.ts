@@ -7,19 +7,19 @@ import { isBinaryFileSync } from 'isbinaryfile'
 
 export default interface FileInterface {
   location: string
-  encoding: string
+  encoding: BufferEncoding
 }
 export default class File implements FileInterface {
   public location: string
   public workspacePath: string
-  public encoding: string
+  public encoding: BufferEncoding
   public resource: FileResource
 
   public constructor(
     location: string,
     workspacePath: string,
     options = {
-      encoding: 'utf8',
+      encoding: 'utf8' as BufferEncoding,
     },
   ) {
     this.location = toUnix(location)

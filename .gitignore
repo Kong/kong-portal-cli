@@ -70,3 +70,6 @@ bin
 workspaces
 
 yarn.lock
+
+# tap test runner output
+.tap

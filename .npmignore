@@ -64,3 +64,6 @@ typings/
 
 # workspaces
 workspaces
+
+# tap test runner output
+.tap

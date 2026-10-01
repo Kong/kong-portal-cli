@@ -3,7 +3,7 @@ import tap from 'tap'
 import { UsageError } from 'clipanion'
 
 // tap.test('Succeed', async t => {
-//   const _config = tap.mock('./config', {
+//   const _config = tap.mockRequire('./config', {
 //     '../core/Workspace': {},
 //     '../core/Config': {}
 //   })
@@ -12,7 +12,8 @@ import { UsageError } from 'clipanion'
 // })
 
 tap.test('Fails because missing workspace', async (t) => {
-  const _config = tap.mock('./config', {
+  const _config = tap.mockRequire('./config', {
+    clipanion: { UsageError },
     '../core/Workspace': {
       exists: async () => {
         return false
@@ -37,7 +38,8 @@ tap.test('Fails because missing theme', async (t) => {
   const noop = () => {
     return
   }
-  const _config = tap.mock('./config', {
+  const _config = tap.mockRequire('./config', {
+    clipanion: { UsageError },
     '../core/Workspace': {
       exists: async () => true,
       getDirectoryPath: () => 'path',

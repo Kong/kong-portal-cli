@@ -1,7 +1,7 @@
 import { IWorkspaceConfig } from '../WorkspaceConfig'
 import { IGetAllFilesParams, IRestResponse } from './RestInterfaces'
 import FileResource, { FileResourceJSON } from './Resources/FileResource'
-import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, AxiosInstance, AxiosRequestHeaders } from 'axios'
+import axios, { AxiosRequestConfig, AxiosResponse, AxiosError, AxiosInstance, RawAxiosRequestHeaders } from 'axios'
 import { Agent as HTTPAgent } from 'http'
 import { Agent as HTTPSAgent } from 'https'
 import { MAX_CONTENT_LENGTH_MB, ONE_MB } from '../constants'
@@ -17,7 +17,7 @@ export class RestClientError<T> extends Error {
 
 export default class RestClient {
   public client: AxiosInstance
-  public clientHeaders: AxiosRequestHeaders
+  public clientHeaders: RawAxiosRequestHeaders
   public clientUrl: string
   public workspaceName: string
 
