@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.4] - 2026-11-03
+### Fixed
+- Resolve all 63 open Dependabot alerts: bump axios from 0.28.1 to 1.20.0, js-yaml from 3.13.1 to 4.3.2, chokidar from 3.0.1 to 4.0.3, fs-extra from 8.0.1 to 11.4.0, ora from 3.4.0 to 5.4.1, tap from 16.3.8 to 21.1.0, and typescript from 4.7.4 to 5.9.3; drop unused body-parser and chalk
+### Changed
+- Require Node >= 20 (CI matrix is now 20/22/24)
+- `portal config` no longer quotes scalars that don't need quoting (js-yaml 4 output style)
+
 ## [3.6.3] - 2024-05-09
 ### Fixed
 - Bump axios minimum version from 0.27.1 to 0.28.1
